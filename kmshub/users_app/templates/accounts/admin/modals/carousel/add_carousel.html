@@ -1,0 +1,37 @@
+<!-- Carousel Modal -->
+<div id="addCarouselModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="addCarouselModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header" style="background-color: #0C356A;">
+        <h2 style="font-weight: bolder; text-align: center; color: white;">Add Carousel</h2>
+        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      </div>
+      <form action="{% url 'admin-add-carousel' %}" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="alt" style="font-weight: bold;">Alt <span style="color: green;">*</span></label>
+            <input type="text" class="form-control" id="alt" name="alt" placeholder="Enter alternative name" required />
+          </div>
+          <div class="form-group">
+            <label for="commodity" style="font-weight: bold;">Commodity <span style="font-weight: normal;">(Optional)</span></label>
+            <select class="form-control" id="commodity" name="commodity" required >
+                <option value="" disabled selected>Select Commodity</option>
+                {% for commodity in commodities %}
+                {% if commodity.status == 'Approved' %}
+                  <option value="{{ commodity.commodity_id }}">{{ commodity.commodity_name }}</option>
+                  {% endif %}
+                {% endfor %}
+              </select>
+          </div>
+          <label for="img_path" style="font-weight: bold;">Image*</label><br>
+          <input type="file" id="img_path" name="img_path" placeholder="Enter file image" required />
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary">Add Carousel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

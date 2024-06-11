@@ -1,0 +1,256 @@
+{% extends 'base/index.html' %}
+{% load static %}
+
+{% block title %}
+  Home
+{% endblock %}
+
+{% block stylesheet %}
+  <link rel="stylesheet" href="{% static 'style/general.css/general.search.css' %}" />
+{% endblock %}
+
+{% block content %}
+  <div class="main-content">
+      <div class="search-container">
+        <form action="{% url "general-search-resources" %}" method="POST" enctype="multipart/form-data" class="search-form" onsubmit="showLoadingSpinner()">
+          {% csrf_token %}
+          <div class="listResourcesType ">
+            {% for resource_type in resources_type %}
+            <div class="checkbox-radio " style="display: inline-block; margin-right: 10px; ">
+                <input type="checkbox" name="resource_type" id="resource_type_{{ forloop.counter }}" value="{{ resource_type }}" class="resource-type-tag" data-selected="true" onchange="handleRadioChange(this)" checked>
+                <label for="resource_type_{{ forloop.counter }}" class="radio-inline">{{ resource_type|capfirst }}</label>
+            </div>
+            {% endfor %}
+          </div>
+          <div class="input-group justify-content-center">
+              <input type="text" id="search-input" class="form-control search-input" name="contents" placeholder="What's in your mind?" oninput="showSuggestions()">
+              <!-- Suggestions Dropdown -->
+              <div class="suggestions-container" id="suggestions-container"></div>
+              <div class="input-group-append">
+                <div class="dropdown">
+                  <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Knowledge Type
+                  </button>
+                  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    <div class="checkbox">
+                      <label style="margin-left: 5px;"><input type="checkbox" name="knowledge" value="all" class="knowledge-tag" onchange="handleCheckboxChange(this)" checked> All </label><br>
+                    </div>
+                    {% for knowledge in resources %}
+                      {% if knowledge.status == 'Approved' %}
+                        <div class="checkbox">
+                          <label style="margin-left: 5px;"><input type="checkbox" name="knowledge" value="{{ knowledge.knowledge_id }}" class="knowledge-tag" onchange="handleCheckboxChange(this)"> {{knowledge.knowledge_title|capfirst}}</label><br>
+                        </div>
+                      {% endif %}
+                    {% endfor %}
+                  </div>
+                </div>
+                <button class="btn search-btn" id="search-btn" type="submit">Search</button>
+              </div>
+            </div>
+            <span class="text-white">Advancing AANR in Western Mindanao</span>
+        </form>
+      </div>
+
+      <img src="{% static 'media/welcome-image.jpg' %}" alt="welcome" class="welcome-img">
+  
+    </div>
+    <br>
+    <div class="container" style="min-height: 50vh;">
+      <div class="row">
+        <div class="col-md-6">
+            <div id="carouselExampleIndicators1" class="carousel slide" data-ride="carousel">
+                <ol class="carousel-indicators">
+                    <li data-target="#carouselExampleIndicators1" data-slide-to="0" class="active"></li>
+                    <li data-target="#carouselExampleIndicators1" data-slide-to="1"></li>
+                    <li data-target="#carouselExampleIndicators1" data-slide-to="2"></li>
+                </ol>
+                <div class="carousel-inner">
+                  {% for carousel in carousels %}
+                  <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                    {% if carousel.commodity.commodity_id %}
+                      <a href="{% url 'general-display-commodity' id=carousel.commodity.commodity_id %}">
+                        <img class="d-block w-100 carousel-img" src="{{ carousel.img_path.url }}?v=1" alt="{{ carousel.alt }}" title="{{ carousel.alt }}">
+                      </a>
+                    {% else %}
+                      <img class="d-block w-100 carousel-img" src="{{ carousel.img_path.url }}?v=1" alt="{{ carousel.alt }}" title="{{ carousel.alt }}">
+                    {% endif %}
+                  </div>
+                {% endfor %}
+                </div>
+                <a class="carousel-control-prev" href="#carouselExampleIndicators1" role="button" data-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Previous</span>
+                </a>
+                <a class="carousel-control-next" href="#carouselExampleIndicators1" role="button" data-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Next</span>
+                </a>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div id="carouselExampleIndicators2" class="carousel slide" data-ride="carousel">
+                <ol class="carousel-indicators">
+                    <li data-target="#carouselExampleIndicators2" data-slide-to="0" class="active"></li>
+                    <li data-target="#carouselExampleIndicators2" data-slide-to="1"></li>
+                    <li data-target="#carouselExampleIndicators2" data-slide-to="2"></li>
+                </ol>
+                <div class="carousel-inner sec-carousel">
+                  {% for carousel in carousels %}
+                  <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                    {% if carousel.commodity.commodity_id %}
+                      <a href="{% url 'general-display-commodity' id=carousel.commodity.commodity_id %}">
+                        <img class="d-block w-100 carousel-img" src="{{ carousel.img_path.url }}?v=1" alt="{{ carousel.alt }}" title="{{ carousel.alt }}">
+                      </a>
+                    {% else %}
+                      <img class="d-block w-100 carousel-img" src="{{ carousel.img_path.url }}?v=1" alt="{{ carousel.alt }}" title="{{ carousel.alt }}">
+                    {% endif %}
+                  </div>
+                {% endfor %}
+                </div>
+                <a class="carousel-control-prev" href="#carouselExampleIndicators2" role="button" data-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Previous</span>
+                </a>
+                <a class="carousel-control-next" href="#carouselExampleIndicators2" role="button" data-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Next</span>
+                </a>
+            </div>
+          </div>
+      </div>
+        <div class="row">
+          <div class="col-3">
+            <span>events</span>
+          </div>
+  
+          <div class="col-3">
+            <span>events</span>
+          </div>
+  
+          <div class="col-6">
+            <span>news</span>
+          </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block script %}
+  {% if messages %}
+    {% for message in messages %}
+      {% if message.tags == 'success' %}
+        <script>
+          // Display SweetAlert success message
+          Swal.fire({
+            icon: 'success',
+            title: 'Success!',
+            text: '{{ message }}'
+          })
+        </script>
+        {% else %}
+        <script>
+          // Display SweetAlert success message
+          Swal.fire({
+            icon: 'error',
+            title: 'Error!',
+            text: '{{ message }}'
+          })
+        </script>
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+
+  <script>
+    function handleCheckboxChange(checkbox) {
+      // Your logic to handle checkbox state changes goes here
+      if (checkbox.checked) {
+        // Checkbox is checked
+        console.log("Checkbox checked:", checkbox.value);
+      } else {
+        // Checkbox is unchecked
+        console.log("Checkbox unchecked:", checkbox.value);
+      }
+    }
+
+    
+    function handleRadioChange(radio) {
+      var chosenResourcesType = document.getElementsByClassName('resource-type-tag');
+      for (var i = 0; i < chosenResourcesType.length; i++) {
+        if (chosenResourcesType[i].checked) {
+          console.log(chosenResourcesType[i].value);
+        }
+      }
+    }
+
+    function handleRadioChangeKnowledge(radio) {
+      var chosenKnowledge = document.getElementsByClassName('knowledge-tag');
+      for (var i = 0; i < chosenKnowledge.length; i++) {
+        if (chosenKnowledge[i].checked) {
+          console.log(chosenKnowledge[i].value);
+        }
+      }
+    }
+
+    function showLoadingSpinner() {
+      document.getElementById("loading-spinner").style.display = "block";
+  }
+
+  const suggestedKeywords = [
+        {% for keyword in suggested_keywords %}
+            { "keyword": "{{ keyword.keyword|capfirst }}" },
+        {% endfor %}
+    ];
+
+    const inputField = document.getElementById('search-input');
+    const suggestionsContainer = document.getElementById('suggestions-container');
+
+    inputField.addEventListener('focus', showSuggestions);
+
+    // Add a click event listener to the document
+    document.addEventListener('click', function (event) {
+        const isClickInsideInput = inputField.contains(event.target);
+        const isClickInsideSuggestions = suggestionsContainer.contains(event.target);
+
+        // If the click is outside the input field and suggestions container, hide suggestions
+        if (!isClickInsideInput && !isClickInsideSuggestions) {
+            suggestionsContainer.style.display = 'none';
+        }
+    });
+
+    function showSuggestions() {
+        // Clear previous suggestions
+        suggestionsContainer.innerHTML = '';
+
+        const matchingSuggestions = getSuggestions('');
+
+        // Populate suggestions container
+        matchingSuggestions.forEach(suggestion => {
+            const suggestionElement = document.createElement('div');
+            suggestionElement.classList.add('suggested-keyword');
+            suggestionElement.textContent = suggestion.keyword;
+            suggestionElement.onclick = function () {
+                selectSuggestedKeyword(suggestion.keyword);
+            };
+            suggestionsContainer.appendChild(suggestionElement);
+        });
+
+        // Display suggestions container
+        suggestionsContainer.style.display = 'block';
+    }
+
+    function selectSuggestedKeyword(keyword) {
+        inputField.value = keyword;
+
+        // Hide suggestions after selecting a keyword
+        suggestionsContainer.style.display = 'none';
+    }
+
+    function getSuggestions(query) {
+        return suggestedKeywords.filter(suggestion => suggestion.keyword.toLowerCase().includes(query));
+    }
+
+    // Auto slide the carousels
+    $('.carousel').carousel({
+      interval: 500 // Change slide every 2 seconds
+  });
+  </script>
+{% endblock %}

@@ -1,0 +1,82 @@
+{% extends 'base/secretariat.html' %}
+{% load static %}
+
+{% block stylesheet %}
+  <link rel="stylesheet" href="{% static 'style/general.css/general.account.css' %}" />
+  <style>
+    html {
+      scroll-behavior: smooth;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+  <br />
+  <div class="main-content">
+    <div class="container" style="min-height: 60vh;">
+      <h3 style="font-weight:bold;">ACCOUNT SETTINGS</h3>
+      <hr style="color: black;" />
+      <div class="card" style="height: auto;">
+        <div class="row">
+          <div class="col-md-6">
+            <br />
+            <div class="form-group row" style="margin-left: 15px;">
+              <div class="col-md-6">
+                <label for="first_name" class="form-label-bold">First Name</label>
+                <input type="text" class="form-control" id="first_name" value="{{ user.first_name|capfirst }}" readonly />
+              </div>
+              <div class="col-md-6">
+                <label for="last_name" class="form-label-bold">Last Name</label>
+                <input type="text" class="form-control" id="last_name" value="{{ user.last_name|capfirst }}" readonly />
+              </div>
+            </div>
+
+            <div class="form-group row" style="margin-left: 15px;">
+              <div class="col-md-6">
+                <label for="email" class="form-label-bold">Email</label>
+                <input type="text" class="form-control" id="email" value="{{ user.email }}" readonly />
+              </div>
+              <div class="col-md-6">
+                <label for="institution" class="form-label-bold">Institution</label>
+                <input type="text" class="form-control" id="institution" value="{{ user.institution|upper }}" readonly />
+              </div>
+            </div>
+
+            <div class="form-group row" style="margin-left: 15px;">
+              <div class="col-md-6">
+                <label for="position" class="form-label-bold">Position</label>
+                <input type="text" class="form-control" id="position" value="{{ user.position|upper }}" readonly />
+              </div>
+              <div class="col-md-6">
+                <label for="date_joined" class="form-label-bold">Date Joined</label>
+                <input type="text" class="form-control" id="date_joined" value="{{ user.date_joined|date:'F d, Y' }}" readonly />
+              </div>
+            </div>
+
+            <div class="form-group row" style="margin-left: 15px;">
+              <div class="col-md-6">
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#userInfoModal" style="font-size: 12px;">Update</button>
+                <button type="button" class="btn btn-success" data-toggle="modal" data-target="#fileUploadModal" style="font-size: 12px;">Upload</button>
+              </div>
+            </div>
+          </div>
+          <!-- Insert vertical line here -->
+          <div class="vertical-line d-none d-md-block" style=" border-left: 2px solid #ccc; height: 339px; margin-left: 30px;"></div>
+
+          <div class="form-group row" style="justify-content: center;">
+            <div class="col-md-6">
+              <!-- Profile Pictures -->
+              <div class="profile-picture text-center">
+                {% if profile.picture %}
+                  <img src="{{ profile.picture.url }}" alt="Profile Picture" class="img-fluid rounded-circle pro-pics" style="max-width: 320px; height: 300px; margin-top: 20px; " />
+                {% else %}
+                  <img src="{% static 'media/default_profile.png' %}" alt="Default Profile Picture" class="img-fluid pro-pics" style="width: 350px;" />
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

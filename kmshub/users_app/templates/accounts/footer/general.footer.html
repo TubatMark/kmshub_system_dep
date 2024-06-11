@@ -1,0 +1,51 @@
+<br><br><br>
+<footer>
+    <div class="footer">
+        <br>
+        <div class="container text-center">
+            <div class="row">
+                <!-- About Column -->
+                <div class="col-md-4 text-white">
+                    <h3>About Us</h3>
+                    <div class="about text-white">
+                        {% for footer in footerContents %}
+                        {{ footer.content_footer|safe }}
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Connect with Us Column -->
+                <div class="col-md-4 text-white">
+                    <h3>Connect with Us</h3>
+                    <div class="info">
+                        <div class="address">
+                            <span><i class="fa-solid fa-location-dot location-icon"></i> WMSU, Normal Road, Baliwasan, Zamboanga City, Philippines</span>
+                        </div>
+                        <div class="contact">
+                            <span><i class="fa-solid fa-address-book contact-icon"></i> (062) 991 5087 | (062) 955 8298</span>
+                        </div>
+                    </div>
+                    <div class="socials d-flex justify-content-center">
+                        <div class="social-icon facebook">
+                            <a href="https://www.facebook.com/WESMAARRDEC"><i class="fa-brands fa-facebook-f"></i></a>
+                        </div>
+                        <div class="social-icon email">
+                            <a href="mailto:wesmaarrdec@wmsu.edu.ph" target="_top"><i class="fa-solid fa-envelope"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Links Column -->
+                <div class="col-md-4 text-white links-column">
+                    <h3>Useful Links</h3>
+                    <div class="links">
+                        {% for link in links %}
+                        <a href="{{link.link}}" target="_blank" class="link-item">{{link.link_title}}</a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br>
+    </div>
+</footer>

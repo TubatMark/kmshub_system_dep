@@ -1,0 +1,90 @@
+{% extends 'base/index.html' %}
+{% load static %}
+<title>
+  {% block title %}
+    Login
+  {% endblock %}
+</title>
+
+{% block stylesheet %}
+  <link rel="stylesheet" href="{% static 'style/login.css' %}" />
+{% endblock %}
+
+{% block content %}
+  <br />
+  <div class="main-content">
+    <div class="container" style="min-height: 66vh;">
+      <div class="card-login">
+        <br>
+          <img src="{% static 'media/RAISE-Logo.png' %}" alt="RAISE Logo" class="navbar-logo-raise" />
+            <h1 class="head1" >Welcome!</h1>
+        <br>
+        <form action="{% url "login" %}" method="POST" class="login-form" id="loginForm">
+          {% csrf_token %}
+          <div class="form-group">
+            <label for="email" class="col-form-label">Email</label>
+            <div class="col">
+              <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" required />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="password">Password</label>
+            <div class="col">
+              <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password" required />
+            </div>
+          </div>
+         
+          <div class="login-button" style="text-align: center;">
+            <div class="login">
+              <button type="submit" value="submit" class="btn btn-primary">Login</button>
+            </div> 
+            <div class="reg" style="font-size: 12px;">
+                <span>Don't have an account yet?<a href="{% url "sign-up" %}"> Sign up here!</a></span>
+            </div>
+            <div class="forgot" style="font-size: 12px;">
+            <span>Forgot your password? Reset it <a href="{% url 'email' %}">here</a>.</span>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  
+{% endblock %}
+
+{% block script %}
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    document.getElementById("loginForm").addEventListener("keydown", function(event) {
+      if (event.key === "Enter") {
+        event.preventDefault();  // Prevent default form submission
+        document.getElementById("loginForm").submit();  // Submit the form
+      }
+    });
+  });
+</script>
+
+  {% if messages %}
+    {% for message in messages %}
+      {% if message.tags == 'error' %}
+        <script>
+          // Display SweetAlert error message
+          Swal.fire({
+            icon: 'error',
+            title: 'Error!',
+            text: '{{ message }}'
+          })
+        </script>
+        {% else %}
+        <script>
+          // Display SweetAlert success message
+          Swal.fire({
+            icon: 'success',
+            title: 'Success!',
+            text: '{{ message }}'
+          })
+        </script>
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+{% endblock %}

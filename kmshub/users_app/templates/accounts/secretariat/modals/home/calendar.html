@@ -1,0 +1,34 @@
+<!-- Modal -->
+<div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="eventModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="eventModalLabel">Add Event</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form id="eventForm">
+            <div class="form-group">
+              <label for="eventTitle">Title:</label>
+              <input type="text" class="form-control" id="eventTitle" name="title">
+            </div>
+            <div class="form-group">
+              <label for="eventStart">Start:</label>
+              <input type="text" class="form-control" id="eventStart" name="start" readonly>
+            </div>
+            <div class="form-group">
+              <label for="eventEnd">End:</label>
+              <input type="text" class="form-control" id="eventEnd" name="end" >
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" id="saveEvent">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  

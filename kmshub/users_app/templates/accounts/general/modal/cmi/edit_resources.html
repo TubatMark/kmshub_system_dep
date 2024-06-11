@@ -1,0 +1,128 @@
+<!-- Edit Program modal -->
+<div id="editResourcesModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="editResourcesModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header" style="background-color: #0C356A;">
+        <h5 class="modal-title text-white" id="editResourcesModalLabel" style="font-weight: bolder;">Request Edit Resources</h5>
+        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      </div>
+      <form action="" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="modal-body">
+          <input type="text" class="form-control" id="resources_id" name="resources_id" hidden />
+
+          <div class="form-group">
+            <label for="edited_title" class="font-weight-bold">Resources Title</label>
+            <input type="text" class="form-control" id="edited_title" name="edited_title" />
+          </div>
+          <div class="form-group">
+            <label for="edited_description" class="font-weight-bold">Description</label>
+            <textarea class="form-control" id="edited_description" name="edited_description" style="height: 150px;" ></textarea>
+          </div>
+          <div class="row">
+            <div style="width: 250px; border: 1px solid #ddd; padding: 5px; border-radius: 4px; margin-left: 20px;">
+              <div class="col-md-12">
+                <div class="form-group">
+                  <label for="current-selected-commodity" style="font-weight: bold;">Current Commodities:</label>
+                  <div id="current-selected-content-commodity" >
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div style="width: 250px; border: 1px solid #ddd; padding: 5px; border-radius: 4px; margin-left: 5px;">
+              <div class="col-md-12">
+                <div class="form-group">
+                  <label for="current-selected-cmi" style="font-weight: bold;">Current CMI(s):</label>
+                  <div id="current-selected-content-cmi" >
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div style="width: 250px; border: 1px solid #ddd; padding: 5px; border-radius: 4px; margin-left: 5px;">
+              <div class="col-md-12">
+                <div class="form-group">
+                  <label for="current-selected-knowledge" style="font-weight: bold;">Current Knowledge:</label>
+                  <div id="current-selected-content-knowledge">
+                   
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <hr />
+          <div class="row">
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="edited_commodity" class="font-weight-bold">Commodity</label>
+                <select class="form-control edited_commodity" id="edited_commodity" name="edited_commodity">
+                  <option value="" disabled selected>Select Commodity</option>
+                  {% for commodity in commodities %}
+                    {% if commodity.status == 'Approved' %}
+                      <option value="{{ commodity.commodity_id }}">{{ commodity.commodity_name }}</option>
+                    {% endif %}
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="edited_cmi" class="font-weight-bold">CMI</label>
+                <select class="form-control edited_cmi" id="edited_cmi" name="edited_cmi">
+                  <option value="" disabled selected>Select CMI</option>
+                  {% for cmi in cmis %}
+                    {% if cmi.status == 'Approved' %}
+                      <option value="{{ cmi.cmi_id }}">{{ cmi.cmi_name }}</option>
+                    {% endif %}
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+            
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="edited_knowledge" class="font-weight-bold">Knowledge Resources</label>
+                <select class="form-control" id="edited_knowledge" name="edited_knowledge">
+                    <option value="" disabled selected>Select Knowledge Resources</option>
+                    {% for knowledge in resources %}
+                    {% if knowledge.status == 'Approved' %}
+                      <option value="{{ knowledge.knowledge_id }}">{{ knowledge.knowledge_title }}</option>
+                      {% endif %}
+                    {% endfor %}
+                </select>
+              </div>
+            </div>
+          </div>
+          <hr />
+          <!-- New row to display selected options -->
+          
+          <div class="row">
+            <div style="width: 250px; border: 1px solid #ddd; padding: 5px; border-radius: 4px; margin-left: 20px;">
+              <div class="col-md-12">
+                <div class="form-group" >
+                    <label for="new-selected-commodity" style="font-weight: bold; color: green;">New Selected Commodities:</label>
+                    <ul id="new-selected-commodity" style="color: green;"></ul>
+                    <textarea name="new_commodity_ids" id="new_commodity_ids" hidden></textarea>
+                </div>
+              </div>
+            </div>
+            <div style="width: 250px; border: 1px solid #ddd; padding: 5px; border-radius: 4px; margin-left: 5px;">
+              <div class="col-md-12">
+                <div class="form-group">
+                  <label for="new-selected-cmi" style="font-weight: bold;color: green;">New Selected CMI(s):</label>
+                  <ul id="new-selected-cmi" style="color: green;"></ul>
+                  <textarea name="new_cmi_ids" id="new_cmi_ids" hidden></textarea>
+                </div>
+              </div>
+            </div>
+            
+          </div>
+        </div>
+        <div class="modal-footer">
+          {% comment %} <button type="button" class="btn" style="background-color: #0C356A; color: white; " id="clear-all-btn" name="clear-all-btn">Clear</button> {% endcomment %}
+          <button type="button" class="btn btn-secondary" data-dismiss="modal" id="close-modal">Close</button>
+          <button type="submit" class="btn btn-primary">Request</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

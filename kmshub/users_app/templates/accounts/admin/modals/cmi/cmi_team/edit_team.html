@@ -1,0 +1,179 @@
+<!-- CMI Registration Modal -->
+<div id="cmiTeamEditModal{{ team.team_id }}" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="cmiTeamEditModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header" style="background-color: #0C356A;">
+        <h2 style="font-weight: bolder; text-align: center; color: white;">CMI Cluster Representatives Edit Information</h2>
+        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      </div>
+      <form action="{% url 'edit-team' id=team.team_id %}" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="modal-body">
+          <div class="row">
+            <div class="col">
+              <div class="form-group">
+                <label for="first_name" style="font-weight: bold;">First Name <span style="color: green;" title="Required">*</span></label>
+                <input type="text" id="first_name" name="first_name" class="form-control" value="{{ team.first_name|capfirst }}" required />
+              </div>
+            </div>
+
+            <div class="col">
+              <div class="form-group">
+                <label for="middle_name" style="font-weight: bold;">Middle Name</label>
+                <input type="text" id="middle_name" name="middle_name" class="form-control" value="{{ team.middle_name|capfirst }}" />
+              </div>
+            </div>
+
+            <div class="col">
+              <div class="form-group">
+                <label for="last_name" style="font-weight: bold;">Last Name <span style="color: green;" title="Required">*</span></label>
+                <input type="text" id="last_name" name="last_name" class="form-control" value="{{ team.last_name|capfirst }}" required />
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-2">
+              <div class="form-group">
+                <label for="sex" style="font-weight: bold;">Sex</label>
+                <select name="sex" id="sex" class="form-control">
+                  {% if team.sex %}
+                    <option value="{{ team.sex }}" selected>{{ team.sex|capfirst }}</option>
+                  {% endif %}
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-3">
+              <div class="form-group">
+                <label for="birth" style="font-weight: bold;">Birth Date</label>
+                <input type="date" id="birth" name="date_birth" class="form-control" value="{{ team.date_birth|date:'Y-m-d' }}" />
+              </div>
+            </div>
+            <div class="col-3">
+              <div class="form-group">
+                <label for="contact_num" style="font-weight: bold;">Contact</label>
+                <input type="number" id="contact_num" name="contact_num" class="form-control" value="{{ team.contact_num }}" />
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="form-group">
+                <label for="email" style="font-weight: bold;">Email</label>
+                <input type="email" id="email" name="email" class="form-control" value="{{ team.email }}" />
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col">
+              <div class="form-group">
+                <label for="bach_deg" style="font-weight: bold;">Bachelor's Degree</label>
+                <input type="text" id="bach_deg" name="bach_deg" class="form-control" value="{{ team.bach_deg|capfirst }}" />
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="form-group">
+                <label for="db_year_completed" style="font-weight: bold;">Year Completed</label>
+                <input type="date" id="db_year_completed" name="db_year_completed" class="form-control" value="{{ team.db_year_completed|date:'Y-m-d' }}" />
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col">
+              <div class="form-group">
+                <label for="mas_deg" style="font-weight: bold;">Master's Degree</label>
+                <input type="text" id="mas_deg" name="mas_deg" class="form-control" value="{{ team.mas_deg|capfirst }}" />
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="form-group">
+                <label for="md_year_completed" style="font-weight: bold;">Year Completed</label>
+                <input type="date" id="md_year_completed" name="md_year_completed" class="form-control" value="{{ team.md_year_completed|date:'Y-m-d' }}" />
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col">
+              <div class="form-group">
+                <label for="doc_deg" style="font-weight: bold;">Doctorate Degree</label>
+                <input type="text" id="doc_deg" name="doc_deg" class="form-control" value="{{ team.doc_deg|capfirst }}" />
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="form-group">
+                <label for="dd_year_completed" style="font-weight: bold;">Year Completed</label>
+                <input type="date" id="dd_year_completed" name="dd_year_completed" class="form-control" value="{{ team.dd_year_completed|date:'Y-m-d' }}" />
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col">
+              <div class="form-group">
+                <label for="cmi" style="font-weight: bold;">CMI</label>
+                <select name="cmi" id="cmi" class="form-control">
+                  {% if team.cmi %}
+                    <option value="{{ team.cmi.cmi_id }}" selected>{{ team.cmi.cmi_name }}</option>
+                  {% endif %}
+                  {% for cmi in cmis %}
+                    {% if cmi.status == 'Approved' %}
+                      <option value="{{ cmi.cmi_id }}">{{ cmi.cmi_name|upper }}</option>
+                    {% endif %}
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+
+            <div class="col">
+              <div class="form-group">
+                <label for="position" style="font-weight: bold;">Position</label>
+                <select name="position" id="position" class="form-control">
+                  {% if team.position %}
+                    <option value="{{ team.position }}" selected>
+                      {% if team.position == 'sc' %}
+                        Science Communication Cluster Coordinator
+                      {% elif team.position == 'rd' %}
+                        Research & Development Cluster Coordinator
+                      {% elif team.position == 'tt' %}
+                        Technology Transfer Cluster Coordinator
+                      {% else %}
+                        Information & Communication Technology Cluster Coordinator
+                      {% endif %}
+                    </option>
+                  {% endif %}
+
+                  <option value="sc">Science Communication Cluster Coordinator</option>
+                  <option value="rd">Research & Development Cluster Coordinator</option>
+                  <option value="tt">Technology Transfer Cluster Coordinator</option>
+                  <option value="ict">Information & Communication Technology</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col">
+              <div class="form-group">
+                <label for="specialization" style="font-weight: bold;">Specialization</label>
+                <input type="text" id="specialization" name="specialization" class="form-control" value="{{ team.specialization|capfirst }}" />
+              </div>
+            </div>
+            <div class="col">
+              <div class="form-group">
+                <label for="date_appointed" style="font-weight: bold;">Date Appointed</label>
+                <input type="date" id="date_appointed" name="date_appointed" class="form-control" value="{{ team.date_appointed|date:'Y-m-d' }}" />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary">Edit</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

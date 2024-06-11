@@ -1,0 +1,224 @@
+{% load static %}
+
+<header>
+  <nav class="navbar navbar-expand-sm">
+    <div class="inner_navbar justify-content-center">
+      <div class="logo-container">
+        <a href="{% url 'general-home' %}"><img src="{% static 'media/RAISE-Logo.png' %}" alt="RAISE Logo" class="navbar-logo-raise" /></a>
+        <div class="text-container">
+          <h1 class="t1">km4aanr</h1>
+          <h3 class="t2">in WESTERN MINDANAO</h3>
+        </div>
+      </div>
+      <div class="navbar-left" id="navbarLeft">
+        <ul>
+          <li>
+            <div class="dropdown" style="margin-top: 5.8px;">
+              <a href="{% url 'general-home' %}" style="padding: 20px;">Home</a>
+            </div>
+          </li>
+          <li>
+            <div class="dropdown" style="margin-top: 5.8px;">
+              <a href="{% url 'general-about' %}" style="padding: 20px;">About</a>
+            </div>
+          </li>
+          <li>
+            <div class="dropdown">
+              <a class="btn dropdown-fa-toggle-down" id="dropdownLinks" data-toggle="dropdown" aria-haspopup="true">Useful Links <i class="fa-solid fa-circle-chevron-down"></i></a>
+              <div class="dropdown-menu" aria-labelledby="dropdownLinks">
+                {% for link in links %}
+                  <a href="{{ link.link }}" class="dropdown-item">{{ link.link_title }}</a>
+                {% endfor %}
+              </div>
+            </div>
+          </li>
+          <li>
+            {% comment %}it should be from the admin, the admin add commodity and only display here in the dropdown based on what is in the database{% endcomment %}
+            <div class="dropdown">
+              <a class="btn dropdown-fa-toggle-down" id="dropdownCommodities" data-toggle="dropdown" aria-haspopup="true" href="{% url 'all_commodities' %}" onclick="handleDropdownClick('commodity')">Commodities <i class="fa-solid fa-circle-chevron-down"></i></a>
+              <div class="dropdown-menu" aria-labelledby="dropdownCommodities">
+                {% comment %}these are just commodities to be added in the database{% endcomment %}
+                {% for commodity in commodities %}
+                  {% if commodity.status == 'Approved' %}
+                    <a href="{% url 'general-display-commodity' id=commodity.commodity_id %}" class="dropdown-item">{{ commodity.commodity_name|capfirst }}</a>
+                  {% endif %}
+                {% endfor %}
+              </div>
+            </div>
+          </li>
+          <li>
+            <div class="dropdown" style="margin-top: 5.8px;">
+              <a href="{% url 'general-forum' %}" style="padding: 20px;">Forum</a>
+            </div>
+          </li>
+          <li>
+            <div class="dropdown">
+              <a class="btn dropdown-fa-toggle-down" id="dropdownResources" data-toggle="dropdown" aria-haspopup="true" href="{% url 'general-resources' %}" onclick="handleDropdownClick('knowledge')">Knowledge Resources <i class="fa-solid fa-circle-chevron-down"></i></a>
+              <div class="dropdown-menu" aria-labelledby="dropdownResources">
+                {% for resource in resources %}
+                  {% if resource.status == 'Approved' %}
+                    <a href="{% url 'general-display-knowledge' knowledge_id=resource.knowledge_id %}" class="dropdown-item">{{ resource.knowledge_title|capfirst }}</a>
+                  {% endif %}
+                {% endfor %}
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+      <div class="navbar-right" id="navbarRight">
+        <ul>
+          {% if request.session.is_cmi_user %}
+            <li>
+              <div class="dropdown">
+                <a class="btn dropdown-fa-toggle-down" id="dropdownResources" data-toggle="dropdown" aria-haspopup="true">Requests <i class="fa-solid fa-circle-chevron-down"></i></a>
+                <div class="dropdown-menu" aria-labelledby="dropdownResources">
+                  <a href="{% url 'general-cmi-requests' %}" class="dropdown-item">CMI</a>
+                  <a href="{% url 'general-commodity-requests' %}" class="dropdown-item">Commodity</a>
+                  <a href="{% url 'general-knowledge-requests' %}" class="dropdown-item">Knowledge Resources</a>
+                </div>
+              </div>
+            </li>
+            <li>
+              <div class="dropdown">
+                <a class="btn dropdown-fa-toggle-down" id="additional" data-toggle="dropdown" aria-haspopup="true">Additional <i class="fa-solid fa-circle-chevron-down"></i></a>
+                <div class="dropdown-menu" aria-labelledby="additional">
+                  <a href="{% url 'general-cmi-resources' %}" class="dropdown-item">Resources</a>
+                  <a href="{% url 'tech_generated' name='cmi' %}" class="dropdown-item">Tech Generated</a>
+                  <a href="{% url 'tech_adaptor' name='cmi' %}" class="dropdown-item">Tech Adaptor</a>
+                </div>
+              </div>
+            </li>
+          {% endif %}
+          {% if user.is_authenticated %}
+            <li>
+              <div class="dropdown" style="margin-top: 5.8px;">
+                <a href="{% url 'logout' %}" style="padding: 10px;" class="logout"><i class="fa fa-sign-out" aria-hidden="true"></i></a>
+              </div>
+            </li>
+            <li>
+              <div class="dropdown" style="margin-top: 5.8px;">
+                <a href="{% url 'general-settings' %}" style="padding: 10px;" class="settings"><i class="fa-solid fa-user"></i></a>
+              </div>
+            </li>
+          {% else %}
+            <li>
+              <div class="dropdown" style="margin-top: 5.8px;">
+                <a href="{% url 'sign-up' %}" style="padding: 10px;" class="register">Register</a>
+              </div>
+            </li>
+            <li>
+              <div class="dropdown" style="margin-top: 5.8px;">
+                <a href="{% url 'login' %}" style="padding: 10px;" class="login">Login</a>
+              </div>
+            </li>
+          {% endif %}
+        </ul>
+      </div>
+      <div class="hamburger" >
+        <i class="fas fa-bars"></i>
+      </div>
+    </div>
+    <div class="mobileView hidden" id="mobileView">
+      <ul>
+        <li>
+          <div class="dropdown">
+            <a href="{% url 'general-home' %}">Home</a>
+          </div>
+        </li>
+        <li>
+          <div class="dropdown">
+            <a href="{% url 'general-about' %}">About</a>
+          </div>
+        </li>
+        <li>
+          <div class="dropdown">
+            <a class=" dropdown-fa-toggle-down" id="dropdownLinks" data-toggle="dropdown" aria-haspopup="true">Useful Links <i class="fa-solid fa-circle-chevron-down" style="float: right; padding-right: 40px;"></i></a>
+            <div class="dropdown-menu" aria-labelledby="dropdownLinks">
+              {% for link in links %}
+                <a href="{{ link.link }}" class="dropdown-item">{{ link.link_title }}</a>
+              {% endfor %}
+            </div>
+          </div>
+        </li>
+        <li>
+          {% comment %}it should be from the admin, the admin add commodity and only display here in the dropdown based on what is in the database{% endcomment %}
+          <div class="dropdown">
+            <a class=" dropdown-fa-toggle-down" id="dropdownCommodities" data-toggle="dropdown" aria-haspopup="true" href="{% url 'all_commodities' %}" onclick="handleDropdownClick('commodity')">Commodities <i class="fa-solid fa-circle-chevron-down" style="float: right; padding-right: 40px;"></i></a>
+            <div class="dropdown-menu" aria-labelledby="dropdownCommodities">
+              {% comment %}these are just commodities to be added in the database{% endcomment %}
+              {% for commodity in commodities %}
+                {% if commodity.status == 'Approved' %}
+                  <a href="{% url 'general-display-commodity' id=commodity.commodity_id %}" class="dropdown-item">{{ commodity.commodity_name|capfirst }}</a>
+                {% endif %}
+              {% endfor %}
+            </div>
+          </div>
+        </li>
+        <li>
+          <div class="dropdown">
+            <a href="{% url 'general-forum' %}">Forum</a>
+          </div>
+        </li>
+        <li>
+          <div class="dropdown">
+            <a class=" dropdown-fa-toggle-down" id="dropdownResources" data-toggle="dropdown" aria-haspopup="true" href="{% url 'general-resources' %}" onclick="handleDropdownClick('knowledge')">Knowledge Resources <i class="fa-solid fa-circle-chevron-down" style="float: right; padding-right: 40px;"></i></a>
+            <div class="dropdown-menu" aria-labelledby="dropdownResources">
+              {% for resource in resources %}
+                {% if resource.status == 'Approved' %}
+                  <a href="{% url 'general-display-knowledge' knowledge_id=resource.knowledge_id %}" class="dropdown-item">{{ resource.knowledge_title|capfirst }}</a>
+                {% endif %}
+              {% endfor %}
+            </div>
+          </div>
+        </li>
+      </ul>
+      <ul>
+        {% if request.session.is_cmi_user %}
+          <li>
+            <div class="dropdown">
+              <a class=" dropdown-fa-toggle-down" id="dropdownResources" data-toggle="dropdown" aria-haspopup="true">Requests <i class="fa-solid fa-circle-chevron-down" style="float: right; padding-right: 40px;"></i></a>
+              <div class="dropdown-menu" aria-labelledby="dropdownResources">
+                <a href="{% url 'general-cmi-requests' %}" class="dropdown-item">CMI</a>
+                <a href="{% url 'general-commodity-requests' %}" class="dropdown-item">Commodity</a>
+                <a href="{% url 'general-knowledge-requests' %}" class="dropdown-item">Knowledge Resources</a>
+              </div>
+            </div>
+          </li>
+          <li>
+            <div class="dropdown">
+              <a class=" dropdown-fa-toggle-down" id="additional" data-toggle="dropdown" aria-haspopup="true">Additional <i class="fa-solid fa-circle-chevron-down" style="float: right; padding-right: 40px;"></i></a>
+              <div class="dropdown-menu" aria-labelledby="additional">
+                <a href="{% url 'general-cmi-resources' %}" class="dropdown-item">Resources</a>
+                <a href="{% url 'tech_generated' name='cmi' %}" class="dropdown-item">Tech Generated</a>
+                <a href="{% url 'tech_adaptor' name='cmi' %}" class="dropdown-item">Tech Adaptor</a>
+              </div>
+            </div>
+          </li>
+        {% endif %}
+        {% if user.is_authenticated %}
+          <li>
+            <div class="dropdown">
+              <a href="{% url 'logout' %}"><i class="fa fa-sign-out" aria-hidden="true"></i> Logout</a>
+            </div>
+          </li>
+          <li>
+            <div class="dropdown">
+              <a href="{% url 'general-settings' %}" class="settings"><i class="fa-solid fa-user"></i> Account Settings</a>
+            </div>
+          </li>
+        {% else %}
+          <li>
+            <div class="dropdown">
+              <a href="{% url 'sign-up' %}" class="register">Register</a>
+            </div>
+          </li>
+          <li>
+            <div class="dropdown">
+              <a href="{% url 'login' %}" class="login">Login</a>
+            </div>
+          </li>
+        {% endif %}
+      </ul>
+    </div>
+  </nav>
+</header>

@@ -1,0 +1,150 @@
+{% extends 'base/admin.html' %}
+{% load static %}
+{% block title %}
+  Admin Comments Management
+{% endblock %}
+{% block stylesheet %}
+  <link rel="stylesheet" href="{% static 'style/admin.css/admin.commodities.css' %}" />
+{% endblock %}
+
+{% block content %}
+  <br />
+  <div class="main-content" id="main-content">
+    <div class="container">
+      <h3 style="font-weight:bold;">ADMIN COMMENTS MANAGEMENT</h3>
+      <a href="{% url "admin-discussion" %}"><i class="fa-solid fa-arrow-left"></i> Forum</a>
+      <hr style="color: black;" />
+      <div class="card-container">
+        <div class="row">
+          
+          <div class="col-xl-3 col-sm-6 col-12">
+            <div class="card">
+              <div class="card-content">
+                <div class="card-body">
+                  <div class="media d-flex">
+                    <div class="align-self-center">
+                      <i class="icon-speech warning font-large-2 float-left"></i>
+                    </div>
+                    <div class="media-body text-right" style="height: 58px;">
+                      <h3 style="text-decoration: underline;">{{total_comments}}</h3>
+                      <span>Total Comments</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-xl-3 col-sm-6 col-12">
+            <div class="card">
+              <div class="card-content">
+                <div class="card-body">
+                  <div class="media d-flex">
+                    <div class="align-self-center">
+                      <i class="icon-speech warning font-large-2 float-left"></i>
+                    </div>
+                    <div class="media-body text-right" style="height: 58px;">
+                      <h3 style="text-decoration: underline;">{{total_comments_today}}</h3>
+                      <span>Total Comments Today</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <br />
+      <div class="button-container-head">
+        <a href="{% url 'admin-search' %}" id="approved-data-button" style="background-color: #0C356A; color: #fff; border: 0; border-radius: 3px; padding: 5px; font-weight: bold;">Search Analytics</a>
+        <a href="{% url 'admin-reaction' %}" id="approved-data-button" style="background-color: #0C356A; color: #fff; border: 0; border-radius: 3px; padding: 5px; font-weight: bold;">Reactions Analytics</a>
+      </div>
+
+      <hr />
+      <div class="table-container">
+        <table id="commentTable" class="comment-table table table-bordered">
+          <thead style="color: #fff; font-size: 13px; background-color: #0C356A; font-weight: bolder;">
+            <tr>
+              <th>ID</th>
+              <th>Post Title</th>
+              <th>Comments</th>
+              <th>Date Commented</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody style="font-size: 12px;">
+            {% for comment in all_comments %}
+              <tr>
+                <td>{{ comment.comment_id }}</td>
+                <td>{{ comment.discussion.discussion_title|capfirst }}</td>
+                <td>{{ comment.comment_content|capfirst }}</td>
+                <td>{{ comment.date_commented }}</td>
+                <td>
+                  <a data-placement="top" data-toggle="tooltip" title="delete" href="/delete-comment/{{ comment.comment_id }}" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash"></i></a>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block script %}
+  <script>
+    $(document).ready(function () {
+      let table = $('#commentTable').DataTable({
+        language: {
+          lengthMenu: '_MENU_',
+          search: '',
+          searchPlaceholder: 'Search...'
+        },
+        lengthMenu: [
+          [3, 5, 7, 10, 25, -1],
+          [3, 5, 7, 10, 25, 'All']
+        ],
+        paging: true,
+        lengthChange: true,
+        autoWidth: false,
+        bInfo: true,
+        bSort: true,
+        responsive: true,
+        buttons: [
+          {
+            text: 'CSV',
+            extend: 'csv'
+          },
+          {
+            text: 'PDF',
+            extend: 'pdf'
+          }
+        ],
+        dom: '<"row"<"col-md-1"l><"col-md-8"B><"col-md-3"f>>' + '<"row"<"col-md-12"tr>>' + '<"row"<"col-md-5"i><"col-md-7"p>>'
+      })
+    })
+  </script>
+
+  {% if messages %}
+    {% for message in messages %}
+      {% if message.tags == 'success' %}
+        <script>
+          // Display SweetAlert success message
+          Swal.fire({
+            icon: 'success',
+            title: 'Success!',
+            text: '{{ message }}'
+          })
+        </script>
+        {% else %}
+        <script>
+          // Display SweetAlert success message
+          Swal.fire({
+            icon: 'error',
+            title: 'Error!',
+            text: '{{ message }}'
+          })
+        </script>
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+{% endblock %}

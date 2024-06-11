@@ -1,0 +1,151 @@
+<!-- Add Program modal -->
+<div id="addResourcesModal{{ source.resources_id }}" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="addResourcesModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addResourcesModalLabel" style="font-weight: bolder;">Add New Resources</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        </div>
+        <form action="{% url 'general-add-resources' account='secretariat' %}" method="POST" enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="modal-body">
+            <div class="form-group">
+              <label for="resources_title" class="font-weight-bold">Resources Title</label>
+              <input type="text" class="form-control" id="resources_title" name="resources_title" required />
+            </div>
+            <div class="form-group">
+              <label for="resources_description" class="font-weight-bold">Description</label>
+              <textarea class="form-control" id="resources_description" name="resources_description" style="height: 150px;" required></textarea>
+            </div>
+            <div class="row">
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="commodity" class="font-weight-bold">Commodity</label>
+                  <select class="form-control" id="commodity" name="commodity" required >
+                    <option value="" disabled selected>Select Commodity Tag</option>
+                    {% for commodity in commodities %}
+                    {% if commodity.status == 'Approved' %}
+                      <option value="{{ commodity.commodity_id }}">{{ commodity.commodity_name }}</option>
+                      {% endif %}
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="cmi" class="font-weight-bold">CMI</label>
+                  <select class="form-control" id="cmi" name="cmi" required >
+                    <option value="" disabled selected>Select CMI</option>
+                    {% for cmi in cmis %}
+                    {% if cmi.status == 'Approved' %}
+                      <option value="{{ cmi.cmi_id }}">{{ cmi.cmi_name }}</option>
+                      {% endif %}
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="resources" class="font-weight-bold">Knowledge Resources</label>
+                  <select class="form-control" id="resources" name="resources" required >
+                    <option value="" disabled selected>Select Knowledge Resources</option>
+                    {% for knowledge in resources %}
+                    {% if knowledge.status == 'Approved' %}
+                      <option value="{{ knowledge.knowledge_id }}">{{ knowledge.knowledge_title }}</option>
+                      {% endif %}
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+            </div>
+            <!-- New row to display selected options -->
+            <div class="row ">
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="selected-commodity" style="font-weight: bold;">Selected Commodities:</label>
+                  <ul id="selected-commodity"> </ul>
+                  <textarea name="commodity_ids" id="commodity_ids" hidden></textarea>
+                </div>            
+              </div>
+              <div class="col-md-4">
+                <div class="form-group">
+                  <label for="selected-cmi" style="font-weight: bold;">Selected CMI(s):</label>
+                  <ul id="selected-cmi"> </ul>
+                  <textarea name="cmi_ids" id="cmi_ids" hidden></textarea>
+                </div>
+              </div>
+            </div>
+            <hr />
+            <!-- coordinates -->
+            <div class="row" id="coordinates" style="display: none;">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="latitude" class="font-weight-bold">Latitude:</label>
+                  <input type="text" id="latitude" name="latitude" class="form-control" placeholder="Enter latitude" />
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="longitude" class="font-weight-bold">Longitude:</label>
+                  <input type="text" id="longitude" name="longitude" class="form-control" placeholder="Enter longitude" />
+                </div>
+              </div>
+            </div>
+  
+            <!-- farm and contact number -->
+            <div class="row" id="farm_contact" style="display: none;">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="farm" class="font-weight-bold">Farm</label>
+                  <input type="text" class="form-control" id="farm" name="farm" placeholder="Farm name" />
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="contact_num" class="font-weight-bold">Contact Number</label>
+                  <input type="text" class="form-control" id="contact_num" name="contact_num" placeholder="Contact number" />
+                </div>
+              </div>
+            </div>
+  
+            <!-- training date -->
+            <div class="row">
+              <div class="col-md-3" id="trainings" style="display: none;">
+                <div class="form-group">
+                  <label for="training_date" class="font-weight-bold">Training Date:</label>
+                  <input type="date" class="form-control" name="training_date" id="training_date" />
+                </div>
+              </div>
+  
+              <!-- venue -->
+              <div class="col-md-9" id="training_venue" style="display: none;">
+                <div class="form-group">
+                  <label for="link" class="font-weight-bold">Venue:</label>
+                  <input type="text" class="form-control" name="venue" placeholder="Input Venue" />
+                </div>
+              </div>
+  
+              <!-- Link input field -->
+              <div class="col-md-9" id="link" style="display: none;">
+                <div class="form-group">
+                  <label for="link" class="font-weight-bold">Link</label>
+                  <input type="url" class="form-control" id="link" name="link" placeholder="Enter resource link" />
+                </div>
+              </div>
+            </div>
+  
+            <!-- JavaScript to show/hide file input -->
+            <div class="form-group" id="fileUploadSection" style="display: none;">
+              <label for="file_upload" class="font-weight-bold">Upload File</label>
+              <input type="file" class="form-control-file" id="file_upload" name="file_upload" />
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal" id="close-clear-modal">Close</button>
+            <button type="submit" class="btn btn-primary">Add Resources</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  

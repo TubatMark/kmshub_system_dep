@@ -1,0 +1,422 @@
+{% extends 'base/index.html' %}
+{% load static %}
+
+{% block stylesheet %}
+  <link rel="stylesheet" href="{% static 'style/general.css/general.account.css' %}" />
+  <style>
+    html {
+      scroll-behavior: smooth;
+    }
+    
+    .dropdown {
+      position: relative;
+    }
+    
+    .dropdown select {
+      width: 100%;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    
+    .dropdown input[type='text'] {
+      width: 100%;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      display: none;
+    }
+    
+    .dropdown input[type='text']:focus {
+      border-color: #aaa;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .bookmark-btn{
+      border: #0C356A 1px solid; 
+      padding: 2px 7px 2px 7px;
+      border-radius: 7px;
+      background-color: #0C356A;
+      color: white;
+      text-decoration: none;
+    }
+
+    .bookmark-btn:hover{
+      background-color: white;
+      color: #0C356A;
+      text-decoration: none;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+  <br />
+  <div class="main-content">
+    <div class="container" style="min-height: 60vh;">
+      <h3 style="font-weight:bold;">ACCOUNT SETTINGS</h3>
+      <hr style="color: black;" />
+      <div class="card" style="height: auto;">
+        <div class="row justify-content-center">
+          <!-- Profile Pictures -->
+          <div class="profile-picture">
+            {% if profile.picture %}
+              <img src="{{ profile.picture.url }}" alt="Profile Picture" class=" rounded-circle " style="margin-top: 20px; " />
+            {% else %}
+              <img src="{% static 'media/default_profile.png' %}" alt="Default Profile Picture" class="img-fluid pro-pics" style="width: 350px; margin-top: 20px; border: #ccc 2px solid;" />
+            {% endif %}
+          </div>
+        </div>
+        <div class="button-container" style="justify-content: center; align-items: center; text-align: center; margin-top: 10px;">
+          <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#userInfoModal" style="font-size: 12px;">Update</button>
+          <button type="button" class="btn btn-success" data-toggle="modal" data-target="#fileUploadModal" style="font-size: 12px;">Upload</button>
+        </div>
+
+        <hr />
+
+        <div class="row justify-content-center">
+          <div class="col" style="margin: 0px 0px 0px 30px;">
+            <div class="form-group">
+              <label for="display_first_name" class="form-label-bold">First Name</label>
+              <input type="text" class="form-control" id="display_first_name" placeholder="{{ user.first_name|capfirst }}" readonly />
+            </div>
+          </div>
+          <div class="col" style="margin: 0px 30px 0px 0px;">
+            <div class="form-group">
+              <label for="display_last_name" class="form-label-bold">Last Name</label>
+              <input type="text" class="form-control" id="display_last_name" placeholder="{{ user.last_name|capfirst }}" readonly />
+            </div>
+          </div>
+        </div>
+        <div class="row justify-content-center">
+          <div class="col" style="margin: 0px 0px 0px 30px;">
+            <div class="form-group">
+              <label for="display_date_birth" class="form-label-bold">Date of Birth</label>
+              <input type="text" class="form-control" id="display_date_birth" placeholder="{{ user.date_birth }}" readonly />
+            </div>
+          </div>
+
+          <div class="col">
+            <div class="form-group">
+              <label for="display_sex" class="form-label-bold">Sex</label>
+              <input type="text" class="form-control" id="display_sex" placeholder="{{ user.sex|capfirst }}" readonly />
+            </div>
+          </div>
+
+          <div class="col" style="margin: 0px 30px 0px 0px;">
+            <div class="form-group">
+              <label for="display_gender" class="form-label-bold">Gender</label>
+              <input type="text" class="form-control" id="display_gender" placeholder="{{ user.gender|capfirst }}" readonly />
+            </div>
+          </div>
+        </div>
+
+        <div class="row justify-content-center">
+          <div class="col" style="margin: 0px 0px 0px 30px;">
+            <div class="form-group">
+              <label for="display_email" class="form-label-bold">Email</label>
+              <input type="email" class="form-control" id="display_email" placeholder="{{ user.email }}" readonly />
+            </div>
+          </div>
+
+          <div class="col">
+            <div class="form-group">
+              <label for="display_contact" class="form-label-bold">Contact Number</label>
+              <input type="text" class="form-control" id="display_contact" placeholder="{% if user.contact %}{{ user.contact }}{% else %}N/A{% endif %}" readonly />
+            </div>
+          </div>
+
+          <div class="col" style="margin: 0px 30px 0px 0px;">
+            <div class="form-group">
+              <label for="display_highest_educ" class="form-label-bold">Highest Education</label>
+              {% for level, label in highest_educ_choices %}
+                {% if user.highest_educ == level %}
+                  <input type="text" class="form-control" id="display_highest_educ" placeholder="{{ label }} " readonly />
+                {% endif %}
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+        <div class="row justify-content-center">
+          <div class="col" style="margin: 0px 0px 0px 30px;">
+            <div class="form-group">
+              <label for="display_position" class="form-label-bold">Position</label>
+              <input type="text" class="form-control" id="display_position" placeholder="{{ user.position|capfirst }}" readonly />
+            </div>
+          </div>
+
+          <div class="col">
+            <div class="form-group">
+              <label for="display_specialization" class="form-label-bold">Specialization</label>
+              <input type="text" class="form-control" id="display_specialization"  placeholder="{% if user.specialization %}{{ user.specialization|capfirst }}{% endif %}" readonly />
+            </div>
+          </div>
+
+          <div class="col" style="margin: 0px 30px 0px 0px;">
+            <div class="form-group">
+              <label for="display_institution" class="form-label-bold">Institution</label>
+              <input type="text" class="form-control" id="display_institution" placeholder="{{ user.institution }} " readonly />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <br />
+
+      <div class="row">
+        <div class="col-md-4">
+          <div class="card total-post" style="height: 100%; background-color: #40A2E3;">
+            <div class="title text-center text-white">
+              <a href="#forum" style="text-decoration: none;"><h5 style="color: white; font-weight: bold; ">Total Forum Post</h5></a>
+              <span>{{ total_posts }}</span>
+            </div>
+          </div>
+        </div>
+        {% if request.session.is_cmi_user %}
+          <div class="col-md-4">
+            <div class="card total-added-resources" style="height: 100%; background-color: #40A2E3;">
+              <div class="title text-center text-white">
+                <a href="#resources" style="text-decoration: none;"><h5 style="color: white; font-weight: bold; ">Total Added Resources</h5></a>
+                <span>{{ total_resources }}</span>
+              </div>
+            </div>
+          </div>
+        {% endif %}
+        <div class="col-md-4">
+          <div class="card total-bookmark" style="height: 100%; background-color: #40A2E3;">
+            <div class="title text-center text-white">
+              <a href="#bookmarks" style="text-decoration: none;"><h5 style="color: white; font-weight: bold; ">Total Bookmarks</h5></a>
+              <span>{{ total_bookmarks }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <br />
+      <div class="forum" id="forum">
+        <div class="forum-header d-flex justify-content-between align-items-center">
+          <h3 style="font-weight:bold;">FORUM POSTS</h3>
+          <a href="{% url 'posts' %}">See more</a>
+        </div>
+        <hr style="color: black;" />
+        {% if posts_order %}
+          {% for post in posts_order %}
+            <div class="card mb-2">
+              <div class="card-body d-flex justify-content-between align-items-center">
+                <a href="{% url 'general-forum-post' id=post.discussion_id %}" class="post_discussion_title" id="post_discussion_id_{{ post.discussion_id }}">{{ post.discussion_title|upper }}</a>
+                <span class="card-text">{{ post.date_posted }}</span>
+              </div>
+            </div>
+          {% endfor %}
+        {% else %}
+          <div class="card">
+            <div class="card-body">
+              <span>No post yet!</span>
+            </div>
+          </div>
+        {% endif %}
+      </div>
+
+      <br />
+      {% if request.session.is_cmi_user %}
+        <div class="resources" id="resources">
+          <div class="resources-header d-flex justify-content-between align-items-center">
+            <h3 style="font-weight:bold;">ADDED RESOURCES</h3>
+            <a href="{% url 'general-cmi-resources' %}">See more</a>
+          </div>
+          <hr style="color: black;" />
+          {% if resources_order %}
+            {% for resources in resources_order %}
+              <div class="card mb-2">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                  <a href="{% url 'general-individual-resources' id=resources.resources_id %}">{{ resources.resources_title|upper }}</a>
+                  <span class="card-text">{{ resources.date_created }}</span>
+                </div>
+              </div>
+            {% endfor %}
+          {% else %}
+            <div class="card">
+              <div class="card-body">
+                <span>No post yet!</span>
+              </div>
+            </div>
+          {% endif %}
+        </div>
+      {% endif %}
+      <br />
+      <div class="bookmarks" id="bookmarks">
+        <div class="bookmarks-header d-flex justify-content-between align-items-center">
+          <h3 style="font-weight:bold;">BOOKMARKS</h3>
+          {% comment %} <a href="{% url 'bookmarks' %}">See more</a> {% endcomment %}
+        </div>
+        <hr style="color: black;" />
+        <a href="{% url 'bookmarks' %}" class="bookmark-btn">See Forum Bookmark</a>
+        <a href="" class="bookmark-btn">See Resources Bookmark</a>
+        {% comment %} {% if bookmarks_order %}
+          {% for bookmark in bookmarks_order %}
+            <div class="card mb-2">
+              <div class="card-body d-flex justify-content-between align-items-center">
+                <a href="{% url 'general-individual-resources' id=bookmark.resources_id %}">{{ bookmark.resources_title|upper }}</a>
+                <span class="card-text">{{ bookmark.date_created }}</span>
+              </div>
+            </div>
+          {% endfor %}
+        {% else %}
+          <div class="card">
+            <div class="card-body">
+              <span>No post yet!</span>
+            </div>
+          </div>
+        {% endif %} {% endcomment %}
+      </div>
+    </div>
+  </div>
+
+  <!-- modal -->
+  <div class="modal fade" id="fileUploadModal" tabindex="-1" aria-labelledby="fileUploadModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header" style="background-color: #0C356A;">
+          <h5 class="modal-title text-white" id="fileUploadModalLabel">Upload Files</h5>
+          <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        </div>
+        <form action="{% url 'general-profile-upload' %}" method="POST" enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="modal-body">
+            <!-- File upload elements will go here -->
+            <div class="file-upload-container">
+              <span style="font-size: 12px; font-weight: bold;">Drag & Drop or Click to Choose Files</span>
+              <label class="file-input-label">
+                <input type="file" class="file-input" name="picture" />
+                <span class="file-input-button">Choose Files</span>
+              </label>
+              <ul class="file-preview"></ul>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn text-white" style="background-color: #0C356A;">Upload</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  {% include 'accounts/general/modal/account/edit_account.html' %}
+{% endblock %}
+
+{% block script %}
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const fileInput = document.querySelector('.file-input')
+      const filePreview = document.querySelector('.file-preview')
+    
+      fileInput.addEventListener('change', () => {
+        filePreview.innerHTML = ''
+        for (const file of fileInput.files) {
+          const li = document.createElement('li')
+          const img = document.createElement('img')
+          const fileDetails = document.createElement('div')
+          const fileName = document.createElement('span')
+          const fileSize = document.createElement('span')
+    
+          fileName.textContent = file.name
+          fileSize.textContent = `${file.size} bytes`
+    
+          img.src = URL.createObjectURL(file)
+          img.alt = file.name
+    
+          fileDetails.classList.add('file-details')
+          fileName.classList.add('file-name')
+          fileSize.classList.add('file-size')
+    
+          fileDetails.appendChild(fileName)
+          fileDetails.appendChild(fileSize)
+    
+          li.appendChild(img)
+          li.appendChild(fileDetails)
+    
+          filePreview.appendChild(li)
+        }
+      })
+    
+      const genderSelect = document.getElementById('gender-select')
+      const othersInput = document.getElementById('others-input')
+    
+      function toggleOthersInput() {
+        if (genderSelect.value === 'others') {
+          othersInput.style.display = 'block' // Show the input field
+        } else {
+          othersInput.style.display = 'none' // Hide the input field
+          othersInput.value = '' // Optionally clear the value
+        }
+      }
+    
+      // Event listener for changes in the dropdown
+      genderSelect.addEventListener('change', toggleOthersInput)
+    
+      // Initial check in case "Others" is pre-selected
+      toggleOthersInput()
+
+      function validateAndUpdatePassword() {
+        var newPassword = document.getElementById('new_password').value;
+        var confirmPassword = document.getElementById('confirm_password').value;
+    
+        if (newPassword === confirmPassword) {
+          // If passwords match, show confirmation message
+          confirmSubmit('updatePasswordForm');
+        } else {
+          // If passwords don't match, show error message
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'New password and confirmation password do not match.'
+          });
+        }
+      }
+    
+      function confirmSubmit(formId) {
+        swal({
+          title: "Are you sure?",
+          text: "Do you want to update the password?",
+          icon: "warning",
+          buttons: true,
+          dangerMode: true,
+        })
+        .then((willSubmit) => {
+          if (willSubmit) {
+            // If user confirms, submit the form
+            document.getElementById(formId).submit();
+          } else {
+            Swal.fire({
+              icon: 'success',
+              title: 'Success',
+              text: 'Process cancelled.'
+            });
+          }
+        });
+      }
+    })
+    
+    
+  </script>
+
+  {% if messages %}
+    {% for message in messages %}
+      {% if message.tags == 'success' %}
+        <script>
+          // Display SweetAlert success message
+          Swal.fire({
+            icon: 'success',
+            title: 'Success!',
+            text: '{{ message }}'
+          })
+        </script>
+      {% else %}
+        <script>
+          // Display SweetAlert success message
+          Swal.fire({
+            icon: 'error',
+            title: 'Error!',
+            text: '{{ message }}'
+          })
+        </script>
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+{% endblock %}

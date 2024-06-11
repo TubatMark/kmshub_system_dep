@@ -1,0 +1,16 @@
+{% autoescape off %}
+Dear {{ first_name }},
+
+Thank you for registering with us!
+
+To complete the registration process and gain access to your account, please click the link below:
+http://{{ domain }}{% url 'activate' uidb64=uid token=token %}
+
+If the above link does not work, you can copy and paste the URL into your web browser.
+Please note that this activation link is only valid for a limited time.
+
+If you did not register for an account with us, please disregard this email.
+
+Thank you,
+The Knowledge Management Hub Team
+{% endautoescape %}

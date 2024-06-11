@@ -1,0 +1,273 @@
+{% extends 'base/index.html' %}
+{% load static %}
+{% block stylesheet %}
+  <style>
+    .pagination-button {
+      border-radius: 5px;
+      /* Adds rounded corners to the button */
+      background-color: #0C356A;
+      /* Sets the background color to green */
+      color: white;
+      /* Sets the text color to white */
+      padding: 2px 7px;
+      /* Adds padding to the button */
+      border: none;
+      /* Removes the button border */
+      cursor: pointer;
+      /* Changes the cursor to a pointer on hover */
+      font-weight: bold;
+    }
+    
+    .pagination-button:disabled {
+      background-color: white;
+      color: #0C356A;
+      /* Change text color for better visibility */
+      cursor: not-allowed;
+      /* Change cursor to indicate it's not clickable */
+      /* Add any additional styling for the disabled state */
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+  <br />
+  <div class="main-content">
+    <div class="container" style="min-height: 51vh;">
+      <h3 style="font-weight: bold;">My Bookmarks</h3>
+      <hr />
+      <div class="header d-flex justify-content-between align-items-center">
+        <div class="sort">
+          <label for="itemCount">Show:</label>
+          <select id="itemCount" onchange="updateDisplay()">
+            <option value="3">3</option>
+            <option value="10">10</option>
+            <option value="20">20</option>
+            <option value="all">All</option>
+          </select>
+        </div>
+        <div class="search" style="margin-bottom: 5px;">
+          <input type="text" id="input-search" placeholder="Search Title" style="height: 41px; width:400px; border-radius: 4px; border: white 1px solid ;" />
+          <button id="search_button" class="btn" type="button" style="background-color: #0C356A; color: white;">Search</button>
+        </div>
+      </div>
+
+      {% if user_bookmarks %}
+        <div class="row" id="bookmarks">
+          <div class="col-md-12" id="to_filter">
+            {% for bookmark in user_bookmarks %}
+              <div class="bookmark">
+                <div class="card mb-2">
+                  <div class="card-body d-flex justify-content-between align-items-center">
+                    <a href="{% url 'general-individual-resources' id=bookmark.resources_id %}" class="bookmark_resources_title" id="bookmark_resources_id_{{ bookmark.resources_id }}">{{ bookmark.resources_title|upper }}</a>
+                    <span class="card-text">{{ bookmark.date_created }}</span>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+        <div class="row">
+          <div class="pagination" style="width: 100%; display: flex; justify-content: center; color: black;">
+            <button class="pagination-button" id="backBtn" onclick="movePage('back')" style="margin-right: 5px; color: white; background-color: #0C356A;">BACK</button>
+            <button class="pagination-button" id="nextBtn" onclick="movePage('next')" style="background-color: #0C356A; color: white;">NEXT</button>
+          </div>
+        </div>
+      {% else %}
+        <div class="card">
+          <div class="card-body">
+            <span>No post yet!</span>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}
+
+{% block script %}
+  <script>
+    // JavaScript Code
+    document.addEventListener('DOMContentLoaded', function () {
+      //Search bookmark
+      const searchInput = document.getElementById('input-search')
+      const searchButton = document.getElementById('search_button')
+    
+      // Add an event listener to the search input field for changes in value
+      searchInput.addEventListener('input', function () {
+        const searchTerm = searchInput.value.trim()
+    
+        if (searchTerm === '') {
+          // If the search input is empty, display all discussion posts
+          const discussionPosts = document.querySelectorAll('.bookmark')
+          discussionPosts.forEach((post) => {
+            post.style.display = 'block'
+          })
+        }
+      })
+    
+      // Function to handle search functionality
+      const performSearch = () => {
+        const searchTerm = searchInput.value.trim()
+        console.log('Search Term', searchTerm)
+    
+        fetch("{% url 'search' %}", {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRFToken': '{{ csrf_token }}'
+          },
+          body: JSON.stringify({
+            search_term: searchTerm
+          })
+        })
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error('Network response was not ok.')
+            }
+            return response.json()
+          })
+          .then((data) => {
+            console.log('Search term sent:', searchTerm)
+            console.log('Search terms fetched:', data.search_terms)
+    
+            if (data.search_terms && data.search_terms.length > 0) {
+              const combinedTerms = data.search_terms.join(' ') // Combine terms into a sentence
+              filterDiscussionsBySearch(combinedTerms)
+            } else {
+              if (!data || (data && !data.search_terms)) {
+                // Display SweetAlert when no data or search terms are received or they are empty
+                Swal.fire({
+                  title: 'No discussions found',
+                  text: `There are no discussions about "${searchTerm}"`,
+                  icon: 'info',
+                  confirmButtonText: 'OK'
+                })
+                window.location.reload()
+                console.error('No search terms received or empty.')
+              }
+            }
+          })
+          .catch((error) => {
+            console.error('There was an error with the request:', error)
+          })
+      }
+    
+      // Event listener for the Enter key press in the search input field
+      searchInput.addEventListener('keypress', function (event) {
+        if (event.key === 'Enter') {
+          performSearch()
+        }
+      })
+    
+      // Event listener for the search button click
+      searchButton.addEventListener('click', performSearch)
+    
+      function filterDiscussionsBySearch(searchTermsSentence) {
+        const searchTerms = searchTermsSentence.split(' ')
+    
+        // Logic for filtering discussions based on search terms
+        const discussionPosts = document.querySelectorAll('.bookmark')
+        const foundDiscussions = Array.from(discussionPosts).filter((post) => {
+          const title = post.querySelector('.bookmark_resources_title').innerText.toLowerCase()
+    
+          return searchTerms.some((term) => title.includes(term))
+        })
+    
+        if (foundDiscussions.length === 0) {
+          // Display SweetAlert when no discussions match the search terms
+          Swal.fire({
+            title: 'No discussions found',
+            text: `There are no discussions matching the search terms`,
+            icon: 'info',
+            confirmButtonText: 'OK'
+          })
+    
+          console.error('No discussions found matching the search terms.')
+          return // Exit the function to prevent hiding existing posts
+        }
+    
+        discussionPosts.forEach((post) => {
+          const found = foundDiscussions.includes(post)
+          post.style.display = found ? 'block' : 'none'
+        })
+      }
+    
+      var currentPage = 1
+      var postDisplay
+    
+      function updateDisplay() {
+        postDisplay = parseInt(document.getElementById('itemCount').value)
+        showPosts()
+      }
+    
+      function movePage(direction) {
+        switch (direction) {
+          case 'back':
+            if (currentPage > 1) {
+              currentPage--
+              showPosts()
+            }
+            break
+          case 'next':
+            currentPage++
+            showPosts()
+            break
+          default:
+            break
+        }
+      }
+    
+      function showPosts() {
+        var posts = document.querySelectorAll('#to_filter .bookmark')
+        var totalPosts = posts.length
+    
+        posts.forEach(function (post, index) {
+          switch (true) {
+            case postDisplay === 'all':
+              post.style.display = 'block'
+              break
+            case index >= (currentPage - 1) * postDisplay && index < currentPage * postDisplay:
+              post.style.display = 'block'
+              break
+            default:
+              post.style.display = 'none'
+              break
+          }
+        })
+    
+        switch (true) {
+          case postDisplay === 'all':
+            document.getElementById('backBtn').disabled = true
+            document.getElementById('nextBtn').disabled = true
+            console.log('All Post displayed successfully')
+            break
+          default:
+            document.getElementById('backBtn').disabled = currentPage === 1
+            document.getElementById('nextBtn').disabled = currentPage * postDisplay >= totalPosts
+            break
+        }
+    
+        // Log additional information for debugging
+        console.log('totalPosts:', totalPosts)
+        console.log('postDisplay:', postDisplay)
+      }
+    
+      // Call updateDisplay function on page load to set the default value
+      window.onload = function () {
+        updateDisplay() // Call the function to update the displayed posts based on the initial selected value
+      }
+    
+      // Attach updateDisplay function to the select element's onchange event
+      document.getElementById('itemCount').onchange = updateDisplay
+    
+      // Attach movePage function to the button click events
+      document.getElementById('backBtn').onclick = function () {
+        movePage('back')
+      }
+    
+      document.getElementById('nextBtn').onclick = function () {
+        movePage('next')
+      }
+    })
+  </script>
+{% endblock %}

@@ -1,0 +1,239 @@
+<!-- CMI Registration Modal -->
+<div id="cmiTeamRegistrationModal{{team.team_id}}" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="cmiTeamRegistrationModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header" style="background-color: #0C356A;">
+        <h2 style="font-weight: bolder; text-align: center; color: white;">CMI Cluster Representatives Information</h2>
+        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      </div>
+      <form action="{% url 'add-team' %}" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="modal-body">
+          <div class="row">
+            <div class="col">
+              <div class="form-group">
+                <label for="first_name" style="font-weight: bold;">First Name </label>
+                <div style="border: #03A9F3 1px solid; border-radius: 5px; text-align: center;">
+                  <span id="first_name">{{team.first_name}}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="col">
+              <div class="form-group">
+                <label for="middle_name" style="font-weight: bold;">Middle Name</label>
+                <div style="border: #03A9F3 1px solid; border-radius: 5px; text-align: center;">
+                  <span id="middle_name">
+                    {% if team.middle_name %}
+                        {{team.middle_name}}
+                    {% else %}
+                    -
+                    {% endif %}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div class="col">
+              <div class="form-group">
+                <label for="last_name" style="font-weight: bold;">Last Name </label>
+                <div style="border: #03A9F3 1px solid; border-radius: 5px; text-align: center;">
+                  <span id="last_name">{{team.last_name}}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-2">
+              <div class="form-group">
+                <label for="sex" style="font-weight: bold;">Sex</label>
+                <div style="border: #03A9F3 1px solid; border-radius: 5px; text-align: center;">
+                  <span id="sex">
+                    {% if team.sex %}
+                        {{team.sex|capfirst}}
+                    {% endif %}
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div class="col-3">
+              <div class="form-group">
+                <label for="birth" style="font-weight: bold;">Birth Date</label>
+                <div id="birth" style="border: #03A9F3 1px solid; border-radius: 5px; text-align: center;">
+                  <span id="birth">{{team.date_birth|date:"F j, Y"}}</span>
+                </div>
+              </div>
+            </div>
+            <div class="col-3">
+              <div class="form-group">
+                <label for="contact_num" style="font-weight: bold;">Contact</label>
+                <div style="border: #03A9F3 1px solid; border-radius: 5px; text-align: center;">
+                  <span id="contact_num">
+                    {% if team.contact_num %}
+                    {{team.contact_num}}
+                    {% else %}
+                    -
+                    {% endif %}
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="form-group">
+                <label for="email" style="font-weight: bold;">Email</label>
+                <div style="border: #03A9F3 1px solid; border-radius: 5px; text-align: center;">
+                  <span id="email">
+                    {% if team.email %}
+                    {{team.email}}
+                    {% else %}
+                    -
+                    {% endif %}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col">
+              <div class="form-group">
+                <label for="bach_deg" style="font-weight: bold;">Bachelor's Degree</label>
+                <div style="border: #03A9F3 1px solid; border-radius: 5px; text-align: center;">
+                  <span id="bach_deg">{{team.bach_deg}}</span>
+                </div>
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="form-group">
+                <label for="db_year_completed" style="font-weight: bold;">Year Completed</label>
+                <div style="border: #03A9F3 1px solid; border-radius: 5px; text-align: center;">
+                  <span id="db_year_completed">{{team.db_year_completed}}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col">
+              <div class="form-group">
+                <label for="mas_deg" style="font-weight: bold;">Master's Degree</label>
+                <div style="border: #03A9F3 1px solid; border-radius: 5px; text-align: center;">
+                  <span id="mas_deg">
+                    {% if team.mas_deg %}
+                    {{team.mas_deg}}
+                    {% else %}
+                    -
+                    {% endif %}
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="form-group">
+                <label for="md_year_completed" style="font-weight: bold;">Year Completed</label>
+                <div style="border: #03A9F3 1px solid; border-radius: 5px; text-align: center;">
+                  <span id="md_year_completed">
+                    {% if team.md_year_completed %}
+                    {{team.md_year_completed}}
+                    {% else %}
+                    -
+                    {% endif %}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col">
+              <div class="form-group">
+                <label for="doc_deg" style="font-weight: bold;">Doctorate Degree</label>
+                <div style="border: #03A9F3 1px solid; border-radius: 5px; text-align: center;">
+                  <span id="doc_deg">
+                    {% if team.doc_reg %}
+                    {{team.doc_deg}}
+                    {% else %}
+                    -
+                    {% endif %}
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="form-group">
+                <label for="dd_year_completed" style="font-weight: bold;">Year Completed</label>
+                <div style="border: #03A9F3 1px solid; border-radius: 5px; text-align: center;">
+                  <span id="dd_year_completed">
+                    {% if team.dd_year_completed %}
+                    {{team.dd_year_completed}}
+                    {% else %}
+                    -
+                    {% endif %}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col">
+              <div class="form-group">
+                <label for="cmi" style="font-weight: bold;">CMI</label>
+                <div style="border: #03A9F3 1px solid; border-radius: 5px; text-align: center;">
+                  <span id="cmi">{{team.cmi.cmi_name}}</span>
+                </div>
+              </div>
+            </div>
+            <div class="col">
+              <div class="form-group">
+                <label for="position" style="font-weight: bold;">Position</label>
+                <div style="border: #03A9F3 1px solid; border-radius: 5px; text-align: center;">
+                    <span id="position">
+                        {% if team.position == "sc" %}
+                            Science Communication Cluster Coordinator
+                        {% elif team.position == "rd" %}
+                            Research & Development Cluster Coordinator
+                        {% elif team.position == "tt" %}
+                            Technology Transfer Cluster Coordinator
+                        {% else %}
+                            Information & Communication Technology Cluster Coordinator
+                        {% endif %}
+                    </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col">
+              <div class="form-group">
+                <label for="specialization" style="font-weight: bold;">Specialization</label>
+                <div style="border: #03A9F3 1px solid; border-radius: 5px; text-align: center;">
+                  <span id="specialization">
+                    {% if team.specialization %}
+                    {{team.specialization}}
+                    {% else %}
+                    -
+                    {% endif %}
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div class="col">
+              <div class="form-group">
+                <label for="date_appointed" style="font-weight: bold;">Date Appointed</label>
+                <div style="border: #03A9F3 1px solid; border-radius: 5px; text-align: center;">
+                  <span id="date_appointed">{{team.date_appointed}}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

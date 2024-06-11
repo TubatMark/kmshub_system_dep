@@ -1,0 +1,21 @@
+.commodityName {
+    font-weight: bolder;
+    text-align: center;
+}
+
+.commodityName:hover{
+    color: #0174BE;
+}
+
+#commodityImg {
+    max-width: 100%;
+    max-height: 300px;
+    /* Adjust the maximum height as needed */
+    display: block;
+    margin: 0 auto;
+    border-radius: 5px;
+}
+
+.description{
+    text-align: center;
+}

@@ -1,0 +1,61 @@
+<!-- Modal -->
+<div class="modal fade" id="questionModal" tabindex="-1" role="dialog" aria-labelledby="questionModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header" style="background-color: #0C356A;">
+        <h5 class="modal-title text-white" id="questionModalLabel">Ask a question about AANR</h5>
+      </div>
+      <div class="modal-body">
+        <form action="{% url 'general-post' %}" method="POST">
+          {% csrf_token %}
+          <div class="row" style="margin-top: 0;">
+            <div class="col">
+              <div class="form-group">
+                <input type="text" class="form-control" id="discussion-title" name="discussion_title" placeholder="Title" required />
+              </div>
+            </div>
+          </div>
+
+          <div class="row" style="margin-top: 0;">
+            <div class="col">
+              <div class="form-group">
+                <textarea class="form-control" id="discussion-question" name="discussion_question" placeholder="Write your question here (Keep it simple and clear to get the best answer)." rows="4" required></textarea>
+              </div>
+            </div>
+          </div>
+
+          
+          <div class="row">
+            <div class="col">
+                <div class="form-group">
+                  <label for="discussion-tag" style="font-weight: bold;">Pick a commodity</label>
+                  <select class="form-control" id="discussion-tag" name="commodity_id" required>
+                    <option value="" disabled selected>Commodity</option>
+                    {% if commodities %}
+                      {% for commodity in commodities %}
+                        <option value="{{ commodity.commodity_id }}">{{ commodity.commodity_name|capfirst }}</option>
+                      {% endfor %}
+                    {% endif %}
+                  </select>
+                </div>
+            </div>
+            <div class="col">
+                <div class="form-group">
+                    <label for="selected-commodity" style="font-weight: bold;">Selected Commodity Tag(s):</label>
+                    <div>
+                    <ul id="selected-commodity"></ul>
+                    </div>
+                    <label for="commodity_ids" hidden>Commodity IDs:</label>
+                    <textarea name="commodity_ids" id="commodity_ids" title="Enter commodity IDs" placeholder="Enter commodity IDs here" hidden></textarea>
+                  </div>
+            </div>
+          </div>
+        </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn text-white" style="background-color: #0C356A;">Submit</button>
+      </div>
+    </form>
+    </div>
+  </div>
+</div>

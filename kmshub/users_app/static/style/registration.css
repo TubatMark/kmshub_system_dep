@@ -1,0 +1,42 @@
+
+.sign-up {
+    flex-direction: column;
+    align-items: center; /* Adjust margin as needed */
+    padding: 5px 12px; /* Adjust padding for top/bottom and left/right */
+}
+
+
+.sign-up {
+    color: #fff;
+    /* Text color (black) */
+    background-color: #0174BE;
+    border-radius: 5px;
+    /* Adjust padding as needed */
+    text-decoration: none;
+    font-size: 15px;
+    border: none;
+}
+
+.sign-up:hover {
+    color: #fff;
+    background-color: #0C356A;
+    text-decoration: none;
+    border: none;
+
+    /* Remove underline on hover */
+}
+
+.button-container {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 10px; /* Adjust margin as needed */
+}
+
+.button-container span {
+    margin-right: 10px; /* Adjust margin as needed */
+}
+
+.logo{
+    width: 70%;
+}

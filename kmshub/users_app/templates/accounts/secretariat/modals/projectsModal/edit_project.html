@@ -1,0 +1,165 @@
+<!-- Edit Project modal -->
+<div id="editProjectModal{{ project.project_id }}" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="addProjectModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="viewProjectModalLabel" style="font-weight: bold;">Project and Budget Updates</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      </div>
+      <div class="modal-body">
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+          <li class="nav-item">
+            <a class="nav-link active" id="project-info-tab" data-toggle="tab" href="#project-info{{ project.project_id }}" role="tab" aria-controls="project-info" aria-selected="true">Project Info</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="downloaded-budget-tab" data-toggle="tab" href="#downloaded-budget{{ project.project_id }}" role="tab" aria-controls="downloaded-budget" aria-selected="false">Downloaded Budget</a>
+          </li>
+        </ul>
+        <br>
+        <div class="tab-content" id="myTabContent">
+          <div class="tab-pane fade show active" id="project-info{{ project.project_id }}" role="tabpanel" aria-labelledby="project-info-tab">
+            <form action="{% url 'secretariat-edit-project' id=project.project_id %}" method="POST" enctype="multipart/form-data">
+              {% csrf_token %}
+              <div class="form-group">
+                <label for="project_title" class="font-weight-bold">Project Title:</label>
+                <input type="text" class="form-control" id="project_title" name="project_title" value="{{ project.project_title }}" />
+              </div>
+              <div class="form-group">
+                <label for="summary" class="font-weight-bold">Executive Summary:</label>
+                <textarea class="form-control" id="summary" name="summary" value="{{ project.summary }}">{{ project.summary }}</textarea>
+              </div>
+              <div class="form-group row">
+                <div class="col-md-8">
+                  <label for="proponent" class="font-weight-bold">Proponent:</label>
+                  <input type="text" class="form-control" id="proponent" name="proponent" value="{{ project.proponent }}" />
+                </div>
+                <div class="col-md-4">
+                  <label for="fund_source" class="font-weight-bold">Fund Source:</label>
+                  <input type="text" class="form-control" id="fund_source" name="fund_source" value="{{ project.fund_source }}" />
+                </div>
+              </div>
+              <div class="form-group row">
+                <div class="col-md-4">
+                  <label for="project_started" class="font-weight-bold">Project Started: <span style="color: green;">{{ project.project_started }}</span></label>
+                  <input type="date" class="form-control" id="project_started" name="project_started" value="{{ project.project_started|date:'Y-m-d' }}"/>
+                </div>
+                <div class="col-md-4">
+                  <label for="project_ended" class="font-weight-bold">Project Ended: <span style="color: green;">{{ project.project_ended }}</span></label>
+                  <input type="date" class="form-control" id="project_ended" name="project_ended" value="{{ project.project_ended|date:'Y-m-d' }}"/>
+                </div>
+                <div class="col-md-4">
+                  <label for="project_status" class="font-weight-bold">Project Status: <span style="color: green;">{{ project.project_status }}</span></label>
+                  <select id="project_status" name="project_status" class="form-control" >
+                    <option value="" disabled selected>Project Status</option>
+                    <option value="Ongoing"{% if project.project_status == 'Ongoing' %} selected {% endif %} >Ongoing</option>
+                    <option value="Extended"{% if project.project_status == 'Extended' %} selected {% endif %}>Extended</option>
+                    <option value="Ended"{% if project.project_status == 'Ended' %} selected {% endif %}>Ended</option>
+                    <option value="Terminated"{% if project.project_status == 'Terminated' %} selected {% endif %}>Terminated</option>
+                    <option value="Completed"{% if project.project_status == 'Completed' %} selected {% endif %}>Completed</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group row">
+                <div class="col-md-3">
+                  <label for="number_years" class="font-weight-bold">Number of Year(s): <span style="color: green;">{{ project.number_years }}</span></label>
+                  <input type="number" class="form-control" id="number_years" name="number_years" step="any"  value="{{ project.number_years }}"/>
+                </div>
+                <div class="col-md-5">
+                  <label for="project_type" class="font-weight-bold">
+                    Project Type: <span style="color: green;">
+                      {% if project.project_type == 'ResearchNDev' %}
+                        R&D
+                      {% elif project.project_type == 'TechnoTrans' %}
+                        Technology Transfer
+                      {% elif project.project_type == 'NoneDegreeTraining' %}
+                        None-Degree Training
+                      {% else %}
+                        Facility Enhancement
+                      {% endif %}
+                    </span>
+                  </label>
+                  <select id="project_type" name="project_type" class="form-control" value="{{project.project_type}}">
+                    <option value="" disabled selected>Select</option>
+                    <option value="ResearchNDev"{% if project.project_type == 'ResearchNDev' %} selected {% endif %}>R&D</option>
+                    <option value="TechnoTrans"{% if project.project_type == 'TechnoTrans' %} selected {% endif %}>Technology Transfer</option>
+                    <option value="NoneDegreeTraining"{% if project.project_type == 'NoneDegreeTraining' %} selected {% endif %}>Non-Degree Training</option>
+                    <option value="FacilityEnhancement"{% if project.project_type == 'FacilityEnhancement' %} selected {% endif %}>Facility Enhancement</option>
+                  </select>
+                </div>
+                <div class="col-md-4">
+                  <label for="approved_budget" class="font-weight-bold">Approved Budget (₱): </label>
+                  <input type="number" class="form-control" id="approved_budget" name="approved_budget" step="any"  value="{{ project.approved_budget }}" readonly/>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="submit" class="btn btn-warning">Update Project Info</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+              </div>
+            </form>
+          </div>
+          <div class="tab-pane fade" id="downloaded-budget{{ project.project_id }}" role="tabpanel" aria-labelledby="downloaded-budget-tab">
+            <form action="{% url 'secretariat-download-budget' id=project.project_id %}" method="post" enctype="multipart/form-data">
+              {% csrf_token %}
+              <div class="form-group row">
+                <div class="col-md-6">
+                  <label for="approved_budget" class="font-weight-bold">Approved Budget: <span style="color: green;">₱{{ project.approved_budget }}</span></label>
+                </div>
+                <div class="col-md-6">
+                  <label for="total_downloaded_budget" class="font-weight-bold">Total Downloaded Budget: <span style="color: green;">₱{{ project.total_downloaded_budget }}</span></label>
+                </div>
+              </div>
+              <hr />
+              <div class="form-group row" style="border: 0px solid #ddd; padding: 10px; border-radius: 4px;">
+                <div class="col-md-5">
+                  <label for="downloaded_budgets" class="font-weight-bold" style="color: green;">Downloaded Budgets (₱)</label>
+                </div>
+                <div class="col-md-5">
+                  <label for="downloaded_date" class="font-weight-bold" style="color: green;">Date</label>
+                </div>
+                <div class="col-md-2">
+                  <label for="year" class="font-weight-bold" style="color: green;">Year</label>
+                </div>
+                {% for budget in project.downloaded_budget.all %}
+                  <div class="col-md-5">
+                    <div class="downloaded_budget" style="width: auto; height: auto; border-bottom: 1px solid #ddd; padding: 10px;">{{ budget.amount }}</div>
+                  </div>
+                  <div class="col-md-5">
+                    <div class="downloaded_date" style="width: auto; height: auto; border-bottom: 1px solid #ddd; padding: 10px;">{{ budget.downloaded_date }}</div>
+                  </div>
+                  <div class="col-md-2">
+                    <div class="year" style="width: auto; height: auto; border-bottom: 1px solid #ddd; padding: 10px;">{{ budget.year }}</div>
+                  </div>
+                {% endfor %}
+              </div>
+              <div class="form-group row">
+                <div class="col-md-5">
+                  <label for="amount" class="font-weight-bold">Add Downloaded Budget (₱):</label>
+                  <input type="number" class="form-control" id="amount" name="amount" step="any" required/>
+                </div>
+                <div class="col-md-5">
+                  <label for="downloaded_date" class="font-weight-bold">Date:</label>
+                  <input type="date" class="form-control" id="downloaded_date" name="downloaded_date" required/>
+                </div>
+                <div class="col-md-2">
+                  <label for="year" class="font-weight-bold">Year:</label>
+                  <select id="year" name="year" class="form-control" required>
+                    <option value="" disabled selected>Select</option>
+                    <option value="1">Year 1</option>
+                    <option value="2">Year 2</option>
+                    <option value="3">Year 3</option>
+                    <option value="4">Year 4</option>
+                    <option value="5">Year 5</option>
+                  </select>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="submit" class="btn btn-warning">Add Budget</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

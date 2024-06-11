@@ -1,0 +1,64 @@
+#post-body {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.reaction {
+    display: flex;
+    gap: 0;
+}
+
+.like-btn {
+    background-color: #4CB8E7;
+    color: white;
+    border: 0;
+    transition: background-color 0.3s, color 0.3s;
+    font-size: 12px;
+    height: 30px;
+    width: auto;
+}
+
+.dislike-btn {
+    background-color: white;
+    color: #F75A4A;
+    transition: background-color 0.3s, color 0.3s;
+    font-size: 12px;
+    height: 30px;
+    width: auto;
+    border: 1px solid #F75A4A;
+    /* Add border to dislike button */
+
+}
+
+.comment-btn {
+    background-color: white;
+    color: #9DBC98;
+    border: 1px solid #9DBC98;
+    transition: background-color 0.3s, color 0.3s;
+    font-size: 12px;
+    height: 30px;
+    width: auto;
+}
+
+.like-btn:hover {
+    background-color: #FFFFFF;
+    color: #4CB8E7;
+    border: 1px solid #4CB8E7;
+}
+
+.dislike-btn:hover {
+    color: #FFFFFF;
+    background-color: #F75A4A;
+    border: 0;
+}
+
+.comment-btn:hover {
+    color: #FFFFFF;
+    background-color: #9DBC98;
+    border: 0;
+}
+
+#comment {
+    background-color: transparent;
+    border: none;
+}

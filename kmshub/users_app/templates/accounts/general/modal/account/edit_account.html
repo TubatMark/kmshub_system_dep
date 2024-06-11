@@ -1,0 +1,178 @@
+<!-- Modal -->
+<div class="modal fade" id="userInfoModal" tabindex="-1" role="dialog" aria-labelledby="userInfoModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content" style="height: 600px;">
+      <div class="modal-header" style="background-color: #0C356A;">
+        <h5 class="modal-title text-white" id="userInfoModalLabel" style="font-weight: bolder;">User Information</h5>
+        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      </div>
+      <div class="modal-body">
+        <!-- Navigation Bar -->
+        <ul class="nav nav-tabs">
+          <li class="nav-item">
+            <a class="nav-link active" id="basicInfo-tab" data-toggle="tab" href="#basicInfo">Update Basic Info</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="additionalInfo-tab" data-toggle="tab" href="#additionalInfo">Additional Info</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="password-tab" data-toggle="tab" href="#password">Update Password</a>
+          </li>
+        </ul>
+
+        <!-- Tab Content -->
+        <div class="tab-content">
+          <br />
+          <!-- Update Basic Info Tab -->
+          <div class="tab-pane fade show active" id="basicInfo">
+            <form action="{% url 'general-update-account' %}" id="basicInfoForm" method="post" enctype="multipart/form-data">
+              {% csrf_token %}
+              <div class="form-group row">
+                <div class="col-md-6">
+                  <label for="first_name" class="form-label">First Name</label>
+                  <input type="text" class="form-control" id="first_name" name="first_name" value="{{ user.first_name|capfirst }}" />
+                </div>
+                <div class="col-md-6">
+                  <label for="last_name" class="form-label">Last Name</label>
+                  <input type="text" class="form-control" id="last_name" name="last_name" value="{{ user.last_name|capfirst }}" />
+                </div>
+              </div>
+              <div class="form-group row">
+                <div class="col-md-6">
+                  <label for="position" class="form-label">Position</label>
+                  <input type="text" class="form-control" id="position" name="position" value="{{ user.position|upper }}" />
+                </div>
+                <div class="col-md-6">
+                  <label for="institution" class="form-label">Institution</label>
+                  <input type="text" class="form-control" id="institution" name="institution" value="{{ user.institution|upper }}" />
+                </div>
+              </div>
+
+              <div class="form-group row">
+                <div class="col-md-12">
+                  <label for="email" class="form-label">Email</label>
+                  <input type="text" class="form-control" id="email" name="email" value="{{ user.email }}" />
+                </div>
+              </div>
+
+              <div class="modal-footer" style="position: absolute; bottom: 0; width: 95%; ">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn" onclick="confirmSubmit('basicInfoForm')" style="background-color: #0C356A; color: white;">Update</button>
+              </div>
+            </form>
+          </div>
+
+          <!-- additional info Tab -->
+          <div class="tab-pane fade" id="additionalInfo">
+            <form id="additionalInfoForm" action="{% url 'general-add-info' %}" method="post" enctype="multipart/form-data">
+              {% csrf_token %}
+              <div class="form-group row">
+                <div class="col">
+                  <label for="date_birth" class="form-label">Date of Birth</label>
+                  <input type="date" class="form-control" id="date_birth" name="date_birth" value="{{ user.date_birth|date:'Y-m-d' }}" required />
+                </div>
+
+                <div class="col">
+                  <label for="contact_num" class="form-label">Contact</label>
+                  <input type="number" class="form-control" id="contact_num" name="contact_num" value="{% if user.contact_num %}{{ user.contact_num }}{% endif %}" placeholder="{% if user.contact_num %}{{ user.contact_num }}{% else %}Input Contact Number{% endif %}"/>
+                </div>
+              </div>
+
+              <div class="form-group row">
+                <div class="col">
+                  <label for="sex" class="form-label">Sex</label>
+                  <select class="form-control" id="sex" name="sex" required>
+                    <option value="" disabled>Select Sex</option>
+                    {% if sex == 'male' %}
+                      <option value="male" selected>Male</option>
+                      <option value="female">Female</option>
+                    {% else %}
+                      <option value="male">Male</option>
+                      <option value="female" selected>Female</option>
+                    {% endif %}
+                  </select>
+                </div>
+
+                <div class="col">
+                  <label for="gender-select" class="form-label">Gender Identity</label>
+                  <div class="dropdown">
+                    <select id="gender-select" class="form-control" name="gender" required>
+                      <option value="" disabled>Select gender</option>
+                      {% if user.gender not in gender_choices %}
+                        <option value="man">Man</option>
+                        <option value="woman">Woman</option>
+                        <option value="transgender">Transgender</option>
+                        <option value="non-binary">Non-binary</option>
+                        <option value="prefer_not_to_say">Prefer not to say</option>
+                        <option value="others"  selected >Others</option>
+                      {% else %}
+                      {% for value, label in gender_choices %}
+                        <option value="{{ value }}" {% if user.gender == value %}  selected {% endif %}>{{ label }}</option>
+                      {% endfor %}
+                      {% endif %}
+                    </select>
+                    <br />
+                    <input type="text" class="form-control" name="other_gender" id="others-input" placeholder="Specify" style="display: none;" value="{{user.gender}}" />
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group row">
+                <div class="col">
+                  <label for="specialization" class="form-label">Specialization</label>
+                  <input type="text" class="form-control" id="specialization" name="specialization" value="{{ user.specialization }}" placeholder="{% if user.specialization %}{{ user.specialization }}{% else %}Input Specialization{% endif %}"/>
+                </div>
+              </div>
+
+              <div class="form-group row">
+                <div class="col">
+                  <label for="highest_educ" class="form-label">Highest Education Attainment</label>
+                  <select class="form-control" id="highest_educ" name="highest_educ" required>
+                    <option value="" disabled>Select Education Level</option>
+                    {% for level, label in highest_educ_choices %}
+                      {% if user.highest_educ == level %}
+                        <option value="{{ level }}" selected>{{ label }}</option>
+                      {% else %}
+                        <option value="{{ level }}">{{ label }}</option>
+                      {% endif %}
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+
+              <div class="modal-footer" style="position: absolute; bottom: 0; width: 95%; ">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn" onclick="confirmSubmit('additionalInfoForm')" style="background-color: #0C356A; color: white;">Update</button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Update Password Tab -->
+          <div class="tab-pane fade" id="password">
+            <form id="updatePasswordForm" action="{% url 'update-password' %}" method="post" enctype="multipart/form-data">
+              {% csrf_token %}
+              <div class="form-group row">
+                <div class="col-md-12">
+                  <label for="new_password" class="form-label">New Password</label>
+                  <input type="password" class="form-control" id="new_password" name="new_password" autocomplete="new-password" />
+                </div>
+              </div>
+
+              <div class="form-group row">
+                <div class="col-md-12">
+                  <label for="confirm_password" class="form-label">Confirm Password</label>
+                  <input type="password" class="form-control" id="confirm_password" name="confirm_password" autocomplete="new-password" />
+                </div>
+              </div>
+
+              <div class="modal-footer" style="position: absolute; bottom: 0; width: 95%; ">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                <button type="button" class="btn" onclick="validateAndUpdatePassword()" style="background-color: #0C356A; color: white;">Update</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

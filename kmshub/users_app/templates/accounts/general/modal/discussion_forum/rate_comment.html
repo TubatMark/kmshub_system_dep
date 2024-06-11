@@ -1,0 +1,27 @@
+<!-- Modal -->
+<div class="modal fade" id="ratecommentModal{{comment.comment_id}}" tabindex="-1" role="dialog" aria-labelledby="ratecommentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header" style="background-color: #0C356A;">
+          <h5 class="modal-title text-white" id="ratecommentModalLabel">Rate Comment</h5>
+        </div>
+        <div class="modal-body">
+          <p>Please rate the usefulness of the comment:</p>
+          
+          <div class="comment-star-rating" style="text-align: center;">
+            <span class="text-muted">Not Useful</span>
+            <button class="comment-star" data-value="1" onclick="rateComment('1', '{{comment.comment_id}}')"><i class="fa fa-star" aria-hidden="true"></i></button>
+            <button class="comment-star" data-value="2" onclick="rateComment('2', '{{comment.comment_id}}')"><i class="fa fa-star" aria-hidden="true"></i></button>
+            <button class="comment-star" data-value="3" onclick="rateComment('3', '{{comment.comment_id}}')"><i class="fa fa-star" aria-hidden="true"></i></button>
+            <button class="comment-star" data-value="4" onclick="rateComment('4', '{{comment.comment_id}}')"><i class="fa fa-star" aria-hidden="true"></i></button>
+            <button class="comment-star" data-value="5" onclick="rateComment('5', '{{comment.comment_id}}')"><i class="fa fa-star" aria-hidden="true"></i></button>
+            <span class="text-muted">Extremely Useful</span>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  

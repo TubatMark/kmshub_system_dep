@@ -1,0 +1,176 @@
+{% extends 'base/admin.html' %}
+{% load static %}
+{% block title %}
+  Search Resources Management
+{% endblock %}
+{% block stylesheet %}
+  <link rel="stylesheet" href="{% static 'style/admin.css/admin.commodities.css' %}" />
+{% endblock %}
+
+{% block content %}
+  <br />
+  <div class="main-content" id="main-content">
+    <div class="container">
+      <h3 style="font-weight:bold;">ADMIN SEARCH RESOURCES MANAGEMENT</h3>
+      <hr style="color: black;" />
+      <div class="card-container">
+        <div class="row">
+          <div class="col-xl-5 col-sm-10 col-12">
+            <div class="card">
+              <div class="card-content">
+                <div class="card-body">
+                  <div class="media d-flex">
+                    <div class="media-body text-center align-self-center">
+                      <span style="font-weight: bold;">Keyword Ranking</span>
+                      <hr />
+                      {% if top_keywords %}
+                        <ul>
+                          {% for keyword, frequency in top_keywords %}
+                            <li>
+                              <span style="float: left;">{{ keyword|capfirst }}</span>
+                              <span style="float: right;">{{ frequency }} times</span>
+                            </li>
+                          {% endfor %}
+                        </ul>
+                      {% else %}
+                        <p>No results found.</p>
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <br />
+      <div class="button-container-head">
+        <a href="{% url 'admin-resources' %}" id="approved-data-button" style="background-color: #0C356A; color: #fff; border: 0; border-radius: 3px; padding: 5px; font-weight: bold;">Approved Resources</a>
+      </div>
+      <hr />
+      <div class="table-container">
+        <table id="searchedTable" class="searched-table table table-bordered">
+          <thead style="color: #fff; font-size: 13px; background-color: #0C356A; font-weight: bolder;">
+            <tr>
+              <th>Id</th>
+              <th>Contents</th>
+              <th>Keywords</th>
+              <th>Knowledge</th>
+              <th>Resources Type</th>
+              <th>Date Searched</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody style="font-size: 12px;">
+            {% for search in homesearch %}
+              <tr>
+                <td>{{ search.search_id }}</td>
+                <td>{{ search.contents|capfirst }}</td>
+                <td>
+                  <i class="fa-solid fa-eye" data-toggle="modal" data-target="#keywordsModal{{ search.search_id }}" onclick="displayKeywords('{{ search.keywords }}')"></i>
+                </td>
+                <td>{{ search.knowledge|capfirst }}</td>
+                <td>{{ search.resources_type|capfirst }}</td>
+                <td>{{ search.search_date }}</td>
+                <td>
+                  <a data-placement="top" data-toggle="tooltip" title="delete" href="{% url 'admin-delete-home-search' id=search.search_id %}" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash"></i></a>
+                </td>
+              </tr>
+
+              <!-- Modal -->
+              <div class="modal fade" id="keywordsModal{{ search.search_id }}" tabindex="-1" role="dialog" aria-labelledby="keywordsModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="keywordsModalLabel">Keywords</h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    </div>
+                    <div class="modal-body" id="keywordsContent">
+                      {% for keyword in search.keywords %}
+                        <span style="background-color: #7BD3EA; padding: 0 7px; color: black; font-weight: bold; border-radius: 4px;">{{ keyword|capfirst }}</span>
+                      {% endfor %}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block script %}
+{% if messages %}
+{% for message in messages %}
+  {% if message.tags == 'success' %}
+    <script>
+      // Display SweetAlert success message
+      Swal.fire({
+        icon: 'success',
+        title: 'Success!',
+        text: '{{ message }}'
+      })
+    </script>
+    {% else %}
+    <script>
+      // Display SweetAlert success message
+      Swal.fire({
+        icon: 'error',
+        title: 'Error!',
+        text: '{{ message }}'
+      })
+    </script>
+  {% endif %}
+{% endfor %}
+{% endif %}
+
+  <script>
+    $(document).ready(function () {
+      let table = $('#searchedTable').DataTable({
+        language: {
+          lengthMenu: '_MENU_',
+          search: '',
+          searchPlaceholder: 'Search...'
+        },
+        lengthMenu: [
+          [7, 10, 25, -1],
+          [7, 10, 25, 'All']
+        ],
+        paging: true,
+        lengthChange: true,
+        autoWidth: false,
+        bInfo: true,
+        bSort: true,
+        responsive: true,
+        buttons: [
+          {
+            text: 'CSV',
+            extend: 'csv'
+          },
+          {
+            text: 'PDF',
+            extend: 'pdf'
+          }
+        ],
+        dom: '<"row"<"col-md-1"l><"col-md-8"B><"col-md-3"f>>' + '<"row"<"col-md-12"tr>>' + '<"row"<"col-md-5"i><"col-md-7"p>>'
+      })
+    })
+    
+    function displayKeywords(keywords) {
+      var keywordsContent = document.getElementById('keywordsContent')
+      // Split the keywords string into an array
+      var keywordsArray = keywords.split("','")
+      // Display each keyword
+      keywordsArray.forEach(function (keyword) {
+        // Remove leading and trailing single quotes
+        keyword = keyword.replace(/^'|'$/g, '')
+        var keywordElement = document.createElement('p')
+        keywordElement.textContent = keyword
+        keywordsContent.appendChild(keywordElement)
+      })
+    }
+  </script>
+{% endblock %}

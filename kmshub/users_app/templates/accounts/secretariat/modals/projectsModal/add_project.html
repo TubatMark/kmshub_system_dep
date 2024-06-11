@@ -1,0 +1,165 @@
+<!-- Add Project modal -->
+<div id="addProjectModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="addProjectModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addProjectModalLabel" style="font-weight: bolder;">Add New Project</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      </div>
+      <form action="{% url 'secretariat-add-project' %}" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="project_title" class="font-weight-bold">Project Title:</label>
+            <input type="text" class="form-control" id="project_title" name="project_title" required />
+          </div>
+          <div class="form-group">
+            <label for="project_description" class="font-weight-bold">Executive Summary:</label>
+            <textarea class="form-control" id="project_description" name="summary" required></textarea>
+          </div>
+          <div class="form-group row">
+            <div class="col-md-5">
+              <label for="project_leader" class="font-weight-bold">Project Leader:</label>
+              <input type="text" class="form-control" id="project_leader" name="proponent" required />
+            </div>
+            <div class="col-md-3">
+              <label for="fund_source" class="font-weight-bold">Source of Fund:</label>
+              <input type="text" class="form-control" id="fund_source" name="fund_source" required />
+            </div>
+            <div class="col-md-4">
+              <label for="project_type" class="font-weight-bold">Project Type:</label>
+              <select id="project_type" name="project_type" class="form-control">
+                <option value="" disabled selected>Select</option>
+                <option value="ResearchNDev">R&D</option>
+                <option value="TechnoTrans">Technology Transfer</option>
+                <option value="NoneDegreeTraining">Non-Degree Training</option>
+                <option value="FacilityEnhancement">Facility Enhancement</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group row">
+            <div class="col-md-3">
+              <label for="approved_budget" class="font-weight-bold">Approved Budget:</label>
+              <input type="number" class="form-control" id="approved_budget" name="approved_budget" step="any" required />
+            </div>
+            <div class="col-md-3">
+              <label for="downloaded_budget" class="font-weight-bold">Downloaded Budget:</label>
+              <input type="number" class="form-control" id="downloaded_budget" name="downloaded_budget" step="any" required />
+            </div>
+            <div class="col-md-3">
+              <label for="downloaded_date" class="font-weight-bold">Downloaded Date:</label>
+              <input type="date" class="form-control" id="downloaded_date" name="downloaded_date" required />
+            </div>
+            <div class="col-md-3">
+              <label for="year" class="font-weight-bold">Year:</label>
+              <select id="year" name="year" class="form-control" required>
+                <option value="" disabled selected>Select</option>
+                <option value="1">Year 1</option>
+                <option value="2">Year 2</option>
+                <option value="3">Year 3</option>
+                <option value="4">Year 4</option>
+                <option value="5">Year 5</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <div class="col-md-3">
+              <label for="project_started" class="font-weight-bold">Project Started:</label>
+              <input type="date" class="form-control" id="project_started" name="project_started" required />
+            </div>
+            <div class="col-md-3">
+              <label for="project_ended" class="font-weight-bold">Project Ended:</label>
+              <input type="date" class="form-control" id="project_ended" name="project_ended" />
+            </div>
+            <div class="col-md-3">
+              <label for="project_status" class="font-weight-bold">Project Status:</label>
+              <select id="project_status" name="project_status" class="form-control" required>
+                <option value="" disabled selected>Select</option>
+                <option value="Ongoing">Ongoing</option>
+                <option value="Extended">Extended</option>
+                <option value="Terminated">Terminated</option>
+                <option value="Completed">Completed</option>
+              </select>
+            </div>
+            <div class="col-md-3">
+              <label for="number_years" class="font-weight-bold">Number of Year(s):</label>
+              <input type="number" class="form-control" id="number_years" name="number_years" step="any" required />
+            </div>
+          </div>
+
+          <hr />
+          <div class="form-group row">
+            <div class="col-md-4">
+              <label for="addAttachment" class="font-weight-bold">Click to add Attachment</label>
+              <button type="button" id="addAttachment" class="btn btn-success" onclick="addAttachmentRow('addProjectModal')">Add Attachment +</button>
+            </div>
+            <div class="col-md-8">
+              <label for="program_id" class="font-weight-bold">Programs:</label>
+              <select id="program_id" name="program" class="form-control" >
+                <option value="" disabled selected>Select Program</option>
+                {% for program in programs %}
+                  <option value="{{ program.program_id }}">{{ program.program_title }}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+          <hr />
+          <div id="attachmentRows" class="form-group row">
+            <div class="col-md-6">
+              <label for="project_file" class="font-weight-bold">Project File:</label>
+              <input type="file" class="form-control-file" name="file[]" required />
+            </div>
+            <div class="col-md-6">
+              <label for="attachment_type" class="font-weight-bold">Attachment Type:</label>
+              <div class="input-group">
+                <select class="form-control" name="attachment_type[]" required>
+                  <option value="" disabled selected>Select Attachment Type</option>
+                  <optgroup label="Project Documents">
+                    <option value="Approved Proposal">Approved Proposal</option>
+                    <option value="Approved Letter of Project">Approved Letter of Project</option>
+                    <option value="Letter of Extension">Letter for Extension</option>
+                    <option value="Letter of Change Project Leadership">Letter for Change of Project Leadership</option>
+                    <option value="MOA">MOA (Memorandum of Agreement)</option>
+                    <option value="MOU">MOU (Memorandum of Understanding)</option>
+                    <option value="Monthly Accomplishment Report">Accomplishment Report (Monthly)</option>
+                    <option value="Terminal Report">Terminal Report</option>
+                    <option value="Progress Report">Progress Report</option>
+                  </optgroup>
+                  <optgroup label="Financial Documents">
+                    <option value="LIB">LIB (Line Item Budget)</option>
+                    <option value="Transmittal Letter">Transmittal Letter</option>
+                    <option value="Approved Realigned Budget">Approved Realigned Budget</option>
+                    <option value="APP">APP (Annual Procurement Plan)</option>
+                    <option value="Official Receipt">Official Receipt</option>
+                    <option value="ADA">ADA</option>
+                    <option value="Disbursement Voucher">Disbursement Voucher</option>
+                  </optgroup>
+                  <optgroup label="Financial Report">
+                    <option value="DOST FORM 8">DOST FORM 8 (Financial Report)</option>
+                    <option value="DOST FORM 9">DOST FORM 9 (Account Payable)</option>
+                    <option value="DOST FORM 11">DOST FORM 11 (List of Personnel Involve)</option>
+                    <option value="DOST FORM 12">DOST FORM 12 (List of Equipment Purchase)</option>
+                    <option value="DOST FORM 16">DOST FORM 16 (Terminal Audited Financial Report)</option>
+                    <option value="DOST FORM 18">DOST FORM 18 (Fund Utilization Report)</option>
+                    <option value="Report of Disbursement Receipt">Report of Disbursement Receipt</option>
+                    <option value="Property Acknowledgement">Property Acknowledgement</option>
+                    <option value="Journal Entry Voucher">JEV (Journal Entry Voucher)</option>
+                  </optgroup>
+                </select>
+                <div class="input-group-append" style="margin-left: 5px;">
+                  <button class="btn btn-danger remove-attachment-btn" type="button" style="color: grey; background-color: white; border: none;"><i class="fa fa-trash" aria-hidden="true"></i></button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <hr />
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary">Add Project</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

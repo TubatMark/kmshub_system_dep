@@ -1,0 +1,68 @@
+.dashboard {
+    display: flex;
+    flex-wrap: wrap-reverse;
+    /* New line starts with table */
+    gap: 1rem;
+
+}
+
+.card-dashboard {
+    flex: 1 1 25%;
+    /* Make each card take up 45% of available space */
+    margin-bottom: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 1rem;
+    height: 225px;
+    overflow: hidden;
+    /* Hide overflowing content */
+    order: 1;
+    /* Cards come first in order */
+
+    background-color: white;
+}
+
+.card-dashboard-table {
+    flex: 1 1 25%;
+    /* Make each card take up 45% of available space */
+    margin-bottom: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 1rem;
+    max-height: auto;
+    overflow: hidden;
+    /* Hide overflowing content */
+    order: 2;
+    /* Cards come first in order */
+    background-color: white;
+}
+
+.card-header {
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    background-color: #0174BE;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+}
+
+.card-search-content ul,
+.card-preferred-commodities ul {
+    list-style: none;
+    padding: 0;
+}
+
+.card-table table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.card-table table th,
+td {
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+}
+
+.table-striped tbody tr:nth-child(odd) {
+    background-color: #f9f9f9;
+}

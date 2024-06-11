@@ -1,0 +1,61 @@
+.cmi-images {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.cmi-item {
+    margin: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.cmi-item img {
+    width: 50px;
+    height: 50px;
+}
+
+.cmi-name {
+    order: 1;
+    font-weight: bold;
+}
+
+#summernote-content {
+    color: black !important;
+}
+
+.video-container {
+    position: relative;
+    padding-bottom: 56.25%; /* 16:9 aspect ratio */
+    height: 0;
+    overflow: hidden;
+    max-width: 100%;
+    background: black;
+}
+
+.video-container iframe,
+.video-container object,
+.video-container embed {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+@media screen and (max-width: 1340px) {
+    .video-container {
+        width: auto;
+    }
+
+    .cmi-item img {
+        width: 30px;
+        height: 30px;
+    }
+
+    .cmi-name {
+        order: 1;
+        font-size: 10px;
+    }
+}

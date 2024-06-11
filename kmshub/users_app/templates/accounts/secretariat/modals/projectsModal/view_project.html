@@ -1,0 +1,128 @@
+<!-- Improved View Project Modal -->
+<div class="modal fade" id="viewProjectModal{{ project.project_id }}" tabindex="-1" role="dialog" aria-labelledby="viewProjectModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="viewProjectModalLabel" style="font-weight: bold;">View Project Details</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="project_title" class="font-weight-bold">Program Title:</label>
+          <div class="project_title" style="width: auto; border: 1px solid #ddd; padding: 10px; border-radius: 4px;">{{ program.program_title|capfirst }}</div>
+        </div>
+
+        <div class="form-group">
+          <label for="project_title" class="font-weight-bold">Project Title:</label>
+          <div class="project_title" style="width: auto; border: 1px solid #ddd; padding: 10px; border-radius: 4px;">{{ project.project_title|capfirst }}</div>
+        </div>
+
+        <div class="form-group">
+          <label for="summary" class="font-weight-bold">Executive Summary:</label>
+          <div class="summary" style="width: auto; height: auto; border: 1px solid #ddd; padding: 10px; border-radius: 4px; text-align: justify;">{{ project.summary|capfirst }}</div>
+        </div>
+
+        <div class="form-group row">
+          <div class="col-md-8">
+            <label for="proponent" class="font-weight-bold">Proponent:</label>
+            <div class="proponent" style="width: auto; height: auto; border: 1px solid #ddd; padding: 10px; border-radius: 4px;">{{ project.proponent|capfirst }}</div>
+          </div>
+          <div class="col-md-4">
+            <label for="fund_source" class="font-weight-bold">Fund Source:</label>
+            <div class="fund_source" style="width: auto; height: auto; border: 1px solid #ddd; padding: 10px; border-radius: 4px;">{{ project.fund_source }}</div>
+          </div>
+        </div>
+        <div class="form-group row">
+          <div class="col-md-4">
+            <label for="approved_budget" class="font-weight-bold">Approved Budget (₱):</label>
+            <div class="approved_budget" style="width: auto; height: auto; border: 1px solid #ddd; padding: 10px; border-radius: 4px;">{{ project.approved_budget }}</div>
+          </div>
+          <div class="col-md-4">
+            <label for="downloaded_budget" class="font-weight-bold">Total Downloaded Budget (₱):</label>
+            <div class="downloaded_budget" style="width: auto; height: auto; border: 1px solid #ddd; padding: 10px; border-radius: 4px;">{{ project.total_downloaded_budget }}</div>
+          </div>
+          <div class="col-md-3">
+            <label for="number_years" class="font-weight-bold">Number of Year(s):</label>
+            <div class="number_years" style="width: auto; height: auto; border: 1px solid #ddd; padding: 10px; border-radius: 4px;">{{ project.number_years }}</div>
+          </div>
+        </div>
+        <hr />
+        <div class="form-group row" style="border: 0px solid #ddd; padding: 10px; border-radius: 4px;">
+          <div class="col-md-5">
+            <label for="downloaded_budgets" class="font-weight-bold" style="color: green;">Downloaded Budgets (₱)</label>
+          </div>
+          <div class="col-md-5">
+            <label for="downloaded_date" class="font-weight-bold" style="color: green;">Date</label>
+          </div>
+          <div class="col-md-2">
+            <label for="year" class="font-weight-bold" style="color: green;">Year</label>
+          </div>
+          {% for budget in project.downloaded_budget.all %}
+          <div class="col-md-5">
+            <div class="downloaded_budget" style="width: auto; height: auto; border-bottom: 1px solid #ddd; padding: 10px;">{{ budget.amount }}</div>
+          </div>
+          <div class="col-md-5">
+            <div class="downloaded_date" style="width: auto; height: auto; border-bottom: 1px solid #ddd; padding: 10px;">{{ budget.downloaded_date }}</div>
+          </div>
+          <div class="col-md-2">
+            <div class="year" style="width: auto; height: auto; border-bottom: 1px solid #ddd; padding: 10px;">{{ budget.year }}</div>
+          </div>
+          {% endfor %}
+        </div>
+        <div class="form-group row">
+          <div class="col-md-3">
+            <label for="project_started" class="font-weight-bold">Project Started:</label>
+            <div class="project_started" style="width: auto; height: auto; border: 1px solid #ddd; padding: 10px; border-radius: 4px;">{{ project.project_started }}</div>
+          </div>
+          <div class="col-md-3">
+            <label for="project_ended" class="font-weight-bold">Project Ended:</label>
+            <div class="project_ended" style="width: auto; height: auto; border: 1px solid #ddd; padding: 10px; border-radius: 4px;">{{ project.project_ended }}</div>
+          </div>
+          <div class="col-md-3">
+            <label for="project_status" class="font-weight-bold">Project Status:</label>
+            <div class="project_status" style="width: auto; height: auto; border: 1px solid #ddd; padding: 10px; border-radius: 4px;">{{ project.project_status }}</div>
+          </div>
+          <div class="col-md-3">
+            <label for="project_status" class="font-weight-bold">Project Type:</label>
+            <div class="project_status" style="width: auto; height: auto; border: 1px solid #ddd; padding: 10px; border-radius: 4px;">
+              {% if project.project_type == 'ResearchNDev' %}
+                R&D
+              {% elif project.project_type == 'TechnoTrans' %}
+                Technology Transfer
+              {% elif project.project_type == 'NoneDegreeTraining' %}
+                None-Degree Training
+              {% else %}
+                Facility Enhancement
+              {% endif %}
+            </div>
+          </div>
+        </div>
+        <hr />
+        <div class="form-group row">
+          <div class="col-md-12">
+            <label for="attachments" class="font-weight-bold">Downloadable Attachments:</label>
+            {% if project.attachments.all %}
+              {% for attachment in project.attachments.all %}
+                <div class="card" style="height: 50px; border: 1px solid #ddd; border-radius: 5px; overflow: hidden; margin-bottom: 10px;">
+                  <div class="card-body d-flex justify-content-between align-items-center" style="padding: 10px;">
+                    <div class="form-check">
+                      <input type="checkbox" class="form-check-input" id="attachmentCheckbox{{ attachment.id }}" />
+                      <span style="flex-grow: 1; margin-right: 10px;">{{ attachment.attachment_type }}</span>
+                    </div>
+                    <a href="{{ attachment.file.url }}" style="color: #12BC79; text-decoration: none;" download><i class="fas fa-download"></i></a>
+                  </div>
+                </div>
+              {% endfor %}
+            {% else %}
+              <p>No attachments available.</p>
+            {% endif %}
+            <button type="button" class="btn btn-primary" onclick="downloadSelectedAttachments()" style="font-size: 13px; padding: 5px;">Download Selected Attachments</button>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>

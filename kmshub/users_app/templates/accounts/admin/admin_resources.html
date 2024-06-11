@@ -1,0 +1,857 @@
+{% extends 'base/admin.html' %}
+{% load static %}
+{% block title %}
+  Request Edit
+{% endblock %}
+{% block stylesheet %}
+  <link rel="stylesheet" href="{% static 'style/admin.css/admin.commodities.css' %}" />
+  <style>
+    html {
+      scroll-behavior:smooth;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+  <br />
+  <div class="main-content" id="main-content">
+    <div class="container">
+      <h3 style="font-weight:bold;">ADMIN RESOURCES MANAGEMENT</h3>
+      <hr style="color: black;" />
+      <div class="button-container-head">
+        <button type="button" id="approved-data-button" style="background-color: #0C356A; color: #fff; border: 0; border-radius: 3px; padding: 5px; font-weight: bold;">Approved Resources</button>
+        <button type="button" id="request-data-button" style="background-color: #0C356A; color: #fff; border: 0; border-radius: 3px; padding: 5px; font-weight: bold;">Edit Request</button>
+        <a href="{% url 'admin-home-search' %}" type="button" style="background-color: #0C356A; color: #fff; border: 0; border-radius: 3px; padding: 5px; font-weight: bold;">Search Resources</a>
+      </div>
+      <br />
+      <div class="row">
+        <div class="col-md-12" style="display: flex; align-items: center; justify-content: center; text-align: center;">
+          <div class="card status-card" style="width: 100%; height: 500px; border: #0174BE 1px solid; align-items: center; justify-content: center; text-align: center;">
+            <span style="margin-bottom: 5px;">Edit Request Status Analytics</span>
+            <div class="row" style="display: flex; align-items: center; justify-content: center; text-align: center;">
+              <div class="col-md-3">
+                <a type="button" href="#approved-report" id="approved_detailed_report" class="card" style="border: #FFFFFF 1px solid; width: 80px; background-color: #66B0FF; align-items: center; justify-content: center; text-align: center;">
+                  <span style="font-weight: bold; text-decoration: underline; color: black;">{{ total_approved }}</span>
+                  <span style="color: #3B3B3B;">Approved</span>
+                </a>
+              </div>
+              <div class="col-md-3">
+                <a type="button" href="#partial-report" id="partial_detailed_report" class="card" style="border: #FFFFFF 1px solid; width: 80px; background-color: #FFDA6A; align-items: center; justify-content: center; text-align: center;">
+                  <span style="font-weight: bold; text-decoration: underline; color: black;">{{ total_partial_approved }}</span>
+                  <span style="color: #3B3B3B;">Partial</span>
+                </a>
+              </div>
+              <div class="col-md-3">
+                <a type="button" href="#pending-report" id="pending_detailed_report" class="card" style="border: #FFFFFF 1px solid; width: 80px; background-color: #FFA1B5; align-items: center; justify-content: center; text-align: center;">
+                  <span style="font-weight: bold; text-decoration: underline; color: black;">{{ total_pending }}</span>
+                  <span style="color: #3B3B3B;">Pending</span>
+                </a>
+              </div>
+              <div class="col-md-3">
+                <button type="button" id="total-request-data-button" class="card" style="border: #FFFFFF 1px solid; width: 80px; background-color: #A4CE95; align-items: center; justify-content: center; text-align: center;">
+                  <span style="font-weight: bold; text-decoration: underline;">{{ total_request }}</span>
+                  <span style="color: #3B3B3B;">Requests</span>
+                </button>
+              </div>
+            </div>
+            
+            <div class="card pie-chart" style="border: none;">
+              <canvas id="statusChart" style="height: 350px; width: 400px; "></canvas>
+            </div>
+          </div>
+
+          <div class="card tagged-card" style="width: 100%; height: 500px; border: #0174BE 1px solid; align-items: center; justify-content: center; text-align: center; margin-left: 10px;">
+            <span style="margin-bottom: 5px;">Tagged Resources Analytics</span>
+            <div class="row" style="display: flex; align-items: center; justify-content: center; text-align: center;">
+              <div class="col-md-3">
+                <a type="button" href="#cmi-report" id="cmi_detailed_report" class="card" style="cursor: pointer; border: #FFFFFF 1px solid; width: 90px; background-color: #66B0FF; align-items: center; justify-content: center; text-align: center;">
+                  <span style="font-weight: bold; text-decoration: underline; color: black;">{{ total_cmi_resources }}</span>
+                  <span style="color: #3B3B3B;">CMI</span>
+                </a>
+              </div>
+              <div class="col-md-3">
+                <a type="button" href="#commodity-report" id="commodity_detailed_report" class="card" style="cursor: pointer; border: #FFFFFF 1px solid; width: 90px; background-color: #FFDA6A; align-items: center; justify-content: center; text-align: center;">
+                  <span style="font-weight: bold; text-decoration: underline; color: black;">{{ total_commodity_resources }}</span>
+                  <span style="color: #3B3B3B;">Commodity</span>
+                </a>
+              </div>
+              <div class="col-md-3">
+                <a type="button" href="#knowledge-report" id="knowledge_detailed_report" class="card" style="cursor: pointer; border: #FFFFFF 1px solid; width: 90px; background-color: #FFA1B5; align-items: center; justify-content: center; text-align: center;">
+                  <span style="font-weight: bold; text-decoration: underline; color: black;">{{ total_knowledge_resources }}</span>
+                  <span style="color: #3B3B3B;">Knowledge </span>
+                </a>
+              </div>
+              <div class="col-md-3">
+                <a href="#approved-table-container" class="card" style="color: black; text-decoration: none; border: #FFFFFF 1px solid; width: 90px; background-color: #A4CE95; align-items: center; justify-content: center; text-align: center;">
+                  <span style="font-weight: bold; text-decoration: underline;">{{ total_resources }}</span>
+                  <span style="color: #3B3B3B;">Resources</span>
+                </a>
+              </div>
+            </div>
+            <div class="card pie-chart" style="border: none;">
+              <canvas id="taggedChart" style="height: 350px; width: 400px; "></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+      <hr />
+      <div class="row">
+        <div class="col-md-12" >
+          <div class="card" id="cmi-report" style="width: 100%; height: 600px; border: #0174BE 1px solid; align-items: center; justify-content: center; text-align: center; display: none; margin-bottom: 15px;">
+            <span>CMI GRAPH</span>
+            <canvas id="cmiBar" style="height: 100%; width: 100%; "></canvas>
+          </div>
+          <div class="card" id="commodity-report" style="width: 100%; height: 600px; border: #FFDA6A 1px solid; align-items: center; justify-content: center; text-align: center; display: none; margin-bottom: 15px;">
+            <span>COMMODITY GRAPH</span>
+            <canvas id="commodityBar" style="height: 100%; width: 100%; "></canvas>
+          </div>
+          <div class="card" id="knowledge-report" style="width: 100%; height: 600px; border: #FFA1B5 1px solid; align-items: center; justify-content: center; text-align: center; display: none; ">
+            <span>KNOWLEDGE RESOURCES GRAPH</span>
+            <canvas id="knowledgeBar" style="height: 100%; width: 100%; "></canvas>
+          </div>
+          <!--edit request-->
+          <div class="card" id="approved-report" style="width: 100%; height: 600px; border: #0174BE 1px solid; align-items: center; justify-content: center; text-align: center; margin-bottom: 15px; display: none;">
+            <span>MONTHLY APPROVED GRAPH</span>
+            <canvas id="approvedBar" style="height: 100%; width: 100%; "></canvas>
+          </div>
+          <div class="card" id="partial-report" style="width: 100%; height: 600px; border: #FFDA6A 1px solid; align-items: center; justify-content: center; text-align: center; margin-bottom: 15px; display: none;">
+            <span>MONTHLY PARTIALLY APPROVED GRAPH</span>
+            <canvas id="partialBar" style="height: 100%; width: 100%; "></canvas>
+          </div>
+          <div class="card" id="pending-report" style="width: 100%; height: 600px; border: #FFA1B5 1px solid; align-items: center; justify-content: center; text-align: center; margin-bottom: 15px; display: none;">
+            <span>MONTHLY PENDING GRAPH</span>
+            <canvas id="pendingBar" style="height: 100%; width: 100%; "></canvas>
+          </div>
+        </div>
+      </div>
+      
+      <hr />
+      <div class="approved-table-container" id="approved-table-container">
+        <table id="approveResourcesTable" class="approveResources-table table table-bordered">
+          <thead style="color: #fff; font-size: 13px; background-color: #0C356A; font-weight: bolder;">
+            <tr>
+              <th>ID</th>
+              <th>Title</th>
+              <th>Description</th>
+              <th>Commodity</th>
+              <th style="width: 100px;">CMI</th>
+              <th>Knowledge Resources</th>
+              <th>User</th>
+              <th style="width: 80px;">Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody style="font-size: 12px;">
+            {% for resource in resources %}
+              <tr>
+                <td>{{ resource.resources_id }}</td>
+                <td>{{ resource.resources_title|capfirst }}</td>
+                <td>{{ resource.resources_description|capfirst }}</td>
+                <td>
+                  {% for commodities in resource.commodity.all %}
+                    <span style="background-color: #7BD3EA; padding: 0 7px; color: black; font-weight: bold; border-radius: 4px;">{{ commodities.commodity_name|capfirst }}</span>
+                    <br />
+                  {% endfor %}
+                </td>
+                <td>
+                  {% for cmis in resource.cmi.all %}
+                    <span style="background-color: #7BD3EA; padding: 0 7px; color: black; font-weight: bold; border-radius: 4px;">{{ cmis.cmi_name|capfirst }}</span>
+                    <br />
+                  {% endfor %}
+                </td>
+                <td>
+                  {% for knowledges in resource.knowledge.all %}
+                    <span style="background-color: #7BD3EA; padding: 0 7px; color: black; font-weight: bold; border-radius: 4px;">{{ knowledges.knowledge_title|capfirst }}</span>
+                  {% endfor %}
+                </td>
+                <td>
+                  <span style="background-color: #7BD3EA; padding: 0 7px; color: black; font-weight: bold; border-radius: 4px;">{{ resource.user.first_name|capfirst }}</span>
+                </td>
+                <td>
+                  <span style="background-color: #7BD3EA; padding: 0 7px; color: black; font-weight: bold; border-radius: 4px;">{{ resource.date_created }}</span>
+                </td>
+                <td>
+                  <div style="display: flex;">
+                    <button type="button" title="View" style="background-color: #0174BE; margin-left: 4px;color: #fff;" class="btn btn-sm view-btn" data-toggle="modal" data-target="#viewResourcesModal{{ resource.resources_id }}"><i class="fa-solid fa-eye"></i></button>
+                    <a data-placement="top" data-toggle="tooltip" title="Delete" href="/delete-resources-admin/{{ resource.resources_id }}" class="btn btn-danger btn-sm" style="margin-left: 4px;"><i class="fa-solid fa-trash"></i></a>
+                  </div>
+                </td>
+              </tr>
+              {% include 'accounts/admin/modals/request_edit/approved_view.html' %}
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="request-table-container" id="request-table-container">
+        <table id="requesteditTable" class="requestedit-table table table-bordered">
+          <thead style="color: #fff; font-size: 13px; background-color: #0C356A; font-weight: bolder;">
+            <tr>
+              <th>Request ID</th>
+              <th>Resource ID</th>
+              <th>Email</th>
+              <th>Title</th>
+              <th>Description</th>
+              <th style="width: 80px;">CMI</th>
+              <th>Commodity</th>
+              <th>Knowledge</th>
+              <th>Submitted</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody style="font-size: 12px;">
+            {% for edits in edit_resources %}
+              {% if edits.request_status == 'Pending' or edits.request_status == 'Partial Approved' %}
+                <tr>
+                  <td>{{ edits.editRequest_id }}</td>
+                  <td>{{ edits.resource_id }}</td>
+                  <td>{{ edits.submitted_by }}</td>
+                  <td>
+                    {% if edits.edited_title %}
+                      <span style="background-color: #7BD3EA; padding: 0 7px; color: black; font-weight: bold; border-radius: 4px;">{{ edits.edited_title }}</span>
+                    {% else %}
+                      -
+                    {% endif %}
+                  </td>
+                  <td>
+                    {% if edits.edited_description %}
+                      <span style="background-color: #7BD3EA; padding: 0 7px; color: black; font-weight: bold; border-radius: 4px;">{{ edits.edited_description }}</span>
+                    {% else %}
+                      -
+                    {% endif %}
+                  </td>
+                  <td>
+                    {% if edits.edited_cmi.exists %}
+                      {% for cmis in edits.edited_cmi.all %}
+                        {% if cmis %}
+                          <span style="background-color: #7BD3EA; padding: 0 7px; color: black; font-weight: bold; border-radius: 4px;">{{ cmis.cmi_name }}</span><br />
+                        {% endif %}
+                      {% endfor %}
+                    {% else %}
+                      -
+                    {% endif %}
+                  </td>
+                  <td>
+                    {% if edits.edited_commodity.exists %}
+                      {% for commodities in edits.edited_commodity.all %}
+                        {% if commodities %}
+                          <span style="background-color: #7BD3EA; padding: 0 7px; color: black; font-weight: bold; border-radius: 4px;">{{ commodities.commodity_name }}</span><br />
+                        {% endif %}
+                      {% endfor %}
+                    {% else %}
+                      -
+                    {% endif %}
+                  </td>
+                  <td>
+                    {% if edits.edited_knowledge %}
+                      <span style="background-color: #7BD3EA; padding: 0 7px; color: black; font-weight: bold; border-radius: 4px;">{{ edits.edited_knowledge.knowledge_title }}</span>
+                    {% else %}
+                      -
+                    {% endif %}
+                  </td>
+                  <td>{{ edits.date_submitted }}</td>
+                  <td>{{ edits.request_status }}</td>
+                  <td>
+                    <div style="display: flex;">
+                      <form method="post" action="{% url 'approve-edit' id=edits.editRequest_id %}">
+                        {% csrf_token %}
+                        <button type="submit" title="Approve" style="background-color: #FFC436; color: #fff;" class="btn btn-sm approve-btn"><i class="fa-solid fa-check"></i></button>
+                      </form>
+                      <button type="button" title="View" style="background-color: #0174BE; margin-left: 4px;color: #fff;" class="btn btn-sm view-btn" data-toggle="modal" data-target="#viewEditRequestModal{{ edits.editRequest_id }}"><i class="fa-solid fa-eye"></i></button>
+                      <a data-placement="top" data-toggle="tooltip" title="Delete" href="/delete-request-edit/{{ edits.editRequest_id }}" class="btn btn-danger btn-sm" style="margin-left: 4px;"><i class="fa-solid fa-trash"></i></a>
+                    </div>
+                  </td>
+                </tr>
+              {% endif %}
+              {% include 'accounts/admin/modals/request_edit/request_edit_view.html' %}
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block script %}
+  {% if messages %}
+    {% for message in messages %}
+      {% if message.tags == 'success' %}
+        <script>
+          // Display SweetAlert success message
+          Swal.fire({
+            icon: 'success',
+            title: 'Success!',
+            text: '{{ message }}'
+          })
+        </script>
+        {% else %}
+        <script>
+          // Display SweetAlert success message
+          Swal.fire({
+            icon: 'error',
+            title: 'Error!',
+            text: '{{ message }}'
+          })
+        </script>
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+
+  <script>
+    $(document).ready(function () {
+      let table = $('#approveResourcesTable').DataTable({
+        language: {
+          lengthMenu: '_MENU_',
+          search: '',
+          searchPlaceholder: 'Search...'
+        },
+        lengthMenu: [
+          [7, 10, 25, -1],
+          [7, 10, 25, 'All']
+        ],
+        paging: true,
+        lengthChange: true,
+        autoWidth: false,
+        bInfo: true,
+        bSort: true,
+        responsive: true,
+        buttons: [
+          {
+            text: 'CSV',
+            extend: 'csv'
+          },
+          {
+            text: 'PDF',
+            extend: 'pdf'
+          }
+        ],
+        dom: '<"row"<"col-md-1"l><"col-md-8"B><"col-md-3"f>>' + '<"row"<"col-md-12"tr>>' + '<"row"<"col-md-5"i><"col-md-7"p>>'
+      })
+    })
+    
+    $(document).ready(function () {
+      let table = $('#requesteditTable').DataTable({
+        language: {
+          lengthMenu: '_MENU_',
+          search: '',
+          searchPlaceholder: 'Search...'
+        },
+        lengthMenu: [
+          [7, 10, 25, -1],
+          [7, 10, 25, 'All']
+        ],
+        paging: true,
+        lengthChange: true,
+        autoWidth: false,
+        bInfo: true,
+        bSort: true,
+        responsive: true,
+        buttons: [
+          {
+            text: 'CSV',
+            extend: 'csv'
+          },
+          {
+            text: 'PDF',
+            extend: 'pdf'
+          }
+        ],
+        dom: '<"row"<"col-md-1"l><"col-md-8"B><"col-md-3"f>>' + '<"row"<"col-md-12"tr>>' + '<"row"<"col-md-5"i><"col-md-7"p>>'
+      })
+    })
+    
+    document.addEventListener('DOMContentLoaded', function () {
+      var approvedTable = document.getElementById('approved-table-container')
+      var requestTable = document.getElementById('request-table-container')
+    
+      var approvedBtn = document.getElementById('approved-data-button')
+      var requestBtn = document.getElementById('request-data-button')
+      var totalrequestBtn = document.getElementById('total-request-data-button')
+    
+      hideAllTablesExcept(approvedTable)
+    
+      approvedBtn.addEventListener('click', function () {
+        approvedTable.style.display = 'block'
+        hideAllTablesExcept(approvedTable)
+      })
+    
+      requestBtn.addEventListener('click', function () {
+        requestTable.style.display = 'block'
+        hideAllTablesExcept(requestTable)
+      })
+
+      totalrequestBtn.addEventListener('click', function () {
+        requestTable.style.display = 'block'
+        hideAllTablesExcept(requestTable)
+        console.log("request total");
+      })
+    
+      function hideAllTablesExcept(exceptTable) {
+        var tables = [approvedTable, requestTable]
+        tables.forEach(function (table) {
+          if (table !== exceptTable) {
+            table.style.display = 'none'
+          }
+        })
+      }
+
+      //handle the display of the bar chart
+      var cmi_report = document.getElementById('cmi-report');
+      var cmi_report_btn = document.getElementById('cmi_detailed_report');
+
+      cmi_report_btn.addEventListener('click', function () {
+          if (cmi_report.style.display === 'block') {
+              cmi_report.style.display = 'none'; // Hide the report if it's already visible
+          } else {
+              cmi_report.style.display = 'block'; // Show the report if it's hidden
+          }
+      });
+
+
+      var commodity_report = document.getElementById('commodity-report')
+      var commodity_report_btn = document.getElementById('commodity_detailed_report')
+      commodity_report_btn.addEventListener('click', function () {
+        if (commodity_report.style.display === 'block'){
+          commodity_report.style.display = 'none';
+        } else {
+          commodity_report.style.display = 'block'
+        }
+      })
+
+      var knowledge_report = document.getElementById('knowledge-report')
+      var knowledge_report_btn = document.getElementById('knowledge_detailed_report')
+      knowledge_report_btn.addEventListener('click', function () {
+        if (knowledge_report.style.display === 'block'){
+          knowledge_report.style.display = 'none';
+        } else {
+          knowledge_report.style.display = 'block'
+        }
+      })
+
+      var approved_report = document.getElementById('approved-report')
+      var approved_report_btn = document.getElementById('approved_detailed_report')
+      approved_report_btn.addEventListener('click', function () {
+        if (approved_report.style.display === 'block'){
+          approved_report.style.display = 'none';
+        } else {
+          approved_report.style.display = 'block'
+        }
+      })
+
+      var partial_report = document.getElementById('partial-report')
+      var partial_report_btn = document.getElementById('partial_detailed_report')
+      partial_report_btn.addEventListener('click', function () {
+        if (partial_report.style.display === 'block'){
+          partial_report.style.display = 'none';
+        } else {
+          partial_report.style.display = 'block'
+        }
+      })
+
+      var pending_report = document.getElementById('pending-report')
+      var pending_report_btn = document.getElementById('pending_detailed_report')
+      pending_report_btn.addEventListener('click', function () {
+        if (pending_report.style.display === 'block'){
+          pending_report.style.display = 'none';
+        } else {
+          pending_report.style.display = 'block'
+        }
+      })
+    })
+
+    //CHARTS taggedChart
+    // Now you can use commodityNames and taggedCounts in your chart creation
+    const pie = document.getElementById('statusChart').getContext('2d');
+    const statusChart = new Chart(pie, {
+      type: 'pie',
+      data: {
+        datasets: [{
+          data: [{{ total_approved }}, {{ total_partial_approved }}, {{ total_pending }}],
+          backgroundColor: [
+            'rgba(0, 123, 255, 0.6)', // Approved
+            'rgba(255, 193, 7, 0.6)', // Partial
+            'rgba(255, 99, 132, 0.6)' // Pending
+          ],
+          borderColor: [
+            'rgba(0, 123, 255, 1)',
+            'rgba(255, 193, 7, 1)',
+            'rgba(255, 99, 132, 1)'
+          ],
+          borderWidth: 1,
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          datalabels: {
+            display: true,
+            formatter: (value, context) => {
+              const label = context.chart.data.labels[context.dataIndex];
+              return `${label}: ${value}`;
+            },
+            color: '#fff',
+            backgroundColor: 'rgba(0, 0, 0, 0.7)',
+            borderRadius: 4,
+            anchor: 'end',
+            align: 'end',
+          }
+        }
+      }
+    });
+
+    //tagged chart
+    const taggedpie = document.getElementById('taggedChart').getContext('2d');
+    const taggedChart = new Chart(taggedpie, {
+      type: 'pie',
+      data: {
+        datasets: [{
+          data: [{{ total_cmi_resources }}, {{ total_commodity_resources }}, {{ total_knowledge_resources }}],
+          backgroundColor: [
+            'rgba(0, 123, 255, 0.6)', // Approved
+            'rgba(255, 193, 7, 0.6)', // Partial
+            'rgba(255, 99, 132, 0.6)' // Pending
+          ],
+          borderColor: [
+            'rgba(0, 123, 255, 1)',
+            'rgba(255, 193, 7, 1)',
+            'rgba(255, 99, 132, 1)'
+          ],
+          borderWidth: 1,
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          datalabels: {
+            display: true,
+            formatter: (value, context) => {
+              const label = context.chart.data.labels[context.dataIndex];
+              return `${label}: ${value}`;
+            },
+            color: '#fff',
+            backgroundColor: 'rgba(0, 0, 0, 0.7)',
+            borderRadius: 4,
+            anchor: 'end',
+            align: 'end',
+          }
+        }
+      }
+    });
+
+    //cmi detailed report
+    const cmiBarChart = document.getElementById('cmiBar').getContext('2d');
+    const cmiBar = new Chart(cmiBarChart, {
+      type: 'bar',
+      data: {
+        labels: {{ cmi_labels|safe }},
+        datasets: [{
+          label: 'Distribution (Bar)',
+          data: {{ cmi_data|safe }},
+          backgroundColor: 'rgba(0, 123, 255, 0.6)', // Bar chart color
+          borderColor: 'rgba(0, 123, 255, 1)',
+          borderWidth: 1,
+        }, {
+          label: 'Distribution (Line)',
+          data: {{ cmi_data|safe }},
+          type: 'line', // Line chart
+          borderColor: 'rgba(255, 99, 132, 1)', // Line chart color
+          borderWidth: 2,
+          fill: false,
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          datalabels: {
+            display: true,
+            color: '#fff',
+            backgroundColor: 'rgba(0, 0, 0, 0.7)',
+            borderRadius: 4,
+            anchor: 'end',
+            align: 'end',
+          }
+        },
+        scales: {
+          y: {
+            display: true,
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'Count', // Label for the y-axis
+            },
+            ticks: {
+              stepSize: 1,
+            }
+          }//,
+          //yAxes: [{
+           // id: 'y-axis-2',
+           // type: 'linear',
+           // position: 'right',
+           // gridLines: {
+           //   drawOnChartArea: false,
+           // },
+          //}]
+        }
+      }
+    });
+
+
+    //commodity detailed report
+    const commodityBarChart = document.getElementById('commodityBar').getContext('2d');
+    const commodityBar = new Chart(commodityBarChart, {
+      type: 'bar',
+      data: {
+        labels: {{ commodity_labels|safe }},
+        datasets: [{
+          data: {{ commodity_data|safe }},
+          backgroundColor: 'rgba(255, 193, 7, 0.6)', // You can customize colors as needed
+          borderColor: 'rgba(255, 193, 7, 0.6)',
+          borderWidth: 1,
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          datalabels: {
+            display: true,
+            color: '#fff',
+            backgroundColor: 'rgba(255, 193, 7, 0.6)',
+            borderRadius: 4,
+            anchor: 'end',
+            align: 'end',
+          }
+        },
+        scales: {
+          y: {
+            display: true,
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'Count' // Label for the y-axis
+            },
+            ticks: {
+              stepSize: 1
+            }
+          }
+        },
+        skipNull: true, // Skip rendering data points with null or undefined labels
+      }
+    });
+
+    //knowledge detailed report
+    const labels = {{ knowledge_labels|safe }} ? {{ knowledge_labels|safe }}.filter(label => label !== 'undefined') : [];
+    const knowledgeBarChart = document.getElementById('knowledgeBar').getContext('2d');
+    const knowledgeBar = new Chart(knowledgeBarChart, {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [{
+          data: {{ knowledge_data|safe }},
+          backgroundColor: 'rgba(255, 99, 132, 0.6)', // You can customize colors as needed
+          borderColor: 'rgba(255, 99, 132, 0.6)',
+          borderWidth: 1,
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          datalabels: {
+            display: true,
+            color: '#fff',
+            backgroundColor: 'rgba(255, 99, 132, 0.6)',
+            borderRadius: 4,
+            anchor: 'end',
+            align: 'end',
+          }
+        },
+        scales: {
+          y: {
+            display: true,
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'Count' // Label for the y-axis
+            },
+            ticks: {
+              stepSize: 1
+            }
+          }
+        },
+        skipNull: true, // Skip rendering data points with null or undefined labels
+      }
+    });
+
+
+    //approved detailed report
+    const approvedBarChart = document.getElementById('approvedBar').getContext('2d');
+    // Create the bar chart
+    const approvedBar = new Chart(approvedBarChart, {
+        type: 'bar',
+        data: {
+            labels: [
+            {% if approved_chart_data %}
+                {% for data in approved_chart_data %}
+                    "{{ data.date_updated }}",
+                {% endfor %}
+              {% else %}
+                "No Available Data"
+                {% endif %}
+            ],
+            datasets: [{
+                label: 'Total Approved Per Day',
+                data: [
+                    {% if approved_chart_data %}
+                    {% for data in approved_chart_data %}
+                        {{ data.total }},
+                    {% endfor %}
+                    {% else %}
+                    0,
+                    {% endif %}
+                ],
+                backgroundColor: 'rgba(0, 123, 255, 0.6)', // Change the color as needed
+                borderColor: 'rgba(0, 123, 255, 1)',
+                borderWidth: 1,
+            }]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            x: {
+              display: true,
+              scaleLabel: {
+                display: true,
+                labelString: 'Date Updated'
+              },
+            },
+            y: {
+              display: true,
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: 'Count' // Label for the y-axis
+              },
+              ticks: {
+                stepSize: 1
+              }
+            }
+          }
+        }
+      });
+
+    //partial approved detailed report
+    const partialBarChart = document.getElementById('partialBar').getContext('2d');
+    // Create the bar chart
+    const partialBar = new Chart(partialBarChart, {
+        type: 'bar',
+        data: {
+            labels: [
+            {% if partial_approved_chart_data %}
+                {% for data in partial_approved_chart_data %}
+                    "{{ data.date_updated_partial }}",
+                {% endfor %}
+            {% else %}
+            "No Data Available"
+            {% endif %}
+            ],
+            datasets: [{
+                label: 'Total Partially Approved Per Day',
+                data: [
+                {% if partial_approved_chart_data %}
+                {% for data in partial_approved_chart_data %}
+                    {{ data.total_partial|safe }},
+                {% endfor %}
+                {% else %}
+                0,
+                {% endif %}
+                ],
+                backgroundColor: 'rgba(255, 193, 7, 0.6)', // Change the color as needed
+                borderColor: 'rgba(255, 193, 7, 0.6)',
+                borderWidth: 1,
+            }]
+        },
+        options: {
+          responsive: true,
+          scales: {
+              x: {
+                  display: true,
+                  scaleLabel: {
+                      display: true,
+                      labelString: 'Date Updated'
+                  }
+              },
+              y: {
+                display: true,
+                beginAtZero: true,
+                title: {
+                  display: true,
+                  text: 'Count' // Label for the y-axis
+                },
+                ticks: {
+                    stepSize: 1
+                }
+              }
+            }
+      }
+    });
+
+    //Pending detailed report
+    const pendingBarChart = document.getElementById('pendingBar').getContext('2d');
+    // Create the bar chart
+    const pendingBar = new Chart(pendingBarChart, {
+        type: 'bar',
+        data: {
+          labels: [
+          {% if pending_chart_data %}
+              {% for data in pending_chart_data %}
+                  "{{ data.date_updated_pending }}",
+              {% endfor %}
+          {% else %}
+              "No data available",
+          {% endif %}
+          ],
+          datasets: [{
+              label: 'Total Pending Per Day',
+              data: [
+                  {% if pending_chart_data %}
+                      {% for data in pending_chart_data %}
+                          {{ data.total_pending }},
+                      {% endfor %}
+                  {% else %}
+                      0,
+                  {% endif %}
+                  ],
+              backgroundColor: 'rgba(255, 99, 132, 0.6)', // Change the color as needed
+              borderColor: 'rgba(255, 99, 132, 0.6)',
+              borderWidth: 1,
+          }]
+        },
+        options: {
+          responsive: true,
+          scales: {
+              x: {
+                  display: true,
+                  scaleLabel: {
+                      display: true,
+                      labelString: 'Date Updated'
+                  }
+              },
+              y: {
+                display: true,
+                beginAtZero: true,
+                title: {
+                  display: true,
+                  text: 'Count' // Label for the y-axis
+                },
+                ticks: {
+                    stepSize: 1
+                }
+              }
+            }
+      }
+    });
+
+
+
+  </script>
+{% endblock %}

@@ -1,0 +1,60 @@
+.card-login {
+    margin: 0 auto;
+    width: 500px; /* adjust desired width for card */
+    padding: 5px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    /* center text within the card */
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    /* Adjust card background color as needed */
+  }
+
+  .login-raise {
+    width: 200px; /* adjust width as needed */
+    height: auto;
+    display: block; /* ensures image displays as block element */
+    margin: 0 auto; /* centers the image horizontally */
+  }
+  
+  .login-header h1 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .login-button {
+    margin-top: 1rem;
+    text-align: right;
+
+  }
+  
+  .login-button button {
+    margin: 0.5rem;
+  }
+  
+  .form-group {
+    display: flex;
+    align-items: center;
+    gap: 1rem; /* Add a small gap between label and input */
+  }
+  
+  .form-group label {
+    flex: 0 0 150px; /* Set desired label width */
+    text-align: right;
+  }
+  
+  .form-control {
+    flex: 1; /* Makes the input field occupy the remaining space */
+  }
+  
+/* Media query for smaller screens */
+@media screen and (max-width: 767px) {
+  .card-login {
+    width: 100%;
+  }
+
+  .form-group label {
+    flex: 0 0 100px;
+  }
+}

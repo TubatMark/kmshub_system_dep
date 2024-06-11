@@ -1,0 +1,106 @@
+{% extends 'base/index.html' %}
+{% load static %}
+{% block title %}
+Most Search Term
+      {% endblock %}
+{% block stylesheet %}  
+
+  <link rel="stylesheet" href="{% static 'style/general.css/general.discussion.forum.css' %}" />
+{% endblock  %}
+{% block content %}
+  <br />
+  <div class="main-content">
+    <div class="container" style="min-height: 63vh;">
+      <h1 style="font-weight: bolder; text-align: center;">SEARCH TERM ANALYTICS</h1>
+      <h3 style="text-align: center; background-color: aquamarine; border-radius: 0; font-size: 15px;">
+        <span style="font-weight: bold; margin-left: 50px;"><i class="fas fa-medal"></i> RANK: {{ rank }}</span>
+        <span style="font-weight: bold; margin-left: 50px;"><i class="fa-solid fa-tag"></i> KEYWORD: {{ terms.search_term|upper }}</span>
+        <span style="font-weight: bold; margin-left: 50px;"><i class="fas fa-chart-bar"></i> FREQUENCY: {{ total_frequency }}</span>
+      </h3>
+
+      <h3 style="font-size: 17px; font-weight: bold;"><span style="text-decoration: underline;">{{ terms.search_term|upper }}</span> RELATED TOPICS</h3>
+      
+        <div class="row" style="align-items: center; justify-content: center;">
+          {% if discussions %}
+          <div class="col-md-8">
+            {% for discussion in discussions %}
+              <div class="card" style="">
+                <div class="card-body">
+                  <a href="{% url 'general-forum-post' id=discussion.discussion_id %}" style="text-decoration: none;">{{ discussion.discussion_title|capfirst }} <span style="left: 590px; position: absolute;">| AUTHOR</span></a>
+                </div>
+              </div>
+              <br />
+            {% endfor %}
+          </div>
+          {% else %}
+          <div class="col-md-8">
+            <div class="card" style="">
+              <div class="card-body">
+                <span>No Discussions related to {{ terms.search_term|capfirst }}</span>
+              </div>
+            </div>
+            <br />
+          </div>
+          {% endif %}
+          <div class="col-md-3">
+            <div id="most-searched">
+              <h4 style="text-align: center; background-color: #283739; color: white; font-weight: bolder;">Most Search Topics</h4>
+              <ul>
+                {% if top_searched_terms %}
+                  {% for term in top_searched_terms %}
+                    <li>
+                      <a href="{% url 'general-search-term' id=term.first_search_id  %}" style="text-decoration: none;">{{ term.search_term|capfirst }}</a>
+                    </li>
+                  {% endfor %}
+                {% else %}
+                  <span>No Topics</span>
+                {% endif %}
+              </ul>
+            </div>
+          </div>
+
+          <h3 style="font-size: 17px; font-weight: bold;">Term Frequency Visualization:</h3>
+        <canvas id="termFrequencyChart" width="200" height="50"></canvas>
+        </div>
+        
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block script %}
+<script>
+  var searchTerms = [];
+  var frequencies = [];
+  {% for term in all_terms_with_frequency %}
+    searchTerms.push("{{ term.search_term|escapejs|capfirst }}");
+    frequencies.push({{ term.total_frequency }});  // Corrected attribute name
+  {% endfor %}
+  var ctx = document.getElementById('termFrequencyChart').getContext('2d');
+  var termFrequencyChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: searchTerms,
+      datasets: [{
+        label: 'Term Frequency',
+        data: frequencies, 
+        borderColor: 'blue',
+        borderWidth: 1
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: {
+            callback: function(value) {
+              return Number.isInteger(value) ? value : '';
+            }
+          }
+        }
+      }
+    }
+  });
+</script>
+
+{% endblock %}

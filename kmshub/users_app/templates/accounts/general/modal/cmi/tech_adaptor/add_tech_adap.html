@@ -1,0 +1,136 @@
+<!-- Add Program modal -->
+<div id="addAdaptorModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="addAdaptorModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header" style="background-color: #0C356A;">
+        <h5 class="modal-title" id="addAdaptorModalLabel" style="font-weight: bolder; color: white;">Add New Technology Adoptor</h5>
+        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      </div>
+      <form action="{% url 'add_adaptor' %}" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="modal-body">
+          <div class="row">
+            <div class="col">
+              <div class="form-group">
+                <label for="first_name" class="font-weight-bold">First Name <span style="color: green;">*</span></label>
+                <input type="text" class="form-control" id="first_name" name="first_name" required />
+              </div>
+            </div>
+
+            <div class="col">
+              <div class="form-group">
+                <label for="middle_name" class="font-weight-bold">Middle Name</label>
+                <input type="text" class="form-control" id="middle_name" name="middle_name" />
+              </div>
+            </div> 
+
+            <div class="col">
+              <div class="form-group">
+                <label for="last_name" class="font-weight-bold">Last Name <span style="color: green;">*</span></label>
+                <input type="text" class="form-control" id="last_name" name="last_name" required />
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col">
+              <div class="form-group">
+                <label for="email" class="font-weight-bold">Email</label>
+                <input type="email" class="form-control" id="email" name="email" />
+              </div>
+            </div>
+
+            <div class="col">
+              <div class="form-group">
+                <label for="contact_num" class="font-weight-bold">Contact</label>
+                <input type="number" class="form-control" id="contact_num" name="contact_num" />
+              </div>
+            </div>
+
+            <div class="col">
+              <div class="form-group">
+                <label for="date_birth" class="font-weight-bold">Birth Date</label>
+                <input type="date" class="form-control" id="date_birth" name="date_birth" required />
+              </div>
+            </div>
+
+            <div class="col">
+              <div class="form-group">
+                <label for="sex" class="font-weight-bold">Sex</label>
+                <select class="form-control" id="sex" name="sex">
+                  <option value="" disabled selected>Select Sex</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col">
+              <div class="form-group">
+                <label for="address" class="font-weight-bold">Address</label>
+                <input type="text" class="form-control" id="address" name="address" required />
+              </div>
+            </div>
+
+            <div class="col">
+              <div class="form-group">
+                <label for="enterprise" class="font-weight-bold">Enterprise</label>
+                <input type="text" class="form-control" id="enterprise" name="enterprise" required />
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <div class="form-group">
+                <label for="latitude" class="font-weight-bold">Latitude</label>
+                <input type="text" step="any"  class="form-control" id="latitude" name="latitude" min="-90" max="90" required readonly />
+              </div>
+            </div>
+
+            <div class="col">
+              <div class="form-group">
+                <label for="longitude" class="font-weight-bold">Longitude</label>
+                <input type="text" step="any"  class="form-control" id="longitude" name="longitude" min="-180" max="180" required readonly />
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col">
+              <label for="technology" class="font-weight-bold">Technology</label>
+              <select class="form-control" id="technology" name="technology">
+                <option value="" selected disabled>Select Technology</option>
+                {% for tech in technology %}
+                  <option value="{{ tech.tech_id }}">{{ tech.tech_title }}</option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <div class="col-3">
+              <div class="form-group">
+                <label for="date_adapted" class="font-weight-bold">Date Adopted</label>
+                <input type="date" class="form-control" id="date_adapted" name="date_adapted" required />
+              </div>
+            </div>
+          </div>
+          <!-- New row to display selected options -->
+          <div class="row">
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="selected-technology" style="font-weight: bold;">Selected Technology:</label>
+                <ul id="selected-technology"></ul>
+                <textarea name="tech_ids" id="tech_ids" hidden></textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal" id="close-clear-modal">Close</button>
+          <button type="submit" class="btn btn-primary">Add Technology Adaptor</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

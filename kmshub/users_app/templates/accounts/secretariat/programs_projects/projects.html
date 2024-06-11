@@ -1,0 +1,45 @@
+{% extends 'base/secretariat.html' %}
+{% load static %}
+{% block title %}
+  Programs
+{% endblock %}
+{% block stylesheet %}
+  {% comment %} <link rel="stylesheet" href="{% static 'style/secretariat.css/programs.css' %}" /> {% endcomment %}
+{% endblock %}
+
+{% block content %}
+  <br />
+  <div class="main-content">
+    <div class="container">
+      <div class="head-programs">
+        <h2 style="font-weight: bolder;">{{ program.program_title|upper }} PROJECTS</h2>
+      </div>
+      <hr />
+      <div class="project-container">
+        <div class="row">
+          {% if projects %}
+            {% for project in projects %}
+              
+              <div class="col-md-12">
+                <div class="card mb-2">
+                  <div class="card-projects" style="text-align: justify;margin-left: 10px; margin-right: 10px;">
+                    <a href="{% url 'secretariat-individual-project' id=project.project_id %}" style="font-size: 18px; font-weight: bold; text-decoration: none; color: green;">{{ project.project_title|capfirst }}</a>
+                  </div>
+                  <hr>
+                  <div>
+                    <span><span style="font-weight: bold; margin-left: 10px;">Started:</span> {{ project.project_started }}</span>
+                    <span><span style="font-weight: bold; margin-left: 10px;">Status:</span> {{ project.project_status }}</span>
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          {% else %}
+            <div class="card mb-2">No projects yet.</div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% include 'accounts/secretariat/modals/programsModal/add_program.html' %}
+{% endblock %}

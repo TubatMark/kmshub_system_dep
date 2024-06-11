@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "leaflet-easyprint": "^2.1.9"
+  }
+}

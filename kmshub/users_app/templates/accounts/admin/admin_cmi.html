@@ -1,0 +1,549 @@
+{% extends 'base/admin.html' %}
+{% load static %}
+{% block title %}
+  Admin CMI Management
+{% endblock %}
+{% block stylesheet %}
+  <link rel="stylesheet" href="{% static 'style/admin.css/admin.commodities.css' %}" />
+{% endblock %}
+
+{% block content %}
+  <br />
+  <div class="main-content" id="main-content">
+    <div class="container">
+      <h3 style="font-weight:bold;">ADMIN CMI MANAGEMENT</h3>
+      <hr style="color: black;" />
+
+      <div class="animated fadeIn">
+        <div class="row">
+          
+
+          <div class="col-lg-3 col-md-6">
+            <div class="card">
+              <div class="card-body">
+                <div class="stat-widget-five">
+                  <div class="stat-icon dib flat-color-3">
+                    <span class="mdi mdi-account-multiple-plus-outline"></span>
+                  </div>
+                  <div class="stat-content">
+                    <div class="text-left dib">
+                      <div class="stat-text">
+                        <span class="count">
+                          {% if total_request_cmi %}
+                            {{ total_request_cmi }}
+                          {% else %}
+                            None
+                          {% endif %}
+                        </span>
+                      </div>
+                      <div class="stat-heading">Request CMI</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-3 col-md-6">
+            <div class="card">
+              <div class="card-body">
+                <div class="stat-widget-five">
+                  <div class="stat-icon dib flat-color-5">
+                    <span class="mdi mdi-account-multiple-check-outline"></span>
+                  </div>
+                  <div class="stat-content">
+                    <div class="text-left dib">
+                      <div class="stat-text">
+                        <span class="count">
+                          {% if total_approved_cmi %}
+                            {{ total_approved_cmi }}
+                          {% else %}
+                            None
+                          {% endif %}
+                        </span>
+                      </div>
+                      <div class="stat-heading">Approved CMI</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-3 col-md-6">
+            <div class="card">
+              <div class="card-body">
+                <div class="stat-widget-five">
+                  <div class="stat-icon dib flat-color-cmi">
+                    <span class="mdi mdi-account-group-outline"></span>
+                  </div>
+                  <div class="stat-content">
+                    <div class="text-left dib">
+                      <div class="stat-text">
+                        <span class="count">
+                          {% if total_cmi %}
+                            {{ total_cmi }}
+                          {% else %}
+                            None
+                          {% endif %}
+                        </span>
+                      </div>
+                      <div class="stat-heading">Total CMI</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-3 col-md-6">
+            <div class="card">
+              <div class="card-body">
+                <div class="stat-widget-five">
+                  <div class="stat-icon dib flat-color-2">
+                    <span class="mdi mdi-account-outline"></span>
+                  </div>
+                  <div class="stat-content">
+                    <div class="text-left dib">
+                      <div class="stat-text">
+                        <span class="text">
+                          {% if total_cmi_team %}
+                            {{ total_cmi_team }}
+                          {% else %}
+                            0
+                          {% endif %}
+                        </span>
+                      </div>
+                      <div class="stat-heading">Total Team</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="buttons" style="margin: 15px 0 0px 0;">
+        <button class="btn text-white" id="cmi_btn" style="background-color: #0174BE;">Pending CMI/s</button>
+        <button class="btn text-white" id="cmi_team" style="background-color: #0174BE;">CMI/s Cluster Representatives</button>
+      </div>
+      <hr />
+
+      <div class="table-container" id="table-container">
+        <table id="cmiTable" class="cmi-table table table-bordered">
+          <thead style="color: #fff; font-size: 13px; background-color: #0C356A; font-weight: bolder;">
+            <tr>
+              <th>CMI</th>
+              <th>Meaning</th>
+              <th>Coordinates</th>
+              <th>Logo</th>
+              <th>Date Created</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody style="font-size: 12px;">
+            {% for cmi in cmis %}
+              {% if cmi.status == 'Approved' %}
+                <tr>
+                  <td>{{ cmi.cmi_name|upper }}</td>
+                  <td>{{ cmi.cmi_meaning|capfirst }}</td>
+                  <td>
+                    {% if cmi.latitude %}
+                      {{ cmi.latitude }},{{ cmi.longitude }}
+                    {% else %}
+                      None
+                    {% endif %}
+                  </td>
+                  <td>
+                    {% if cmi.cmi_image %}
+                      <img src="{{ cmi.cmi_image.url }}" alt="{{ cmi.cmi_name }} Image" style="max-width: 50px; max-height: 50px; display: block; margin: 0 auto;" />
+                    {% else %}
+                      No Image
+                    {% endif %}
+                  </td>
+                  <td>{{ cmi.date_created }}</td>
+                  <td>
+                    <div style="display: flex;">
+                      <button type="button" style="background-color: #FFC436; color: #fff;" class="btn btn-sm edit-btn" data-toggle="modal" data-target="#editCmiModal" data-cmiid="{{ cmi.cmi_id }}" data-cminame="{{ cmi.cmi_name }}" data-cmimeaning="{{ cmi.cmi_meaning }}" data-cmidescription="{{ cmi.cmi_description|capfirst }}" data-cmiimage="{{ cmi.cmi_image.url }}" data-datecreated="{{ cmi.date_created|capfirst }}" data-address="{{ cmi.address|capfirst }}" data-contactnumber="{{ cmi.contact_num }}" data-email="{{ cmi.email }}" data-latitude="{{ cmi.latitude }}" data-longitude="{{ cmi.longitude }}"><i class="fa-solid fa-pen-to-square"></i></button>
+
+                      <button type="button" style="background-color: #0174BE; color: #fff; margin-left: 4px;" class="btn btn-sm view-btn" data-toggle="modal" data-target="#viewCmiModal" data-cmiid="{{ cmi.cmi_id }}" data-cminame="{{ cmi.cmi_name }}" data-cmimeaning="{{ cmi.cmi_meaning }}" data-cmidescription="{{ cmi.cmi_description|capfirst }}" data-cmiimage="{{ cmi.cmi_image.url }}" data-datecreated="{{ cmi.date_created|capfirst }}" data-address="{{ cmi.address|capfirst }}" data-contactnumber="{{ cmi.contact_num }}" data-email="{{ cmi.email }}" data-coordinates="{{ cmi.latitude }}, {{ cmi.longitude }}"><i class="fa-solid fa-eye"></i></button>
+
+                      <a data-placement="top" data-toggle="tooltip" title="delete" href="/delete-cmi/{{ cmi.cmi_id }}" class="btn btn-danger btn-sm" style="margin-left: 4px;"><i class="fa-solid fa-trash"></i></a>
+                    </div>
+                  </td>
+                </tr>
+                {% include 'accounts/admin/modals/cmi/edit_cmi.html' %}
+              {% endif %}
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="pending-container" id="pending-container">
+        <table id="pendingCMI" class="cmi-pending-table table table-bordered">
+          <thead style="color: #fff; font-size: 13px; background-color: #0C356A; font-weight: bolder;">
+            <tr>
+              <th>CMI</th>
+              <th>Meaning</th>
+              <th>Coordinates</th>
+              <th>Logo</th>
+              <th>Date Created</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody style="font-size: 12px;">
+            {% for cmi in pending_cmis %}
+              <tr>
+                <td>{{ cmi.cmi_name|upper }}</td>
+                <td>{{ cmi.cmi_meaning|capfirst }}</td>
+                <td>
+                  {% if cmi.latitude %}
+                    {{ cmi.latitude }},{{ cmi.longitude }}
+                  {% else %}
+                    None
+                  {% endif %}
+                </td>
+                <td>
+                  {% if cmi.cmi_image %}
+                    <img src="{{ cmi.cmi_image.url }}" alt="{{ cmi.cmi_name }} Image" style="max-width: 50px; max-height: 50px; display: block; margin: 0 auto;" />
+                  {% else %}
+                    No Image
+                  {% endif %}
+                </td>
+                <td>{{ cmi.date_created }}</td>
+                <td>
+                  <div style="display: flex;">
+                    <form method="post" action="{% url 'approve-request' id=cmi.cmi_id name='CMI' %}">
+                      {% csrf_token %}
+                      <button type="submit" title="Approve" style="background-color: #FFC436; color: #fff;" class="btn btn-sm approve-btn"><i class="fa-solid fa-check"></i></button>
+                    </form>
+                    <a data-placement="top" data-toggle="tooltip" title="delete" href="/delete-additional-request/{{ cmi.cmi_id }}/CMI/" class="btn btn-danger btn-sm" style="margin-left: 4px;"><i class="fa-solid fa-trash"></i></a>
+                  </div>
+                </td>
+              </tr>
+              {% include 'accounts/admin/modals/cmi/edit_cmi.html' %}
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <!-- cmi team -->
+      <div class="team-table-container " id="team-table-container" style="display: none;  ">
+        <table id="cmiTeamTable" class="cmi-team-table table table-bordered nowrap" style="width:100%;">
+          <thead style="color: #fff; font-size: 13px; background-color: #0C356A; font-weight: bolder;">
+            <tr>
+              <th scope="col">ID</th>
+              <th scope="col">CMI</th>
+              <th scope="col">First Name</th>
+              <th scope="col">Middle Name</th>
+              <th scope="col">Last Name</th>
+              <th scope="col">Email</th> <!-- Remove fixed width -->
+              <th scope="col">Contact Number</th>
+              <th scope="col">Sex</th>
+              <th scope="col">Date Appointed</th>
+              <th scope="col">Actions</th>
+            </tr>
+          </thead>
+          <tbody style="font-size: 12px;">
+            {% for team in cmi_team %}
+              <tr>
+                <th scope="row">{{ team.team_id }}</th>
+                <td>{{ team.cmi.cmi_name }}</td>
+                <td>{{ team.first_name|capfirst }}</td>
+                <td>{{ team.middle_name|capfirst }}</td>
+                <td>{{ team.last_name|capfirst }}</td>
+                <td>{{ team.email }}</td>
+                <td>{{ team.contact_num }}</td>
+                <td>{{ team.sex|capfirst }}</td>
+                <td>{{ team.date_appointed }}</td>
+                <td>
+                  <div style="display: flex;">
+                    <!-- Edit Button -->
+                    <button type="button" style="background-color: #FFC436; color: #fff;" class="btn btn-sm edit-btn" title="Edit" data-toggle="modal" data-target="#cmiTeamEditModal{{team.team_id}}"><i class="fas fa-edit"></i></button>
+
+                    <!-- View Button -->
+                    <button type="button" style="background-color: #0174BE; color: #fff; margin-left: 4px;" class="btn btn-sm view-btn" title="View" data-toggle="modal" data-target="#cmiTeamRegistrationModal{{team.team_id}}"><i class="fas fa-eye"></i></button>
+
+                    <!-- Delete Button -->
+                    <a data-placement="top" data-toggle="tooltip" title="delete" href="{% url 'delete-team' id=team.team_id %}" class="btn btn-danger btn-sm" style="margin-left: 4px;"><i class="fa-solid fa-trash"></i></a>
+                  </div>
+                </td>
+              </tr>
+              {% include 'accounts/admin/modals/cmi/cmi_team/view_team.html' %}
+              {% include 'accounts/admin/modals/cmi/cmi_team/edit_team.html' %}
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  {% include 'accounts/admin/modals/cmi/cmi_team/add_team.html' %}
+  {% include 'accounts/admin/modals/cmi/add_cmi.html' %}
+  {% include 'accounts/admin/modals/cmi/view_cmi.html' %}
+{% endblock %}
+
+{% block script %}
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      var cmiTable = document.getElementById('table-container')
+      var pendingTable = document.getElementById('pending-container')
+      var teamTable = document.getElementById('team-table-container')
+      var cmiBtn = document.getElementById('cmi_btn')
+      var teamBtn = document.getElementById('cmi_team')
+    
+      // Initially show the Pending CMI Table and hide the CMI Table
+      cmiTable.style.display = 'block'
+      pendingTable.style.display = 'none'
+      cmiBtn.textContent = 'Pending CMI/s' // Set initial button text
+    
+      // Add click event listener to the CMI Button
+      cmiBtn.addEventListener('click', function () {
+        teamTable.style.display = 'none' // Hide the team table if it's already visible
+        // Check if the Pending CMI Table is currently displayed
+        if (cmiTable.style.display === 'block') {
+          // If so, hide the Pending CMI Table and display the CMI Table
+          cmiTable.style.display = 'none'
+          pendingTable.style.display = 'block'
+          // Change the text of the button to indicate the currently displayed table
+          cmiBtn.textContent = 'Approved CMI/s'
+        } else {
+          // If the CMI Table is currently displayed, hide it and display the Pending CMI Table
+          pendingTable.style.display = 'none'
+          cmiTable.style.display = 'block'
+          // Change the text of the button to indicate the currently displayed table
+          cmiBtn.textContent = 'Pending CMI/s'
+        }
+      })
+    
+      teamBtn.addEventListener('click', function () {
+        console.log('team button click')
+        cmiTable.style.display = 'none' // Hide the CMI table
+        pendingTable.style.display = 'none' // Hide the pending CMI table
+    
+        if (teamTable.style.display === 'none') {
+          teamTable.style.display = 'block' // Show the team table
+        } else {
+          teamTable.style.display = 'none' // Hide the team table if it's already visible
+        }
+      })
+    })
+    
+    $(document).ready(function () {
+      $('.view-btn').on('click', function () {
+        var cmiId = $(this).data('cmiid')
+        var cmiName = $(this).data('cminame')
+        var cmiMeaning = $(this).data('cmimeaning')
+        var cmiDescription = $(this).data('cmidescription')
+        var cmiImg = $(this).data('cmiimage')
+        var dateCreated = $(this).data('datecreated')
+        var address = $(this).data('address')
+        var contactNumber = $(this).data('contactnumber')
+        var email = $(this).data('email')
+        var coordinates = $(this).data('coordinates')
+    
+        $('#viewCmiModal').find('#viewCmiId').text(cmiId)
+        $('#viewCmiModal').find('#viewCmiName').text(cmiName)
+        $('#viewCmiModal').find('#viewCmiMeaning').text(cmiMeaning)
+        $('#viewCmiModal').find('#viewCmiDescription').text(cmiDescription)
+        $('#viewCmiModal').find('#viewCmiImg').attr('src', cmiImg)
+        $('#viewCmiModal').find('#viewDateCreated').text(dateCreated)
+        $('#viewCmiModal').find('#viewAddress').text(address)
+        $('#viewCmiModal').find('#viewContactNumber').text(contactNumber)
+        $('#viewCmiModal').find('#viewEmail').text(email)
+        $('#viewCmiModal').find('#viewCoordinates').text(coordinates)
+      })
+    })
+    
+    $(document).ready(function () {
+      // Event listener for the edit button
+      $('.edit-btn').on('click', function () {
+        // Retrieve CMI details from the data attributes
+        var cmiId = $(this).data('cmiid')
+        var cmiName = $(this).data('cminame')
+        var cmiMeaning = $(this).data('cmimeaning')
+        var cmiDescription = $(this).data('cmidescription')
+        var cmiAddress = $(this).data('address')
+        var cmiContactNumber = $(this).data('contactnumber')
+        var cmiEmail = $(this).data('email')
+        var cmilatitude = $(this).data('latitude')
+        var cmilongitude = $(this).data('longitude')
+    
+        // Populate modal fields with CMI-specific data
+        $('#editCmiModal').find('#editCmiName').val(cmiName)
+        $('#editCmiModal').find('#editCmiMeaning').val(cmiMeaning)
+        $('#editCmiModal').find('#editCmiDescription').val(cmiDescription)
+        $('#editCmiModal').find('#editCmiAddress').val(cmiAddress)
+        $('#editCmiModal').find('#editCmiContactNumber').val(cmiContactNumber)
+        $('#editCmiModal').find('#editCmiEmail').val(cmiEmail)
+        $('#editCmiModal').find('#editLatitude').val(cmilatitude)
+        $('#editCmiModal').find('#editLongitude').val(cmilongitude)
+    
+        // Update form action attribute with the CMI ID
+        $('#editCmiModal')
+          .find('form')
+          .attr('action', '/edit-cmis/' + cmiId + '/')
+      })
+    })
+    
+    //add account modal
+    function addCmi() {
+      console.log('Add Data button clicked');
+  
+      Swal.fire({
+          title: 'Do you want to add new CMI?',
+          showCancelButton: true,
+          confirmButtonText: 'Yes',
+          cancelButtonText: 'No',
+          icon: 'question',
+          preConfirm: () => {
+              // Logic to handle "Yes" goes here
+              // For example, redirecting the user
+              console.log('User confirm the operation so redirect!!!');
+              window.location.href = '{% url "map" name="cmi" %}'; // Adjust the URL as needed
+          }
+      }).then((result) => {
+          if (result.isDismissed) {
+              // Logic to handle "No" goes here
+              console.log('User cancelled the operation');
+          }
+      });
+    }
+  
+    
+    $(document).ready(function () {
+      let table = $('#cmiTable').DataTable({
+        language: {
+          lengthMenu: '_MENU_',
+          search: '',
+          searchPlaceholder: 'Search...'
+        },
+        lengthMenu: [
+          [7, 10, 25, -1],
+          [7, 10, 25, 'All']
+        ],
+        paging: true,
+        lengthChange: true,
+        autoWidth: false,
+        bInfo: true,
+        bSort: true,
+        responsive: true,
+        buttons: [
+          {
+            text: 'CSV',
+            extend: 'csv'
+          },
+          {
+            text: 'PDF',
+            extend: 'pdf'
+          },
+          {
+            text: 'ADD',
+            className: 'btn btn-primary',
+            action: function () {
+              addCmi()
+            }
+          }
+        ],
+        dom: '<"row"<"col-md-1"l><"col-md-8"B><"col-md-3"f>>' + '<"row"<"col-md-12"tr>>' + '<"row"<"col-md-5"i><"col-md-7"p>>'
+      })
+    })
+    
+    $(document).ready(function () {
+      let table = $('#pendingCMI').DataTable({
+        language: {
+          lengthMenu: '_MENU_',
+          search: '',
+          searchPlaceholder: 'Search...'
+        },
+        lengthMenu: [
+          [7, 10, 25, -1],
+          [7, 10, 25, 'All']
+        ],
+        paging: true,
+        lengthChange: true,
+        autoWidth: false,
+        bInfo: true,
+        bSort: true,
+        responsive: true,
+        buttons: [
+          {
+            text: 'CSV',
+            extend: 'csv'
+          },
+          {
+            text: 'PDF',
+            extend: 'pdf'
+          }
+        ],
+        dom: '<"row"<"col-md-1"l><"col-md-8"B><"col-md-3"f>>' + '<"row"<"col-md-12"tr>>' + '<"row"<"col-md-5"i><"col-md-7"p>>'
+      })
+    })
+    
+    //add account modal
+    function addCmiTeam() {
+      // Add your logic here for adding data
+      $('#cmiTeamRegistrationModal').modal('show')
+    }
+    
+    $(document).ready(function () {
+      let table = $('#cmiTeamTable').DataTable({
+        autoWidth: false,
+        language: {
+          lengthMenu: '_MENU_',
+          search: '',
+          searchPlaceholder: 'Search...'
+        },
+        lengthMenu: [
+          [7, 10, 25, -1],
+          [7, 10, 25, 'All']
+        ],
+        paging: true,
+        lengthChange: true,
+        bInfo: true,
+        bSort: true,
+        responsive: true,
+        buttons: [
+          {
+            text: 'CSV',
+            extend: 'csv'
+          },
+          {
+            text: 'PDF',
+            extend: 'pdf'
+          },
+          {
+            text: 'ADD',
+            className: 'btn btn-primary',
+            action: function () {
+              addCmiTeam()
+            }
+          }
+        ],
+        dom: '<"row"<"col-md-1"l><"col-md-8"B><"col-md-3"f>>' + '<"row"<"col-md-12"tr>>' + '<"row"<"col-md-5"i><"col-md-7"p>>'
+      })
+    })
+  </script>
+  {% if messages %}
+    {% for message in messages %}
+      {% if message.tags == 'success' %}
+        <script>
+          // Display SweetAlert success message
+          Swal.fire({
+            icon: 'success',
+            title: 'Success!',
+            text: '{{ message }}'
+          })
+        </script>
+      {% else %}
+        <script>
+          // Display SweetAlert success message
+          Swal.fire({
+            icon: 'error',
+            title: 'Error!',
+            text: '{{ message }}'
+          })
+        </script>
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+{% endblock %}

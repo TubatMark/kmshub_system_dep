@@ -1,0 +1,29 @@
+<!-- Add Program modal -->
+<div id="editProgramModal{{program.program_id}}" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="editProgramModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editProgramModalLabel" style="font-weight: bolder;">Update Program</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        </div>
+        <form action="{% url 'secretariat-edit-program' id=program.program_id %}" method="POST" enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="modal-body">
+            <div class="form-group">
+              <label for="program_title" class="font-weight-bold">Program Title</label>
+              <input type="text" class="form-control" id="program_title" name="program_title" value="{{program.program_title}}" />
+            </div>
+            <div class="form-group">
+              <label for="program_description" class="font-weight-bold">Program Description</label>
+              <textarea class="form-control" id="program_description" name="program_description" >{{program.program_description}}</textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Update Program</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  

@@ -1,0 +1,185 @@
+<!-- View Edit Request modal -->
+<div id="viewEditRequestModal{{ edits.editRequest_id }}" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="viewEditRequestModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header" style="background-color: #0C356A;">
+        <h5 class="modal-title text-white" id="viewEditRequestModalLabel" style="font-weight: bolder;">Edit Request Assessment</h5>
+        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      </div>
+        <div class="modal-body">
+          <h6 style="font-weight: bold; text-align: center;">CURRENT</h6>
+          <div class="form-group">
+            <label for="resources_title" class="font-weight-bold">Resources Title</label>
+            <div class="resources_title" style="width: auto; border: 1px solid #ddd; padding: 10px; border-radius: 4px;">{{ edits.resource.resources_title|capfirst }}</div>
+          </div>
+          <div class="form-group">
+            <label for="resources_description" class="font-weight-bold">Program Description</label>
+            <div class="resources_description" style="width: auto; border: 1px solid #ddd; padding: 10px; border-radius: 4px;">{{ edits.resource.resources_description|capfirst }}</div>
+          </div>
+          <div class="row">
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="commodity" class="font-weight-bold">Commodity</label>
+                <div class="commodity" style="width: auto; border: 1px solid #ddd; padding: 10px; border-radius: 4px;">
+                  {% for commodities in edits.resource.commodity.all %}
+                  <span style="background-color: #7BD3EA; padding: 0 7px; color: black; font-weight: bold; border-radius: 4px;">{{ commodities.commodity_name }}</span>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="cmi" class="font-weight-bold">CMI</label>
+                <div class="cmi" style="width: auto; border: 1px solid #ddd; padding: 10px; border-radius: 4px;">
+                  {% for cmis in edits.resource.cmi.all %}
+                          <span style="background-color: #7BD3EA; padding: 0 7px; color: black; font-weight: bold; border-radius: 4px;">{{ cmis.cmi_name }}</span>
+                    {% endfor %}
+                </div>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="resources" class="font-weight-bold">Knowledge Resources</label>
+                <div class="resources" style="width: auto; border: 1px solid #ddd; padding: 10px; border-radius: 4px;">
+                  {% for knowledge in edits.resource.knowledge.all %}
+                  <span style="background-color: #7BD3EA; padding: 0 7px; color: black; font-weight: bold; border-radius: 4px;">{{ knowledge.knowledge_title }}</span>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+          </div>
+          <hr />
+          <h6 style="font-weight: bold; text-align: center; color: green;">SUGGESTED UPDATES</h6>
+            {% if edits.edited_title %}
+            <div class="form-group row">
+                <div class="col-md-10">
+                <label for="edited_title" class="font-weight-bold" style="color: green;">Resources Title</label>
+                <div class="edited_title" style="width: auto; border: 1px solid #ddd; padding: 10px; border-radius: 4px;">{{ edits.edited_title|capfirst }}</div>
+                </div>
+                <div class="col-md-2">
+                <label for="edited_title" class="font-weight-bold" style="color: green;">Actions</label>
+                <div class="edited_title" style="display: flex; justify-content: center; align-items: center; width: auto; border: 1px solid #ddd; padding: 7px; border-radius: 4px; text-align: center;">
+                    <form method="post" action="{% url 'individual-approve-edit' id=edits.editRequest_id name="edited_title" %}">
+                    {% csrf_token %}
+                    <button type="submit" title="Approve" class="btn btn-warning btn-sm approve-btn"><i class="fa-solid fa-check"></i></button>
+                    </form>
+                    <form method="post" action="{% url 'delete-individual-request' id=edits.editRequest_id name="edited_title"%}">
+                      {% csrf_token %}
+                      <button type="submit" title="Disapprove" class="btn btn-danger btn-sm approve-btn" style="padding: 4px 11px; margin-left: 4px;"><i class="fa fa-times"></i></button>
+                  </form>
+                </div>
+                </div>
+            </div>
+            {% endif %}
+
+            {% if edits.edited_description %}
+            <div class="form-group row">
+              <div class="col-md-10">
+                  <label for="edited_description" class="font-weight-bold" style="color: green;">Program Description</label>
+                  <div class="edited_description" style="width: auto; border: 1px solid #ddd; padding: 10px; border-radius: 4px;">{{ edits.edited_description|capfirst }}</div>
+              </div>
+              <div class="col-md-2">
+                  <label for="edited_description" class="font-weight-bold" style="color: green;">Actions</label>
+                  <div class="edited_description" style="display: flex; justify-content: center; align-items: center; width: auto; border: 1px solid #ddd; padding: 7px; border-radius: 4px; text-align: center;">
+                      <form method="post" action="{% url 'individual-approve-edit' id=edits.editRequest_id name="edited_description"%}">
+                          {% csrf_token %}
+                          <button type="submit" title="Approve" class="btn btn-warning btn-sm approve-btn"><i class="fa-solid fa-check"></i></button>
+                      </form>
+                      <form method="post" action="{% url 'delete-individual-request' id=edits.editRequest_id name="edited_description"%}">
+                          {% csrf_token %}
+                          <button type="submit" title="Disapprove" class="btn btn-danger btn-sm approve-btn" style="padding: 4px 11px; margin-left: 4px;"><i class="fa fa-times"></i></button>
+                      </form>
+                  </div>
+              </div>
+            </div>
+            {% endif %}
+
+            {% if edits.edited_cmi.exists %}
+            <div class="form-group row">
+                <div class="col-md-10">
+                <label for="edited_cmi" class="font-weight-bold" style="color: green;">CMI</label>
+                <div class="edited_cmi" style="width: auto; border: 1px solid #ddd; padding: 10px; border-radius: 4px;">
+                  {% for cmis in edits.edited_cmi.all %}
+                          <span style="background-color: #7BD3EA; padding: 0 7px; color: black; font-weight: bold; border-radius: 4px;">{{ cmis.cmi_name }}</span>
+                    {% endfor %}
+                </div>
+                </div>
+                <div class="col-md-2">
+                <label for="edited_cmi" class="font-weight-bold" style="color: green;">Actions </label>
+                <div class="edited_cmi" style=" display: flex; justify-content: center; align-items: center; width: auto; border: 1px solid #ddd; padding: 7px; border-radius: 4px; text-align: center;">
+                    <form method="post" action="{% url 'individual-approve-edit' id=edits.editRequest_id name="edited_cmi" %}">
+                    {% csrf_token %}
+                    <button type="submit" title="Approve" class="btn btn-warning btn-sm approve-btn"><i class="fa-solid fa-check"></i></button>
+                    </form>
+                    <form method="post" action="{% url 'delete-individual-request' id=edits.editRequest_id name="edited_cmi"%}">
+                      {% csrf_token %}
+                      <button type="submit" title="Disapprove" class="btn btn-danger btn-sm approve-btn" style="padding: 4px 11px; margin-left: 4px;"><i class="fa fa-times"></i></button>
+                  </form>
+                </div>
+                </div>
+            </div>
+            {% endif %}
+
+            {% if edits.edited_commodity.exists %}
+            
+                <div class="form-group row">
+                    <div class="col-md-10">
+                    <label for="edited_commodity" class="font-weight-bold" style="color: green;">Commodity</label>
+                    <div class="edited_commodity" style="width: auto; border: 1px solid #ddd; padding: 10px; border-radius: 4px;">
+                      {% for commodities in edits.edited_commodity.all %}
+                      <span style="background-color: #7BD3EA; padding: 0 7px; color: black; font-weight: bold; border-radius: 4px;">{{ commodities.commodity_name }}</span>
+                      {% endfor %}
+                    </div>
+                </div>
+                    <div class="col-md-2">
+                    <label for="edited_commodity" class="font-weight-bold" style="color: green;">Actions </label>
+                    <div class="edited_commodity" style="display: flex; justify-content: center; align-items: center;  width: auto; border: 1px solid #ddd; padding: 7px; border-radius: 4px; text-align: center;">
+                        <form method="post" action="{% url 'individual-approve-edit' id=edits.editRequest_id name="edited_commodity" %}">
+                            {% csrf_token %}
+                        <button type="submit" title="Approve" class="btn btn-warning btn-sm approve-btn"><i class="fa-solid fa-check"></i></button>
+                        </form>
+                        <form method="post" action="{% url 'delete-individual-request' id=edits.editRequest_id name="edited_commodity"%}">
+                          {% csrf_token %}
+                          <button type="submit" title="Disapprove" class="btn btn-danger btn-sm approve-btn" style="padding: 4px 11px; margin-left: 4px;"><i class="fa fa-times"></i></button>
+                      </form>
+                    </div>
+                    </div>
+                </div>
+            {% endif %}
+
+            {% if edits.edited_knowledge %}
+                <div class="form-group row">
+                    <div class="col-md-10">
+                        <label for="edited_resources" class="font-weight-bold" style="color: green;">Knowledge Resources</label>
+                        <div class="edited_resources" style="width: auto; border: 1px solid #ddd; padding: 10px; border-radius: 4px;">{{ edits.edited_knowledge.knowledge_title }}</div>
+                    </div>
+                    <div class="col-md-2">
+                        <label for="edited_resources" class="font-weight-bold" style="color: green;">Actions </label>
+                        <div class="edited_resources" style="display: flex; justify-content: center; align-items: center;  width: auto; border: 1px solid #ddd; padding: 7px; border-radius: 4px; text-align: center;">
+                          <form method="post" action="{% url 'individual-approve-edit' id=edits.editRequest_id name="edited_knowledge"%}">
+                            {% csrf_token %}
+                            <button type="submit" title="Approve" class="btn btn-warning btn-sm approve-btn"><i class="fa-solid fa-check"></i></button>
+                          </form>
+                          <form method="post" action="{% url 'delete-individual-request' id=edits.editRequest_id name="edited_knowledge"%}">
+                            {% csrf_token %}
+                            <button type="submit" title="Disapprove" class="btn btn-danger btn-sm approve-btn" style="padding: 4px 11px; margin-left: 4px;"><i class="fa fa-times"></i></button>
+                        </form>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+
+        </div>
+
+        <div class="modal-footer">
+          <form method="post" action="{% url 'approve-edit' id=edits.editRequest_id %}">
+            {% csrf_token %}
+            <button type="submit" title="Approve All" class="btn btn-warning approve-btn" >
+              Approve All
+            </button>
+          </form>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+    </div>
+  </div>
+</div>

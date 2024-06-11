@@ -1,0 +1,537 @@
+{% extends 'base/index.html' %}
+{% load static %}
+{% block title %}
+  Knowledge Resources
+{% endblock %}
+{% block stylesheet %}
+  {% comment %} <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" /> {% endcomment %}
+
+  <style>
+    .card {
+      transition: transform 0.3s ease-in-out;
+    }
+
+    .card:hover {
+      transform: scale(1.05);
+    }
+
+    .legend {
+      border: 2px solid black;
+      width: 20%;
+      height: 100%; /* Allow height to adjust based on content */
+      padding: 10px;
+      position: relative;
+      margin-left: 10px;
+    }
+    
+    .legend-title {
+      position: absolute;
+      top: -13px;
+      left: 10px;
+      background-color: #FFF0CE;
+      padding: 0 5px;
+      font-weight: bold;
+      font-size: 18px;
+    }
+    
+    .body {
+      display: block;
+      flex-wrap: wrap; /* Allow items to wrap in small screens */
+      padding-top: 20px;
+    }
+    
+    .legend-item {
+      display: flex;
+      align-items: center;
+      margin-right: 15px; /* Spacing between items */
+      margin-bottom: 10px; /* Additional space for mobile layout */
+    }
+    
+    .body i {
+      width: 18px;
+      height: 18px;
+      margin-right: 8px;
+      opacity: 0.7;
+    }
+    
+    .body span {
+      font-size: 11px;
+    }
+    
+    .maps-legends{
+      display: flex;
+    }
+
+    .dropdown-toggle {
+      border-top-left-radius: 0px;
+      border-bottom-left-radius: 0px;
+      background-color: #FCB040;
+      border: #FCB040 1px solid;
+  }
+  
+  .dropdown-toggle:hover {
+      background-color: #F8D082;
+      color: #0C356A;
+      border: none;
+  }
+
+  .search-btn {
+    background-color: #0C356A;
+    color: white;
+    margin: 0px 0px 0px 10px;
+    border-radius: 7px;
+    border: none;
+}
+
+    @media screen and (max-width: 768px) { /* Adjust breakpoint as needed */
+      .map{
+        width: 100%;
+      }
+      .maps-legends{
+        display: block;
+      }
+
+      .legend{
+        margin-top: 15px;
+        width: 35%;
+        margin-left: 0px;
+      }
+
+      .body {
+        display: block;
+      }
+    
+      .legend-item {
+        margin-right: 0;
+        margin-bottom: 10px;
+      }
+    }
+      
+  </style>
+
+  {% endblock %}
+
+{% block content %}
+  <br />
+  
+  <div class="main-content" style="min-height: 63vh;">
+    <div class="container">
+      <div class="head-resources">
+        <h2 style="font-weight: bolder;">{{ knowledge_instance.knowledge_title }}</h2>
+      </div>
+      <hr />
+
+      <div class="input-group justify-content-center">
+        <input type="text" id="search-input" class="form-control search-input" name="contents" placeholder="What's in your mind?" oninput="showSuggestions()">
+        <!-- Suggestions Dropdown -->
+        <div class="suggestions-container" id="suggestions-container"></div>
+        <div class="input-group-append">
+          <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Content Type
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+              <div class="checkbox">
+                <label style="margin-left: 5px;"><input type="checkbox" name="knowledge" value="all" class="knowledge-tag" checked> All </label><br>
+              </div>
+                  <div class="checkbox">
+                    <label style="margin-left: 5px;"><input type="checkbox" name="knowledge" value="cmi" class="knowledge-tag" > CMI</label><br>
+                    <label style="margin-left: 5px;"><input type="checkbox" name="knowledge" value="commodity" class="knowledge-tag" > COMMODITY</label><br>
+                    <label style="margin-left: 5px;"><input type="checkbox" name="knowledge" value="knowledge-resources" class="knowledge-tag" > KNOWLEDGE RESOURCES</label><br>
+                    <label style="margin-left: 5px;"><input type="checkbox" name="knowledge" value="technology-adoptors" class="knowledge-tag" > TECHNOLOGY ADOPTORS</label><br>
+                  </div>
+            </div>
+          </div>
+          <button class="btn search-btn" id="search-btn" type="submit">Search</button>
+        </div>
+      </div>
+
+      <br>
+      {% if knowledge_instance.knowledge_title == 'Maps' %}
+      <div class="maps-legends">
+        <div class="map" id="map" style="height: 500px; width: 100%;"></div>
+
+        <div class="legend">
+          <div class="legend-title">LEGEND
+            <a type="button" id="details" data-toggle="modal" data-target="#instructionsModal" style="border: none; background-color: transparent; font-size: 14px;">
+              <i class="fa-regular fa-circle-question" style="color: red;"></i>
+            </a>
+          </div>
+          <div class="body">
+            <div class="legend-item">
+              <i style="background: #267FCA;" id="cmiBtn"></i><span>CMI</span>
+            </div>
+            <div class="legend-item">
+              <i style="background: #24ac20;" id="commodityBtn"></i><span>COMMODITY</span>
+            </div>
+            <div class="legend-item">
+              <i style="background: crimson;" id="knowledge_resourcesBtn"></i><span>KNOWLEDGE RESOURCES</span>
+            </div>
+            <div class="legend-item">
+              <i style="background: #FF7D29;" id="tech_adoptorsBtn"></i><span>TECHNOLOGY ADOPTORS</span>
+            </div>
+          </div>
+        </div>
+  
+      </div>
+      {% elif knowledge_instance.knowledge_title == 'Websites' or knowledge_instance.knowledge_title == 'News' or knowledge_instance.knowledge_title == 'Webinars' %}
+        {% if resource_filter %}
+        <div class="row" style="display: flex; justify-content: center;">
+          {% for resource in resource_filter %}
+            <div class="card mr-2 mb-2" style="width: 15rem;">
+              <div class="card-header" style="text-align: center; ">
+                <a style="font-weight: bold; font-size: 13px; text-decoration: none;" href="{% url 'general-individual-resources' id=resource.resources_id %}">{{ resource.resources_title|capfirst|truncatechars:30 }}</a>
+              </div>
+              <div class="card-body">
+                <span>
+                  <span style="font-weight: bold; font-size: 13px;">CMI:</span>
+                  {% for cmi in resource.cmi.all %}
+                    <span style="font-size: 13px; background-color: #0174BE; padding: 0 7px; color: white; border-radius: 4px;">{{ cmi.cmi_name|capfirst }}</span>
+                  {% endfor %}
+                </span><br />
+                <span>
+                  <span style="font-weight: bold; font-size: 13px;">Commodity:</span>
+                  {% for commodity in resource.commodity.all %}
+                    <span style="font-size: 13px; background-color: #0174BE; padding: 0 7px; color: white; border-radius: 4px;">{{ commodity.commodity_name|capfirst }}</span>
+                  {% endfor %}
+                </span>
+              </div>
+              <div class="card-footer d-flex justify-content-end">
+                <span style="font-size: 13px; margin-left: 7px; "><i class="fas fa-download" title="Download" style="color: #0C356A; font-size: 13px;"></i> {{resource.downloads_count}}</span>
+               <span style="font-size: 13px;  margin-left: 7px; margin-right: 7px;"><i class="fas fa-heart" title="React" style="color: #0C356A; font-size: 13px;"></i> {{resource.reactions_count}}</span> <!-- Font Awesome heart icon -->
+               <span style="font-size: 13px;"><i class="fa-solid fa-share-nodes" title="Share" style="color: #0C356A; font-size: 13px;"></i> {{resource.shares_count}}</span> <!-- Font Awesome share icon -->
+             </div>
+            </div>
+          {% endfor %}
+        </div>
+        {% else %}
+          <span>No Added Resources Yet.</span>
+        {% endif %}
+        {% elif knowledge_instance.knowledge_title == 'Policies' or knowledge_instance.knowledge_title == 'Projects' or knowledge_instance.knowledge_title == 'Publications' or knowledge_instance.knowledge_title == 'Flyers' %}
+        {% if resource_filter %}
+        <div class="row" style="display: flex; justify-content: center;">
+          {% for resource in resource_filter %}
+            <div class="card mr-2 mb-2" style="width: 15rem;">
+              <div class="card-header" style="text-align: center; ">
+                <a style="font-weight: bold; font-size: 13px; text-decoration: none;" href="{% url 'general-individual-resources' id=resource.resources_id %}">{{ resource.resources_title|capfirst|truncatechars:30 }}</a>
+              </div>
+              <div class="card-body">
+                <span>
+                  <span style="font-weight: bold; font-size: 13px;">CMI:</span>
+                  {% for cmi in resource.cmi.all %}
+                    <span style="font-size: 13px; background-color: #0174BE; padding: 0 7px; color: white; border-radius: 4px;">{{ cmi.cmi_name|capfirst }}</span>
+                  {% endfor %}
+                </span><br />
+                <span>
+                  <span style="font-weight: bold; font-size: 13px;">Commodity:</span>
+                  {% for commodity in resource.commodity.all %}
+                    <span style="font-size: 13px; background-color: #0174BE; padding: 0 7px; color: white; border-radius: 4px;">{{ commodity.commodity_name|capfirst }}</span>
+                  {% endfor %}
+                </span>
+              </div>
+              <div class="card-footer d-flex justify-content-end">
+                <span style="font-size: 13px;"><i class="fas fa-eye" title="View" style="color: #0C356A; font-size: 13px;"></i> {{resource.views_count}}</span> <!-- Font Awesome eye icon -->
+                <span style="font-size: 13px; margin-left: 7px; "><i class="fas fa-download" title="Download" style="color: #0C356A; font-size: 13px;"></i> {{resource.downloads_count}}</span>
+                <span style="font-size: 13px;  margin-left: 7px; margin-right: 7px;"><i class="fas fa-heart" title="React" style="color: #0C356A; font-size: 13px;"></i> {{resource.reactions_count}}</span> <!-- Font Awesome heart icon -->
+               <span style="font-size: 13px;"><i class="fa-solid fa-share-nodes" title="Share" style="color: #0C356A; font-size: 13px;"></i> {{resource.shares_count}}</span> <!-- Font Awesome share icon -->
+             </div>
+            </div>
+          {% endfor %}
+        </div>
+        {% else %}
+          <span>No Added Resources Yet.</span>
+        {% endif %}
+        {% elif knowledge_instance.knowledge_title == 'Training/Seminars' or knowledge_instance.knowledge_title == 'Events' %}
+        {% if resource_filter %}
+        <div class="row" style="display: flex; justify-content: center;">
+          {% for resource in resource_filter %}
+            <div class="card mr-2 mb-2" style="width: 15rem;">
+              <div class="card-header" style="text-align: center; ">
+                <a style="font-weight: bold; font-size: 13px; text-decoration: none;" href="{% url 'general-individual-resources' id=resource.resources_id %}">{{ resource.resources_title|capfirst|truncatechars:30 }}</a>
+              </div>
+              <div class="card-body">
+                <span>
+                  <span style="font-weight: bold; font-size: 13px;">CMI:</span>
+                  {% for cmi in resource.cmi.all %}
+                    <span style="font-size: 13px; background-color: #0174BE; padding: 0 7px; color: white; border-radius: 4px;">{{ cmi.cmi_name|capfirst }}</span>
+                  {% endfor %}
+                </span><br />
+                <span>
+                  <span style="font-weight: bold; font-size: 13px;">Commodity:</span>
+                  {% for commodity in resource.commodity.all %}
+                    <span style="font-size: 13px; background-color: #0174BE; padding: 0 7px; color: white; border-radius: 4px;">{{ commodity.commodity_name|capfirst }}</span>
+                  {% endfor %}
+                </span>
+              </div>
+              <div class="card-footer d-flex justify-content-end">
+                <span style="font-size: 13px; margin-left: 7px; "><i class="fas fa-download" title="Download" style="color: #0C356A; font-size: 13px;"></i> {{resource.downloads_count}}</span>
+               <span style="font-size: 13px;  margin-left: 7px; margin-right: 7px;"><i class="fas fa-heart" title="React" style="color: #0C356A; font-size: 13px;"></i> {{resource.reactions_count}}</span> <!-- Font Awesome heart icon -->
+               <span style="font-size: 13px;"><i class="fa-solid fa-share-nodes" title="Share" style="color: #0C356A; font-size: 13px;"></i> {{resource.shares_count}}</span> <!-- Font Awesome share icon -->
+             </div>
+            </div>
+          {% endfor %}
+        </div>
+        {% else %}
+          <span>No Added Resources Yet.</span>
+        {% endif %}
+      {% else %}
+        <div class="row" id="thumbnail" style="display: flex; justify-content: center;">
+          {% if resource_filter %}
+            {% for resource in resource_filter %}
+              <div class="card mr-2 mb-2" style="width: 15rem;">
+                {% if resource.images %}
+                  <div class="card-header" style="text-align: center; ">
+                    <a style="font-weight: bold; font-size: 13px; text-decoration: none;" href="{% url 'general-individual-resources' id=resource.resources_id %}">{{ resource.resources_title|capfirst|truncatechars:30 }}</a>
+                    <br />
+                  </div>
+                  <img class="card-img-top" src="{{ resource.images.url }}" alt="{{ resource.resources_title|capfirst }}" style="height: 200px; border-radius: 0;" />
+                  <div class="card-body">
+                    <span>
+                      <span style="font-weight: bold; font-size: 13px;">CMI:</span>
+                      {% for cmi in resource.cmi.all %}
+                        <span style="font-size: 13px; background-color: #0174BE; padding: 0 7px; color: white; border-radius: 4px;">{{ cmi.cmi_name|capfirst }}</span>
+                      {% endfor %}
+                    </span><br />
+                    <span>
+                      <span style="font-weight: bold; font-size: 13px;">Commodity:</span>
+                      {% for commodity in resource.commodity.all %}
+                        <span style="font-size: 13px; background-color: #0174BE; padding: 0 7px; color: white; border-radius: 4px;">{{ commodity.commodity_name|capfirst }}</span>
+                      {% endfor %}
+                    </span>
+                  </div>
+                  <div class="card-footer d-flex justify-content-end">
+                    <span style="font-size: 13px;"><i class="fas fa-eye" title="View" style="color: #0C356A; font-size: 13px;"></i> {{resource.views_count}}</span> <!-- Font Awesome eye icon -->
+                    <span style="font-size: 13px; margin-left: 7px; "><i class="fas fa-download" title="Download" style="color: #0C356A; font-size: 13px;"></i> {{resource.downloads_count}}</span>
+                    <span style="font-size: 13px;  margin-left: 7px; margin-right: 7px;"><i class="fas fa-heart" title="React" style="color: #0C356A; font-size: 13px;"></i> {{resource.reactions_count}}</span> <!-- Font Awesome heart icon -->
+                   <span style="font-size: 13px;"><i class="fa-solid fa-share-nodes" title="Share" style="color: #0C356A; font-size: 13px;"></i> {{resource.shares_count}}</span> <!-- Font Awesome share icon -->
+                 </div>
+                {% else %}
+                  <span style="font-weight: bold; text-align: center;">No Image Available</span>
+                  <div class="card-body">
+                    <span><span style="font-weight: bold;">Title:</span>{{ resource.resources_title|capfirst|truncatechars:30 }}</span><br />
+                    <span>
+                      <span style="font-weight: bold;">CMI:</span>{% for cmi in resource.cmi.all %}
+                        {{ cmi.cmi_name }}
+                      {% endfor %}
+                    </span><br />
+                    <span>
+                      <span style="font-weight: bold;">Commodity:</span>{% for commodity in resource.commodity.all %}
+                        {{ commodity.commodity_name }}
+                      {% endfor %}
+                    </span>
+                  </div>
+                {% endif %}
+              </div>
+            {% endfor %}
+          {% else %}
+            <span>No Added Resources Yet.</span>
+          {% endif %}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+  {% include "accounts/general/modal/details/legend_map_details.html" %}
+{% endblock %}
+
+{% block script %}
+  {% if messages %}
+    {% for message in messages %}
+      {% if message.tags == 'success' %}
+        <script>
+          // Display SweetAlert success message
+          Swal.fire({
+            icon: 'success',
+            title: 'Success!',
+            text: '{{ message }}'
+          })
+        </script>
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+  {% comment %} <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script> {% endcomment %}
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      var map = L.map('map', { zoomControl: false }).setView([12.894091, 122.277365], 5)
+    
+      // OpenStreetMap tile layer
+      var tileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: 'Map data © <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors'
+      }).addTo(map);
+    
+      // Google Streets and Hybrid layers
+      const createGoogleLayer = (type) => {
+        return L.tileLayer(`https://{s}.google.com/vt/lyrs=${type}&x={x}&y={y}&z={z}`, {
+          maxZoom: 20,
+          subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+        });
+      };
+
+      const googleStreets = createGoogleLayer('m');
+      const googleHybrid = createGoogleLayer('s,h');
+
+      // Add base maps to a control
+      var baseMaps = {
+        "OpenStreetMap": tileLayer,
+        "Google Streets": googleStreets,
+        "Google Hybrid": googleHybrid
+      };
+
+      L.control.layers(baseMaps).addTo(map);
+
+      // Create a control with custom icons for zoom in and zoom out
+      var zoomControl = L.control.zoom({
+        position: 'topright',
+        zoomInText: '+',
+        zoomOutText: '-'
+      });
+    
+      // Add the zoom control to the map
+      map.addControl(zoomControl);
+
+      // Define green icon
+      var greenIcon = L.icon({
+        iconUrl: '{% static "assets/css/images/marker-icon-green.png" %}',
+        shadowUrl: '{% static "assets/css/images/marker-shadow.png" %}',
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        shadowSize: [41, 41]
+      });
+
+      // Define red icon
+      var redcon = L.icon({
+        iconUrl: '{% static "assets/css/images/marker-icon-red.png" %}',
+        shadowUrl: '{% static "assets/css/images/marker-shadow.png" %}',
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        shadowSize: [41, 41]
+      });
+
+      // Define orange icon
+      var orangecon = L.icon({
+        iconUrl: '{% static "assets/css/images/marker-icon-orange.png" %}',
+        shadowUrl: '{% static "assets/css/images/marker-shadow.png" %}',
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        shadowSize: [41, 41]
+      });
+
+      // Initialize arrays to store references to markers
+      const cmiMarkers = [];
+      const commodityMarkers = [];
+      const knowledgeResourcesMarkers = [];
+      const techAdoptorsMarkers = [];
+
+      // Loop through resources and add markers to the map
+      {% if resource_filter %}
+        {% for resource in resource_filter %}
+          {% if resource.latitude is not None and resource.longitude is not None %}
+            var marker = L.marker([{{ resource.latitude }}, {{ resource.longitude }}], {icon: redcon}).addTo(map);
+            marker.bindPopup("<b>Title: {{ resource.resources_title|capfirst }}<br>CMI: {% for cmi in resource.cmi.all %}{{ cmi.cmi_name }}{% endfor %}<br>Commodity: {% for commodity in resource.commodity.all %}{{commodity.commodity_name|capfirst}}{% endfor %}");
+            knowledgeResourcesMarkers.push(marker);
+          {% endif %}
+        {% endfor %}
+      {% endif %}
+
+      {% if cmis %}
+        {% for cmi in cmis %}
+          {% if cmi.latitude is not None and cmi.longitude is not None %}
+            var marker = L.marker([{{ cmi.latitude }}, {{ cmi.longitude }}]).addTo(map);
+            marker.bindPopup("<b>CMI: {{ cmi.cmi_name|upper }}");
+            cmiMarkers.push(marker);
+          {% endif %}
+        {% endfor %}
+      {% endif %}
+
+      {% if commodities %}
+        {% for commodity in commodities %}
+          {% if commodity.latitude is not None and commodity.longitude is not None %}
+            var marker = L.marker([{{ commodity.latitude }}, {{ commodity.longitude }}], {icon: greenIcon}).addTo(map);
+            marker.bindPopup("<b>Commodity: {{ commodity.commodity_name|capfirst }}");
+            commodityMarkers.push(marker);
+          {% endif %}
+        {% endfor %}
+      {% endif %}
+
+      {% if tech_adoptors %}
+        {% for adoptors in tech_adoptors %}
+          {% if adoptors.latitude is not None and adoptors.longitude is not None %}
+            var marker = L.marker([{{ adoptors.latitude }}, {{ adoptors.longitude }}], {icon: orangecon}).addTo(map);
+            marker.bindPopup("<b>Tech Adoptors: {{ adoptors.first_name|capfirst }} {{ adoptors.last_name|capfirst }}");
+            techAdoptorsMarkers.push(marker);
+          {% endif %}
+        {% endfor %}
+      {% endif %}
+
+      // Function to show only selected markers
+      function showMarkers(markerArray) {
+        // Hide all markers
+        [...cmiMarkers, ...commodityMarkers, ...knowledgeResourcesMarkers, ...techAdoptorsMarkers].forEach(marker => {
+          map.removeLayer(marker);
+        });
+
+        // Show selected markers
+        markerArray.forEach(marker => {
+          marker.addTo(map);
+        });
+      }
+
+      // Function to show all markers
+      function showAllMarkers() {
+        [...cmiMarkers, ...commodityMarkers, ...knowledgeResourcesMarkers, ...techAdoptorsMarkers].forEach(marker => {
+          marker.addTo(map);
+        });
+      }
+
+      // Variable to keep track of the last clicked button
+      let lastClickedBtn = null;
+
+      // Event listeners for legend items with toggle functionality
+      document.getElementById('cmiBtn').addEventListener('click', () => {
+        if (lastClickedBtn === 'cmiBtn') {
+          showAllMarkers();
+          lastClickedBtn = null;
+        } else {
+          showMarkers(cmiMarkers);
+          lastClickedBtn = 'cmiBtn';
+        }
+      });
+
+      document.getElementById('commodityBtn').addEventListener('click', () => {
+        if (lastClickedBtn === 'commodityBtn') {
+          showAllMarkers();
+          lastClickedBtn = null;
+        } else {
+          showMarkers(commodityMarkers);
+          lastClickedBtn = 'commodityBtn';
+        }
+      });
+
+      document.getElementById('knowledge_resourcesBtn').addEventListener('click', () => {
+        if (lastClickedBtn === 'knowledge_resourcesBtn') {
+          showAllMarkers();
+          lastClickedBtn = null;
+        } else {
+          showMarkers(knowledgeResourcesMarkers);
+          lastClickedBtn = 'knowledge_resourcesBtn';
+        }
+      });
+
+      document.getElementById('tech_adoptorsBtn').addEventListener('click', () => {
+        if (lastClickedBtn === 'tech_adoptorsBtn') {
+          showAllMarkers();
+          lastClickedBtn = null;
+        } else {
+          showMarkers(techAdoptorsMarkers);
+          lastClickedBtn = 'tech_adoptorsBtn';
+        }
+      });
+    })
+
+
+
+  </script>
+{% endblock %}

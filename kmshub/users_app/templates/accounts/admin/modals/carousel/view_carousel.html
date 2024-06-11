@@ -1,0 +1,22 @@
+<!-- Carousel Modal -->
+<div id="viewCarouselModal{{ carousel.carousel_id }}" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="viewCarouselModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header" style="background-color: #0C356A;">
+        <h2 style="font-weight: bolder; text-align: center; color: white;">{{carousel.alt}}</h2>
+        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      </div>
+      <div class="modal-body">
+  
+              {% if carousel.commodity.commodity_id %}
+                  <img class="d-block w-100 carousel-img" src="{{ carousel.img_path.url }}?v=1" alt="{{ carousel.alt }}" title="{{ carousel.alt }}">
+              {% else %}
+                <img class="d-block w-100 carousel-img" src="{{ carousel.img_path.url }}?v=1" alt="{{ carousel.alt }}" title="{{ carousel.alt }}">
+              {% endif %}
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>

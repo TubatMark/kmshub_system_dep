@@ -1,0 +1,271 @@
+{% extends 'base/index.html' %}
+{% load static %}
+
+{% block title %}
+  Search Result
+{% endblock %}
+
+{% block stylesheet %}
+  <style>
+    .card {
+      border-radius: 10px;
+      background-color: white;
+      max-width: 300px;
+      margin: 10px 10px 10px 10px;
+      border: 1px solid #8B322C;
+    }
+
+    .card-title{
+      justify-content: left;
+      text-align: left;
+      border-bottom: lightgray 1px solid;
+    }
+
+    .title{
+      font-size: 14px;
+      margin: 10px 0px 10px 20px;
+    }
+
+    .card-body{
+      font-size: 13px;
+      text-align: left;
+      justify-content: left;
+    }
+
+    .cmi-btn{
+      font-size: 10px;
+      color: white;
+      font-weight: bold;
+      background-color: #0C358A;
+      text-decoration: none;
+      
+    }
+
+    .cmi-btn:hover{
+      background-color: white;
+      border: #0C358A 1px solid;
+    }
+
+    .commodity-btn{
+      font-size: 10px;
+      color: black;
+      font-weight: bold;
+      background-color: #FCB040;
+      text-decoration: none;
+    }
+
+    .commodity-btn:hover{
+      background-color: white;
+      border: #FCB040 1px solid;
+    }
+
+    .icons-container{
+      margin-top: 10px;
+    }
+
+    .icons{
+      font-size: 20px;
+      color: #776B5D;
+      margin: 0px 5px 0px 0px;
+    }
+
+    .icons:hover{
+      color: #0C358A;
+    }
+
+    .card-footer{
+      display: flex;
+    }
+
+    .button-right-footer-container{
+      margin-left: 159px;
+    }
+
+    .footer-icon{
+      font-size: 20px;
+      margin: 0px 5px 0px 0px;
+    }
+
+    .fa-solid:hover{
+      color: #0C356A;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+  <br />
+  <div class="main-content">
+    <div class="container" style="min-height: 50vh;">
+      <h4 style="font-size: 15px;">Search Results for "{{ request.session.search_contents|capfirst }}"</h4>
+      <hr />
+      <div class="row justify-content-center">
+        {% for result in similarity_results %}
+          <div class="card">
+            <div class="card-title">
+              <div class="button-container" style="margin: 10px 0px 10px 0px;">
+                <a href="{% url 'general-individual-resources' id=result.0 %}" class="title">{{ result.1|capfirst|truncatechars:30 }}</a>
+              </div>
+            </div>
+            <div class="card-body">
+              <!--<span>Similarity: {{ result.5 }}%</span>
+              <br />!-->
+              <div class="content-container">
+                <p>{{ result.2|truncatechars:110 }}</p>
+              </div>
+              <div class="buttons-container">
+                <a class="btn cmi-btn" href="#" title="CMI"> {{ result.3 }} </a>
+                <a class="btn commodity-btn" href="#" title="Commodity"> {{ result.4 }} </a>
+              </div>
+              <div class="icons-container">
+                {% if result.6 %}
+                  <i class="fa-regular fa-file-powerpoint icons"></i>
+                {% elif result.7 %}
+                  <i class="fa-regular fa-file-pdf icons"></i>
+                {% endif %}
+    
+                {% if result.8 == "Events" %}
+                    <i class="fa-solid fa-calendar-days icons"></i>
+                {% elif result.8 == "Websites" %}
+                    <i class="fa-solid fa-globe icons"></i>
+                {% elif result.8 == "Maps" %}
+                    <i class="fa-solid fa-map-location-dot icons"></i>
+                {% elif result.8 == "Media" %}
+                    <i class="fa-solid fa-photo-film icons"></i>
+                {% elif result.8 == "News" %}
+                    <i class="fa-solid fa-newspaper icons"></i>
+                {% elif result.8 == "Policies" %}
+                    <i class="fa-solid fa-scale-balanced icons"></i>
+                {% elif result.8 == "Products" %}
+                    <i class="fa-solid fa-bag-shopping icons"></i>
+                {% elif result.8 == "Projects" %}
+                    <i class="fa-solid fa-folder icons"></i>
+                {% elif result.8 == "Publications" %}
+                    <i class="fa-solid fa-scroll icons"></i>
+                {% elif result.8 == "Technologies" %}
+                    <i class="fa-solid fa-tractor icons"></i>
+                {% elif result.8 == "Training/Seminars" %}
+                    <i class="fa-solid fa-chalkboard-user icons"></i>
+                {% elif result.8 == "Webinars" %}
+                    <i class="fa-solid fa-users-rectangle icons"></i>
+                {% endif %}
+              </div>
+            </div>
+            <div class="card-footer">
+              <div class="button-left-footer-container">
+                {% if request.user.is_authenticated %}
+                  <a class="footer-icon" type="button" onclick="handleReact('{{ result.0 }}', 'reactions')">
+                    {% if result.10 %}
+                      <i class="fas fa-heart" title="Reacted" style="color: red;"></i>
+                    {% else %}
+                      <i class="fas fa-heart" title="Not React" style="color: #797A8F;"></i>
+                    {% endif %}
+                  </a>
+                {% else %}
+                  <i class="fas fa-heart footer-icon" title="React" style="color: #797A8F;"></i>
+                  {% endif %}
+              </div>
+              <div class="button-right-footer-container">
+                {% if request.user.is_authenticated %}
+                <a class="footer-icon" type="button" style="color: #0C356A;" onclick="bookmark('{{ result.0 }}', 'bookmark')">
+                  {% if result.9 %}
+                    <i class="fa-solid fa-bookmark" title="Bookmarked"></i> 
+                  {% else %}
+                    <i class="fa-regular fa-bookmark" title="Not Bookmark"></i> 
+                  {% endif %}
+                </a>
+                {% else %}
+                <i class="fa-regular fa-bookmark footer-icon" title="Bookmark"></i> 
+                {% endif %}
+                <i class="fas fa-download footer-icon" title="Download" style="color: #0C356A;"></i>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block script %}
+  {% if messages %}
+    {% for message in messages %}
+      {% if message.tags == 'success' %}
+        <script>
+          // Display SweetAlert success message
+          Swal.fire({
+            icon: 'success',
+            title: 'Success!',
+            text: '{{ message }}'
+          })
+        </script>
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+
+  <script>
+    //handle react heart
+    function handleReact(id, actionType) {
+      console.log('handle react')
+      // Send AJAX request to the Django view
+      $.ajax({
+        url: '{% url "general-resources-updates" %}',
+        type: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest',
+          'X-CSRFToken': '{{ csrf_token }}'
+        },
+        contentType: 'application/json',
+        data: JSON.stringify({
+          id: id,
+          name: actionType
+        }),
+        success: function (data) {
+          // Update the UI based on the response data
+          console.log(data.message)
+          console.log('React count:', data.reacts_count)
+    
+          // Reload the page after a short delay
+          setTimeout(function () {
+            window.location.reload()
+          }, 1000) // You can adjust the delay (in milliseconds) as needed
+        },
+        error: function (xhr, status, error) {
+          console.error('Ajax request failed:', error)
+        }
+      })
+    }
+
+    //handle bookmark
+    function bookmark(id, actionType) {
+      // Send AJAX request to the Django view
+      $.ajax({
+        url: '{% url "general-resources-updates" %}',
+        type: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest',
+          'X-CSRFToken': '{{ csrf_token }}'
+        },
+        contentType: 'application/json',
+        data: JSON.stringify({
+          id: id,
+          name: actionType
+        }),
+        success: function (data) {
+          // Update the UI based on the response data
+          console.log(data.message)
+          console.log('Bookmark count:', data.bookmark_count)
+    
+          // Reload the page after a short delay
+          setTimeout(function () {
+            window.location.reload()
+          }, 1000) // You can adjust the delay (in milliseconds) as needed
+        },
+        error: function (xhr, status, error) {
+          console.error('Ajax request failed:', error)
+        }
+      })
+    }
+  </script>
+{% endblock %}

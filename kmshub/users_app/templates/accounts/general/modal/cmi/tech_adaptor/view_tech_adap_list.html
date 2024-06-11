@@ -1,0 +1,141 @@
+
+<!-- view Program modal -->
+<div class="modal fade" id="viewAdaptorInfoModal{{ adaptor.adaptor_id }}" tabindex="-1" role="dialog" aria-labelledby="viewAdaptorInfoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header" style="background-color: #0C356A;">
+          <h5 class="modal-title" id="viewAdaptorInfoModalLabel" style="font-weight: bolder; color: white;">Technology Adoptor Information</h5>
+          <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col">
+              <div class="form-group">
+                <label for="first_name" class="font-weight-bold">First Name</label>
+                <div style="width: auto; border: 1px solid #ddd; padding: 10px; border-radius: 4px;">
+                  <p style=" margin: 2px 0px 2px 0px; text-align: center;">{{ adaptor.first_name }}</p>
+                </div>
+              </div>
+            </div>
+            <div class="col">
+              <div class="form-group">
+                <label for="middle_name" class="font-weight-bold">Middle Name</label>
+                <div style="width: auto; border: 1px solid #ddd; padding: 10px; border-radius: 4px;">
+                  <p style=" margin: 2px 0px 2px 0px; text-align: center;">{{ adaptor.middle_name }}</p>
+                </div>
+              </div>
+            </div>
+            <div class="col">
+              <div class="form-group">
+                <label for="last_name" class="font-weight-bold">Last Name</label>
+                <div style="width: auto; border: 1px solid #ddd; padding: 10px; border-radius: 4px;">
+                  <p style=" margin: 2px 0px 2px 0px; text-align: center;">{{ adaptor.last_name }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+  
+          <div class="row">
+            <div class="col">
+              <div class="form-group">
+                <label for="email" class="font-weight-bold">Email</label>
+                <div style="width: auto; border: 1px solid #ddd; padding: 10px; border-radius: 4px;">
+                  <p style=" margin: 2px 0px 2px 0px; text-align: center;">{{ adaptor.email }}</p>
+                </div>
+              </div>
+            </div>
+  
+            <div class="col">
+              <div class="form-group">
+                <label for="contact_num" class="font-weight-bold">Contact</label>
+                <div style="width: auto; border: 1px solid #ddd; padding: 10px; border-radius: 4px;">
+                  <p style=" margin: 2px 0px 2px 0px; text-align: center;">{{ adaptor.contact_num }}</p>
+                </div>
+              </div>
+            </div>
+  
+            <div class="col">
+              <div class="form-group">
+                <label for="date_birth" class="font-weight-bold">Birth Date</label>
+                <div style="width: auto; border: 1px solid #ddd; padding: 10px; border-radius: 4px;">
+                  <p style=" margin: 2px 0px 2px 0px; text-align: center;">{{ adaptor.date_birth }}</p>
+                </div>
+              </div>
+            </div>
+  
+            <div class="col">
+              <div class="form-group">
+                <label for="sex" class="font-weight-bold">Sex</label>
+                <div style="width: auto; border: 1px solid #ddd; padding: 10px; border-radius: 4px;">
+                  <p style=" margin: 2px 0px 2px 0px; text-align: center;">{{ adaptor.sex }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+  
+          <div class="row">
+            <div class="col">
+              <div class="form-group">
+                <label for="address" class="font-weight-bold">Address</label>
+                <div style="width: auto; border: 1px solid #ddd; padding: 10px; border-radius: 4px;">
+                  <p style=" margin: 2px 0px 2px 0px; text-align: center;">{{ adaptor.address }}</p>
+                </div>
+              </div>
+            </div>
+  
+            <div class="col">
+              <div class="form-group">
+                <label for="enterprise" class="font-weight-bold">Enterprise</label>
+                <div style="width: auto; border: 1px solid #ddd; padding: 10px; border-radius: 4px;">
+                  <p  style=" margin: 2px 0px 2px 0px; text-align: center;">{{ adaptor.enterprise }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+  
+          <div class="row">
+            <div class="col">
+              <div class="form-group">
+                <label for="latitude" class="font-weight-bold">Latitude</label>
+                <div style="width: auto; border: 1px solid #ddd; padding: 10px; border-radius: 4px;">
+                  <p  style=" margin: 2px 0px 2px 0px; text-align: center;">{{ adaptor.latitude }}</p>
+                </div>
+              </div>
+            </div>
+  
+            <div class="col">
+              <div the="form-group">
+                <label for="longitude" class="font-weight-bold">Longitude</label>
+                <div style="width: auto; border: 1px solid #ddd; padding: 10px; border-radius: 4px;">
+                  <p   style=" margin: 2px 0px 2px 0px; text-align: center;">{{ adaptor.longitude }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+  
+          <div class="row">
+            <div class="col">
+              <label for="technology" class="font-weight-bold">Technology</label>
+              <div style="width: auto; border: 1px solid #ddd; padding: 10px; border-radius: 4px;">
+                  <p   style=" margin: 2px 0px 2px 0px; text-align: center;">
+                    {% for tech in adaptor.technology.all %}
+                    {{ tech.tech_title }}
+                    {% endfor %}
+                  </p>
+              </div>
+            </div>
+  
+            <div class="col-3">
+              <div class="form-group">
+                <label for="date_adapted" class="font-weight-bold">Date Adopted</label>
+                <div style="width: auto; border: 1px solid #ddd; padding: 10px; border-radius: 4px;">
+                  <p   style=" margin: 2px 0px 2px 0px; text-align: center;">{{ adaptor.date_adapted }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  

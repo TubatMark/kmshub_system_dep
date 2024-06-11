@@ -1,0 +1,44 @@
+{% extends 'base/index.html' %}
+{% load static %}
+{% block title %}
+Commodity
+      {% endblock %}
+{% block stylesheet %}
+<link rel="stylesheet" href="{% static 'style/general.css/general.display.commodity.css' %}" />
+<style>
+    .dashed-info {
+        margin-top: 0;
+        padding: 0 10px 0;
+        margin-bottom: 0;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<br>
+  <div class="main-content">
+    <div class="container" style="min-height: 55vh;">
+        {% for commodity in display_commodity %}
+        <h3 class="text font-weight-bold">'{{ commodity.commodity_name|capfirst }}' Related Resources Discussion</h3>
+        <a href="{% url 'general-display-commodity' id=commodity.commodity_id %}"><i class="fa-solid fa-arrow-left"></i>Back</a>
+        {% endfor %}
+        <hr>
+      <div class="row">
+        <div class="col-md-12 ">
+          {% for resource in related_resources %}
+          <div class="card " style="margin-bottom: 5px; background-color: #0174BE;">
+            <ul style="margin: 7px 0px 7px 0px; color: white;">
+              <li>
+                <div class="display" style="display: flex; justify-content: space-between;">
+                    <a href="{% url "general-individual-resources" id=resource.resources_id %}" style="color: white; text-align: justify;">{{ resource.resources_title|capfirst|truncatechars:120 }}</a>
+                    <span class="dashed-info">Posted <span>&#183;</span> {{ resource.date_created|date:'F j, Y' }}</span>
+                </div>
+              </li>
+            </ul>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

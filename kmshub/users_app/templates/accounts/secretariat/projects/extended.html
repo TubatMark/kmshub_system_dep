@@ -1,0 +1,116 @@
+{% extends 'base/secretariat.html' %}
+{% load static %}
+{% block title %}
+  Extended Projects
+{% endblock %}
+
+{% block stylesheet %}
+<link rel="stylesheet" href="{% static 'style/secretariat.css/all_projects.css' %}" />
+{% endblock stylesheet %}
+
+
+{% block content %}
+  <br />
+  <div class="main-content">
+    <div class="container">
+      <h3 style="font-weight:bold;">EXTENDED PROJECTS</h3>
+      <hr />
+
+      <div>
+        <label for="itemCount">Show:</label>
+        <select id="itemCount" onchange="updateDisplay()">
+          <option value="5">5</option>
+          <option value="10">10</option>
+          <option value="20">20</option>
+          <option value="all" hidden>All</option>
+        </select>
+      </div>
+
+      <div class="row" id="status-content">
+        <div class="col-md-12" id="to_filter">
+          {% for project in extended_projects %}
+            <div class="status">
+              <div class="card mb-2">
+                <div class="card-title" style="text-align: justify;margin-left: 10px; margin-right: 10px;">
+                  <a href="{% url 'secretariat-individual-project' id=project.project_id %}" style="font-size: 18px; font-weight: bold; text-decoration: none; color: green;">{{ project.project_title|capfirst }}</a>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+        <div class="pagination" style="width: 100%; display: flex; justify-content: center; color: black;">
+            <button class="pagination-button" id="backBtn" onclick="movePage('back')" style="margin-right: 5px; color: black; background-color: #ADBC9F;">BACK</button>
+            <button class="pagination-button" id="nextBtn" onclick="movePage('next')" style="background-color: #ADBC9F; color: black;">NEXT</button>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block script %}
+  <script>
+    var currentPage = 1
+    
+    function updateDisplay() {
+      postDisplay = parseInt(document.getElementById('itemCount').value)
+      showPosts()
+    }
+    
+    function movePage(direction) {
+      switch (direction) {
+        case 'back':
+          if (currentPage > 1) {
+            currentPage--
+            showPosts()
+          }
+          break
+        case 'next':
+          currentPage++
+          showPosts()
+          break
+        default:
+          break
+      }
+    }
+    
+    function showPosts() {
+      var posts = document.querySelectorAll('#to_filter .status')
+      var totalPosts = posts.length
+    
+      posts.forEach(function (post, index) {
+        switch (true) {
+          case postDisplay === 'all':
+            post.style.display = 'block'
+            break
+          case index >= (currentPage - 1) * postDisplay && index < currentPage * postDisplay:
+            post.style.display = 'block'
+            break
+          default:
+            post.style.display = 'none'
+            break
+        }
+      })
+    
+      switch (true) {
+        case postDisplay === 'all':
+          document.getElementById('backBtn').disabled = true
+          document.getElementById('nextBtn').disabled = true
+          console.log('All Post displayed successfully')
+          break
+        default:
+          document.getElementById('backBtn').disabled = currentPage === 1
+          document.getElementById('nextBtn').disabled = currentPage * postDisplay >= totalPosts
+          break
+      }
+    
+      // Log additional information for debugging
+      console.log('totalPosts:', totalPosts)
+      console.log('postDisplay:', postDisplay)
+    }
+    
+    // Call updateDisplay function on page load to set the default value
+    window.onload = function () {
+      updateDisplay() // Call the function to update the displayed posts based on the initial selected value
+    }
+  </script>
+{% endblock %}

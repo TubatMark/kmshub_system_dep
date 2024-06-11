@@ -1,0 +1,65 @@
+{% load static %}
+
+<nav id="navbar">
+  <div id="toggle-nav-btn">
+    <i class="fa-solid fa-ellipsis-h"></i>
+  </div>
+  <div class="nav-content">
+    <div class="nav-title" style="font-weight:bold;">
+      <div class="logo-image">
+        <img src="{% static 'media/RAISE-Logo.png' %}" alt="Logo" class="navbar-logo-raise" />
+        <div class="text-container" id="text-container">
+          <h1 class="t1 nav-text">km4aanr</h1>
+          <h3 class="t2 nav-text">in WESTERN MINDANAO</h3>
+        </div>
+      </div>
+    </div>
+    <hr style="color:white" />
+    <a class="nav-link" href="{% url "admin-dashboard" %}"><i class="fa-solid fa-chart-bar"></i> <span class="nav-text" style="margin-left: 5px;">Dashboard</span></a>
+    <hr style="color:white" />
+    <a class="nav-link" href="{% url "admin-accounts" %}"><i class="fa-solid fa-user-circle"></i> <span class="nav-text" style="margin-left: 5px;">Account Management</span></a>
+    <hr style="color:white" />
+
+    <a href="#" class="nav-link dropdown-btn"><i class="fa-solid fa-comments"></i> <span class="nav-text">Discussion Modules</span> <i class="fa fa-caret-down" id="arrow" style="margin-left: 5px;"></i></a>
+    <div class="dropdown-container">
+      <hr style="color:white" />
+      <a class="nav-link" href="{% url "admin-resources" %}"><i class="fas fa-cogs"></i> <span class="dropdown-text" style="margin-left: 5px;"> Resources Management</span></a>
+      <hr style="color:white" />
+      <a class="nav-link" href="{% url "admin-discussion" %}"><i class="fas fa-list-alt"></i> <span class="dropdown-text" style="margin-left: 5px;">Forum Management</span></a>
+      <hr style="color:white" />
+      <a class="nav-link" href="{% url "admin-user-feedbacks" %}"><i class="fa-solid fa-star"></i> <span class="dropdown-text" style="margin-left: 5px;">Feedbacks/Ratings</span></a>
+    </div>
+
+    <hr style="color:white" />
+
+    <a href="#" class="nav-link dropdown-btn"><i class="fas fa-toolbox"></i> <span class="nav-text">Resource Modules</span> <i class="fa fa-caret-down" id="arrow" style="margin-left: 5px;"></i></a>
+    <div class="dropdown-container">
+      <hr style="color:white" />
+      <a class="nav-link" href="{% url 'display-map' %}"><i class="fa-solid fa-map"></i> <span class="dropdown-text" style="margin-left: 5px;"> Map</span></a>
+      <hr style="color:white" />
+      <a class="nav-link" href="{% url "admin-cmis" %}"><i class="fa-solid fa-users"></i> <span class="dropdown-text" style="margin-left: 5px;"> CMI/s</span></a>
+      <hr style="color:white" />
+      <a class="nav-link" href="{% url "admin-commodities" %}"><i class="fa-solid fa-boxes-stacked"></i> <span class="dropdown-text" style="margin-left: 5px;">Commodities</span></a>
+      <hr style="color:white" />
+      <a class="nav-link" href="{% url "admin-knowledge" %}"><i class="fa-brands fa-sourcetree"></i> <span class="dropdown-text" style="margin-left: 5px;">Knowledge Resources</span></a>
+      <hr style="color:white" />
+    </div>
+
+    <hr style="color:white" />
+    <a href="#" class="nav-link dropdown-btn"><i class="fas fa-file-alt"></i> <span class="nav-text">Content Modules</span> <i class="fa fa-caret-down" id="arrow" style="margin-left: 5px;"></i></a>
+    <div class="dropdown-container">
+      <hr style="color:white" />
+      <a class="nav-link" href="{% url "about-page" %}"><i class="fa-solid fa-circle-info"></i> <span class="dropdown-text" style="margin-left: 5px;">About</span></a>
+      <hr style="color:white" />
+      <a class="nav-link" href="{% url "admin-carousel" %}"><i class="fa-solid fa-clapperboard"></i> <span class="dropdown-text" style="margin-left: 5px;">Carousel Management</span></a>
+      <hr style="color:white" />
+      <a class="nav-link" href="{% url "admin-useful-links" %}"><i class="fas fa-building"></i> <span class="dropdown-text" style="margin-left: 5px;">Links Management</span></a>
+    </div>
+
+    <hr style="color:white" />
+  </div>
+  <div class="logout-container">
+    <span class="nav-text"></span>
+    <a class="nav-link logout" href="{% url "logout" %}"><i class="fa-solid fa-arrow-right-to-bracket"></i> <span class="nav-text">Logout</span></a>
+  </div>
+</nav>

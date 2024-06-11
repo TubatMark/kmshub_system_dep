@@ -1,0 +1,158 @@
+{% extends 'base/secretariat.html' %}
+{% load static %}
+{% block title %}
+  Resources
+{% endblock %}
+{% block stylesheet %}
+
+{% endblock %}
+
+{% block content %}
+  <br />
+  <div class="main-content">
+    <div class="container">
+      <div class="form-group">
+        <label for="title" class="font-weight-bold">Title:</label>
+        <div class="title" style="width: auto; border: 1px solid #ddd; padding: 10px; border-radius: 4px; background-color: white;">{{ resources_instance.resources_title|capfirst }}</div>
+      </div>
+
+      <div class="form-group">
+        <label for="description" class="font-weight-bold">Description:</label>
+        <div class="description" style="width: auto; height: auto; border: 1px solid #ddd; padding: 10px; border-radius: 4px; text-align: justify; background-color: white;">{{ resources_instance.resources_description|capfirst }}</div>
+      </div>
+
+      <div class="form-group row">
+        <div class="col-md-12">
+          <label for="cmi" class="font-weight-bold">CMI:</label>
+          <div class="cmi" style="width: auto; height: auto; border: 1px solid #ddd; padding: 10px; border-radius: 4px; background-color: white;">
+            {% for cmis in resources_instance.cmi.all %}
+              <span style="background-color: #0174BE; padding: 0 7px; color: white; border-radius: 4px;">{{ cmis.cmi_meaning|capfirst }}</span>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+      <div class="form-group row">
+        <div class="col-md-6">
+          <label for="commodity" class="font-weight-bold">Commodity:</label>
+          <div class="commodity" style="width: auto; height: auto; border: 1px solid #ddd; padding: 10px; border-radius: 4px; background-color: white;">
+            {% for commodities in resources_instance.commodity.all %}
+              <span style="background-color: #0174BE; padding: 0 7px; color: white; border-radius: 4px;">{{ commodities.commodity_name|capfirst }}</span>
+            {% endfor %}
+          </div>
+        </div>
+        <div class="col-md-6">
+          <label for="knowledge" class="font-weight-bold">Knowledge Resources:</label>
+          <div class="knowledge" style="width: auto; height: auto; border: 1px solid #ddd; padding: 10px; border-radius: 4px; background-color: white;">
+            {% for knowledges in resources_instance.knowledge.all %}
+              <span style="background-color: #0174BE; padding: 0 7px; color: white; border-radius: 4px;">{{ knowledges.knowledge_title|capfirst }}</span>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+      <hr />
+
+      <div class="form-group row">
+        <div class="col-md">
+          {% for knowledges in resources_instance.knowledge.all %}
+            {% if knowledges.knowledge_title == 'Maps' %}
+              <!-- coordinates -->
+              <div class="row" id="coordinates">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="latitude" class="font-weight-bold">Latitude</label>
+                    <div id="latitude" name="latitude" class="form-control" data-latitude="{{ resources_instance.latitude }}">{{ resources_instance.latitude }}</div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="longitude" class="font-weight-bold">Longitude</label>
+                    <div id="longitude" name="longitude" class="form-control" data-longitude="{{ resources_instance.longitude }}">{{ resources_instance.longitude }}</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- farm and contact number -->
+              <div class="row" id="farm_contact">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="farm" class="font-weight-bold">Farm</label>
+                    <div id="farm" name="farm" class="form-control">{{ resources_instance.farm }}</div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="contact_num" class="font-weight-bold">Contact Number</label>
+                    <div id="contact_num" name="contact_num" class="form-control">{{ resources_instance.contact_num }}</div>
+                  </div>
+                </div>
+              </div>
+            {% elif knowledges.knowledge_title == 'Websites' %}
+              <label class="font-weight-bold">Links</label>
+              <ul>
+                <li>
+                  <a href="{{ resources_instance.link }}">{{ resources_instance.resources_title|capfirst }}</a>
+                </li>
+              </ul>
+            {% elif knowledges.knowledge_title == 'Policies' or knowledges.knowledge_title == 'Projects' or knowledges.knowledge_title == 'Publications' or knowledges.knowledge_title == 'Flyers' %}
+              <label class="font-weight-bold">Documents</label>
+              <ul>
+                <li>
+                  <a href="{% url 'view_pdf' id=resources_instance.resources_id %}" target="_blank">{{ resources_instance.resources_title|capfirst }}</a>
+                </li>
+              </ul>
+            {% elif knowledges.knowledge_title == 'Media' or knowledges.knowledge_title == 'Products' or knowledges.knowledge_title == 'Technology' %}
+              {% if resource.images %}
+                <img class="card-img-top mx-auto d-block" src="{{ resources_instance.images.url }}" alt="{{ resources_instance.resources_title|capfirst }}" style="height: 400px; width: 400px;" />
+              {% else %}
+                <span style="font-weight: bold; text-align: center;">No Image Available</span>
+              {% endif %}
+            {% elif knowledges.knowledge_title == 'Training/Seminars' or knowledges.knowledge_title == 'Events' %}
+              <div class="row">
+                <div class="col-md-3" id="trainings">
+                  <div class="form-group">
+                    <label for="training_date" class="font-weight-bold">Training Date:</label>
+                    <div id="training_date" class="form-control">{{ resources_instance.training_date }}</div>
+                  </div>
+                </div>
+                <!-- venue -->
+                <div class="col-md-9" id="training_venue">
+                  <div class="form-group">
+                    <label for="link" class="font-weight-bold">Venue:</label>
+                    <div id="venue" class="form-control">{{ resources_instance.venue }}</div>
+                  </div>
+                </div>
+              </div>
+            {% elif knowledges.knowledge_title == 'Webinar' %}
+              <div class="row">
+                <div class="col-md-3" id="trainings">
+                  <div class="form-group">
+                    <label for="training_date" class="font-weight-bold">Training Date:</label>
+                    <div id="training_date" class="form-control">{{ resources_instance.training_date }}</div>
+                  </div>
+                </div>
+
+                <!-- Link div -->
+                <div class="col-md-9" id="link">
+                  <div class="form-group">
+                    <label for="link" class="font-weight-bold">Link</label>
+                    <div id="link" class="form-control">{{ resources_instance.link }}</div>
+                  </div>
+                </div>
+              </div>
+            {% else %}
+              <div class="col-md-12" id="link">
+                <div class="form-group">
+                  <span style="font-weight: bold;">No Data</span>
+                </div>
+              </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block script %}
+  
+{% endblock %}

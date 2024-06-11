@@ -1,0 +1,422 @@
+{% extends 'base/admin.html' %}
+{% load static %}
+{% block title %}
+  Admin Knowledge Management
+{% endblock %}
+{% block stylesheet %}
+  <link rel="stylesheet" href="{% static 'style/admin.css/admin.commodities.css' %}" />
+{% endblock %}
+
+{% block content %}
+  <br />
+  <div class="main-content" id="main-content">
+    <div class="container">
+      <h3 style="font-weight:bold;">ADMIN KNOWLEDGE RESOURCES</h3>
+      <hr style="color: black;" />
+      <div class="animated fadeIn">
+        <div class="row">
+          <div class="col-lg-3 col-md-6">
+            <div class="card">
+              <div class="card-body">
+                <div class="stat-widget-five">
+                  <div class="stat-icon dib flat-color-3">
+                    <span class="mdi mdi-format-list-bulleted"></span>
+                  </div>
+                  <div class="stat-content">
+                    <div class="text-left dib">
+                      <div class="stat-text">
+                        <span class="text" style="font-size: 15px;">
+                          {% if latest_resource %}
+                            {{ latest_resource.knowledge_title|capfirst }}
+                          {% else %}
+                            None
+                          {% endif %}
+                        </span>
+                      </div>
+                      <div class="stat-heading">New Knowledge Resources</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-3 col-md-6">
+            <div class="card">
+              <div class="card-body">
+                <div class="stat-widget-five">
+                  <div class="stat-icon dib flat-color-5">
+                    <span class="mdi mdi-tag-check-outline"></span>
+                  </div>
+                  <div class="stat-content">
+                    <div class="text-left dib">
+                      <div class="stat-text">
+                        <span class="count">
+                          {% if total_approved %}
+                            {{ total_approved }}
+                          {% else %}
+                            0
+                          {% endif %}
+                        </span>
+                      </div>
+                      <div class="stat-heading" >Approved Requests</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-3 col-md-6">
+            <div class="card">
+              <div class="card-body">
+                <div class="stat-widget-five">
+                  <div class="stat-icon dib flat-color-cmi">
+                    <span class="mdi mdi-receipt-clock-outline"></span>
+                  </div>
+                  <div class="stat-content">
+                    <div class="text-left dib">
+                      <div class="stat-text">
+                        <span class="count">
+                          {% if total_request %}
+                            {{ total_request }}
+                          {% else %}
+                            0
+                          {% endif %}
+                        </span>
+                      </div>
+                      <div class="stat-heading">Pending Requests</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-3 col-md-6">
+            <div class="card">
+              <div class="card-body">
+                <div class="stat-widget-five">
+                  <div class="stat-icon dib flat-color-2">
+                    <span class="mdi mdi-book-check"></span>
+                  </div>
+                  <div class="stat-content">
+                    <div class="text-left dib">
+                      <div class="stat-text">
+                        <span class="count">
+                          {% if total_resource %}
+                            {{ total_resource }}
+                          {% else %}
+                            0
+                          {% endif %}
+                        </span>
+                      </div>
+                      <div class="stat-heading">Knowledge Resources</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="buttons" style="margin: 15px 0 0px 0;">
+        <button class="btn text-white" id="knowledge_btn" style="background-color: #0174BE;">Pending Knowledge Resource/s</button>
+      </div>
+      <hr />
+      <div class="approve-knowledge-container" id="approve-knowledge-container">
+        <table id="approvedknowledgeTable" class="knowledge-table table table-bordered">
+          <thead style="color: #fff; font-size: 13px; background-color: #0C356A; font-weight: bolder;">
+            <tr>
+              <th style="width: 8px;">ID</th>
+              <th>Title</th>
+              <th>Description</th>
+              <th>Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody style="font-size: 12px;">
+            <!-- Inside the table where you display resources -->
+            {% for resource in approvedknowledges %}
+            <tr>
+                <td>{{ resource.knowledge_id }}</td>
+                <td>{{ resource.knowledge_title|capfirst }}</td>
+                <td>{{ resource.knowledge_description|capfirst }}</td>
+                <td>{{ resource.date_created }}</td>
+                <td>
+                  <div class="buttons" style="display: flex;">
+                    <!-- Modify data attributes to include commodity_name -->
+                    <button type="button" style="background-color: #FFC436; color: #fff; margin-right: 4px;" class="btn btn-sm edit-btn"
+                      data-toggle="modal"
+                      data-target="#editKnowledgeModal"
+                      data-knowledgeid="{{ resource.knowledge_id }}"
+                      data-knowledgetitle="{{ resource.knowledge_title }}"
+                      data-knowledgedescription="{{ resource.knowledge_description }}"
+                      data-commodityid="{% for commodity in resource.commodity.all %}{{ commodity.commodity_id }}{% endfor %}"
+                      data-defaultcommodityid="{{ resource.commodity.first.commodity_id }}"
+                      data-defaultcommodityname="{{ resource.commodity.first.commodity_name }}">
+                      <i class="fa-solid fa-pen-to-square"></i>
+                    </button>
+                    <a data-placement="top" data-toggle="tooltip" title="delete" href="/delete-knowledge/{{ resource.knowledge_id }}" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash"></i></a>
+                  </div>
+                </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <!--knowledge-->
+      <div class="pending-knowledge-container" id="pending-knowledge-container">
+        <table id="pendingknowledgeTable" class="knowledge-table table table-bordered">
+          <thead style="color: #fff; font-size: 13px; background-color: #0C356A; font-weight: bolder;">
+            <tr>
+              <th style="width: 8px;">ID</th>
+              <th>Title</th>
+              <th>Description</th>
+              <th>Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody style="font-size: 12px;">
+            <!-- Inside the table where you display resources -->
+            {% for resource in pendingknowledges %}
+            <tr>
+                <td>{{ resource.knowledge_id }}</td>
+                <td>{{ resource.knowledge_title|capfirst }}</td>
+                <td>{{ resource.knowledge_description|capfirst }}</td>
+                <td>{{ resource.date_created }}</td>
+                <td>
+                  <div class="buttons" style="display: flex;">
+                    <form method="post" action="{% url 'approve-request' id=resource.knowledge_id name='Knowledge' %}">
+                        {% csrf_token %}
+                        <button type="submit" title="Approve" style="background-color: #FFC436; color: #fff; margin-right: 4px;" class="btn btn-sm approve-btn" >
+                          <i class="fa-solid fa-check"></i>
+                        </button>
+                      </form>
+                    <a data-placement="top" data-toggle="tooltip" title="delete" href="/delete-additional-request/{{ resource.knowledge_id }}/Knowledge/" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash"></i></a>
+                  </div>
+                </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- add commodity modal -->
+  <div id="addKnowledgeModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="addKnowledgeModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addKnowledgeModalLabel">Add New Knowledge Resources</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        </div>
+        <form action="{% url 'add-knowledge' %}" method="POST" enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="modal-body">
+            <div class="form-group">
+              <label for="knowledge_title">Knowledge Title:</label>
+              <input type="text" class="form-control" id="knowledge_title" name="knowledge_title" required />
+            </div>
+            <div class="form-group">
+              <label for="knowledge_description">Knowledge Description:</label>
+              <textarea class="form-control" id="knowledge_description" name="knowledge_description" required></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Add</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  {% include 'accounts/admin/modals/knowledgeResources/edit_resources.html' %}
+{% endblock %}
+
+{% block script %}
+{% if messages %}
+{% for message in messages %}
+  {% if message.tags == 'success' %}
+    <script>
+      // Display SweetAlert success message
+      Swal.fire({
+        icon: 'success',
+        title: 'Success!',
+        text: '{{ message }}'
+      })
+    </script>
+    {% else %}
+    <script>
+      // Display SweetAlert success message
+      Swal.fire({
+        icon: 'error',
+        title: 'Error!',
+        text: '{{ message }}'
+      })
+    </script>
+  {% endif %}
+{% endfor %}
+{% endif %}
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      var approvedTable = document.getElementById('approve-knowledge-container');
+      var pendingTable = document.getElementById('pending-knowledge-container');
+      var knowledgeBtn = document.getElementById('knowledge_btn');
+
+       // Initially show the Pending CMI Table and hide the CMI Table
+        approvedTable.style.display = 'block';
+        pendingTable.style.display = 'none';
+        knowledgeBtn.textContent = 'Pending Knowledge Resource/s'; // Set initial button text
+        
+        // Add click event listener to the CMI Button
+        knowledgeBtn.addEventListener('click', function() {
+          // Check if the Pending CMI Table is currently displayed
+          if (approvedTable.style.display === 'block') {
+            // If so, hide the Pending CMI Table and display the CMI Table
+            approvedTable.style.display = 'none';
+            pendingTable.style.display = 'block';
+            // Change the text of the button to indicate the currently displayed table
+            knowledgeBtn.textContent = 'Approved Knowledge Resource/s';
+          } else {
+            // If the CMI Table is currently displayed, hide it and display the Pending CMI Table
+            pendingTable.style.display = 'none';
+            approvedTable.style.display = 'block';
+            // Change the text of the button to indicate the currently displayed table
+            knowledgeBtn.textContent = 'Pending Knowledge Resource/s';
+          }
+        });
+    });
+
+    // Function to edit knowledge resources modal
+    function editKnowledgeResourcesModal(knowledgeId, knowledgeTitle, knowledgeDescription, defaultCommodityId, commodityId, defaultCommodityName) {
+      // Log information (optional)
+      console.log('Knowledge ID: ', knowledgeId);
+      console.log('Knowledge Title: ', knowledgeTitle);
+      console.log('Knowledge Description: ', knowledgeDescription);
+      console.log('Commodity ID: ', commodityId);
+      console.log('Default Commodity ID: ', defaultCommodityId);
+      console.log('Default Commodity Name: ', defaultCommodityName);
+
+      // Populate modal fields with knowledge-specific data
+      $('#editKnowledgeModal').find('#knowledge_title').val(knowledgeTitle);
+      $('#editKnowledgeModal').find('#knowledge_description').val(knowledgeDescription);
+      $('#editKnowledgeModal').find('#default_commodity').val(defaultCommodityName);
+
+      // Update form action attribute with the knowledge ID
+      $('#editKnowledgeModal')
+          .find('form')
+          .attr('action', '/edit-knowledge/' + knowledgeId + '/');
+
+       // Always display the default commodity span
+       $('#editKnowledgeModal').find('#default_commodity').show().text(defaultCommodityName.charAt(0).toUpperCase() + defaultCommodityName.slice(1));
+
+       $('#editKnowledgeModal').find('#commodity').val(commodityId);
+
+      // Show the modal
+      $('#editKnowledgeModal').modal('show');
+    }
+
+    // Event listener for the edit button
+    $('.edit-btn').on('click', function () {
+      var knowledgeId = $(this).data('knowledgeid');
+      var knowledgeTitle = $(this).data('knowledgetitle');
+      var knowledgeDescription = $(this).data('knowledgedescription');
+      var commodityId = $(this).data('commodityid');
+      var defaultCommodityId = $(this).data('defaultcommodityid');
+      var defaultCommodityName = $(this).data('defaultcommodityname');
+
+      // Call the function to show the edit knowledge modal
+      editKnowledgeResourcesModal(knowledgeId, knowledgeTitle, knowledgeDescription, defaultCommodityId, commodityId, defaultCommodityName);
+    });
+    
+    //add commodity modal
+    function addResources() {
+      // Logic to handle adding data goes here
+      console.log('Add Data button clicked')
+      // Add your logic here for adding data
+      $('#addKnowledgeModal').modal('show')
+    }
+    $(document).ready(function () {
+      let table = $('#approvedknowledgeTable').DataTable({
+        language: {
+          lengthMenu: '_MENU_',
+          search: '',
+          searchPlaceholder: 'Search...'
+        },
+        lengthMenu: [
+          [7, 10, 25, -1],
+          [7, 10, 25, 'All']
+        ],
+        paging: true,
+        lengthChange: true,
+        autoWidth: false,
+        bInfo: true,
+        bSort: true,
+        responsive: true,
+        buttons: [
+          {
+            text: 'CSV',
+            extend: 'csv'
+          },
+          {
+            text: 'PDF',
+            extend: 'pdf'
+          },
+          {
+            text: 'ADD',
+            className: 'btn btn-primary',
+            action: function () {
+              //call the add function
+              addResources()
+            }
+          }
+        ],
+        dom: '<"row"<"col-md-1"l><"col-md-8"B><"col-md-3"f>>' + '<"row"<"col-md-12"tr>>' + '<"row"<"col-md-5"i><"col-md-7"p>>'
+      })
+    })
+
+    $(document).ready(function () {
+      let table = $('#pendingknowledgeTable').DataTable({
+        language: {
+          lengthMenu: '_MENU_',
+          search: '',
+          searchPlaceholder: 'Search...'
+        },
+        lengthMenu: [
+          [7, 10, 25, -1],
+          [7, 10, 25, 'All']
+        ],
+        paging: true,
+        lengthChange: true,
+        autoWidth: false,
+        bInfo: true,
+        bSort: true,
+        responsive: true,
+        buttons: [
+          {
+            text: 'CSV',
+            extend: 'csv'
+          },
+          {
+            text: 'PDF',
+            extend: 'pdf'
+          },
+          {
+            text: 'ADD',
+            className: 'btn btn-primary',
+            action: function () {
+              //call the add function
+              addResources()
+            }
+          }
+        ],
+        dom: '<"row"<"col-md-1"l><"col-md-8"B><"col-md-3"f>>' + '<"row"<"col-md-12"tr>>' + '<"row"<"col-md-5"i><"col-md-7"p>>'
+      })
+    })
+  </script>
+{% endblock %}

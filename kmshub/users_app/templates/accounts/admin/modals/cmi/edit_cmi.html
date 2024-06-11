@@ -1,0 +1,58 @@
+<!-- Edit CMI Modal -->
+<div class="modal fade" id="editCmiModal" tabindex="-1" role="dialog" aria-labelledby="editCmiModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header" style="background-color: #0C356A;">
+        <h5 class="modal-title text-white" id="editCmiModalLabel" style="font-weight: bolder;">Edit CMI</h5>
+        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      </div>
+      <form id="editCmiForm" action="/edit-cmis/{{ cmi.cmi_id }}/" method="POST" enctype="multipart/form-data">
+        <div class="modal-body">
+          <!-- Form for editing CMI details -->
+          {% csrf_token %}
+          <div class="mb-3">
+            <label for="editCmiName" style="font-weight: bold;">CMI Name</label>
+            <input type="text" class="form-control" id="editCmiName" name="cmi_name" value="{{ cmi.cmi_name }}" />
+          </div>
+          <div class="mb-3">
+            <label for="editCmiMeaning" style="font-weight: bold;">CMI Meaning</label>
+            <input type="text" class="form-control" id="editCmiMeaning" name="cmi_meaning" value="{{ cmi.cmi_meaning }}" />
+          </div>
+          <div class="mb-3">
+            <label for="editCmiDescription" style="font-weight: bold;">CMI Description</label>
+            <textarea class="form-control" id="editCmiDescription" name="cmi_description" rows="3" value="{{ cmi.cmi_description }}"></textarea>
+          </div>
+          <div class="mb-3">
+            <label for="editCmiAddress" style="font-weight: bold;">Address</label>
+            <input type="text" class="form-control" id="editCmiAddress" name="address" value="{{ cmi.address }}" />
+          </div>
+          <div class="mb-3">
+            <label for="editCmiContactNumber" style="font-weight: bold;">Contact Number</label>
+            <input type="tel" class="form-control" id="editCmiContactNumber" name="contact_num" value="{{ cmi.contact_num }}" />
+          </div>
+          <div class="mb-3">
+            <label for="editCmiEmail" style="font-weight: bold;">Email</label>
+            <input type="email" class="form-control" id="editCmiEmail" name="email" value="{{ cmi.email }}" />
+          </div>
+          
+          <div class="row">
+            <div class="col" >
+              <label for="editLatitude" style="font-weight: bold;">Latitude</label>
+              <input type="text" class="form-control" id="editLatitude" name="latitude" value="{{ cmi.latitude }}" />
+            </div>
+            <div class="col" >
+              <label for="editLongitude" style="font-weight: bold;">Longitude</label>
+              <input type="text" class="form-control" id="editLongitude" name="longitude" value="{{ cmi.longitude }}" />
+            </div>
+          </div>
+         
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+

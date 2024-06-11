@@ -1,0 +1,64 @@
+{% extends 'base/index.html' %}
+{% load static %}
+
+{% block title %}
+  Request Additional Commodity
+{% endblock %}
+
+{% block stylesheet %}
+  <!-- Add any additional stylesheets if needed -->
+{% endblock %}
+
+{% block content %}
+  <br />
+  <div class="main-content" id="main-content">
+    <div class="container" style="background-color: #fff; min-height: 50vh;">
+      <br />
+      <h3 style="font-weight:bold;">REQUEST ADDITIONAL KNOWLEDGE RESOURCES</h3>
+      <hr style="color: black;" />
+      <div class="card-container">
+        <form action="{% url 'general-additional' name='Knowledge' %}" method="POST" enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="row">
+            <div class="col-md-12">
+              <div class="form-group">
+                <label for="knowledge_title">Knowledge Title:</label>
+                <input type="text" class="form-control" id="knowledge_title" name="knowledge_title" required />
+              </div>
+            </div>
+            <div class="col-md-12">
+              <div class="form-group">
+                <label for="knowledge_description">Knowledge Description:</label>
+                <textarea class="form-control" id="knowledge_description" name="knowledge_description" required></textarea>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <div class="form-group">
+                <button type="submit" class="btn btn-primary">Request</button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block script %}
+  {% if messages %}
+    {% for message in messages %}
+      {% if message.tags == 'success' %}
+        <script>
+          // Display SweetAlert success message
+          Swal.fire({
+            icon: 'success',
+            title: 'Success!',
+            text: '{{ message }}'
+          })
+        </script>
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+{% endblock %}

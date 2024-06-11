@@ -1,0 +1,33 @@
+{% extends 'base/index.html' %}
+{% load static %}
+{% block title %}
+  Commodities
+{% endblock %}
+{% block stylesheet %}
+<link rel="stylesheet" href="{% static 'style/general.css/general.display.all.commodities.css' %}" />
+{% endblock %}
+
+{% block content %}
+  <br />
+  <div class="main-content">
+    <div class="container">
+      <h3 class="head">Commodities</h3>
+      <hr>
+      <div class="row commodities">
+        {% for commodity in commodities %}
+        <div class="card">
+          <img class="card-img-top" src="{{ commodity.commodity_img.url }}" alt="Card image cap">
+          <div class="card-body">
+            <h5 class="card-title"><a href="{% url 'general-display-commodity' id=commodity.commodity_id %}">{{ commodity.commodity_name|capfirst }}</a></h5>
+            <p class="card-text">{{ commodity.description|capfirst|truncatechars:90 }}</p>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block script %}
+
+{% endblock %}

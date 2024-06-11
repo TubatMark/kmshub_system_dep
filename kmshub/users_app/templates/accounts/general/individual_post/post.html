@@ -1,0 +1,632 @@
+{% extends 'base/index.html' %}
+{% load static %}
+{% load custom_tags %}
+
+{% block title %}
+Post
+      {% endblock %}
+{% block stylesheet %}
+  <link rel="stylesheet" href="{% static 'style/general.css/general.reaction.css' %}" />
+<style>
+  .search-input {
+    width: 100%; /* Adjust the width of the input field as needed */
+  }
+  
+  .dropdown-toggle {
+    border-top-left-radius: 0px;
+    border-bottom-left-radius: 0px;
+    background-color: #fcb040;
+    border: #fcb040 1px solid;
+  }
+  
+  .dropdown-toggle:hover {
+    background-color: #f8d082;
+    color: #0c356a;
+    border: none;
+  }
+
+  /* Add this to your existing CSS or within a <style> tag in the head of your HTML */
+.content.d-flex {
+  display: flex; /* ensures flexbox is used */
+  justify-content: space-between; /* aligns children with space between */
+  align-items: center; /* centers items vertically */
+  width: 100%; /* takes full width to spread out children */
+}
+
+.button-content {
+  margin-left: auto; /* pushes the button-content div to the right */
+  padding-right: 20px; /* optional padding for aesthetics */
+}
+
+.btn-post{
+  background-color: transparent;
+  color: #0C356A;
+  border: none;
+}
+
+.author{
+  color: #000000;
+}
+/* Add this CSS to your stylesheet or within a <style> tag in the HTML head */
+.header-content {
+    margin-left: 55px; /* maintains the left margin */
+    display: flex; /* uses flexbox for layout */
+    flex-direction: column; /* stacks children vertically */
+    align-items: flex-start; /* aligns items to the left */
+}
+
+.header-content .author,
+.header-content .commodity-name,
+.header-content .date-posted {
+    margin: 0; /* removes all margins */
+    padding: 0; /* removes all padding */
+}
+
+.header-content .commodity-name  {
+    color: #000000;
+    font-size: 10px;
+    display: block; /* ensures it appears on a new line */
+}
+
+.date-posted{
+  color: #000000;
+  font-size: 10px;
+}
+
+
+.card.comment {
+  position: relative; /* Allows absolute positioning within */
+}
+
+.card.comment textarea {
+  width: 100%; /* Width adjusted to leave space for the button */
+  padding-right: 50px; /* Avoids text getting hidden behind the button */
+  box-sizing: border-box; /* Includes padding in width calculation */
+}
+
+.card.comment .submit-btn {
+  font-size: 13px;
+  cursor: pointer; /* Gives a pointer cursor on hover */
+  background-color: #0C356A;
+  color: white;
+  border: none;
+  border-radius: 7px;
+  margin-left: 797px;
+  padding: 3px 10px 3px 10px;
+  margin-bottom: 8px;
+}
+
+/* Rate discussion */
+.star-rating .star,
+.comment-star-rating .comment-star {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 13px; /* Adjust size as needed */
+  color: #ccc; /* Default non-selected color */
+}
+
+/* Highlight stars when hovered */
+.star-rating .star:hover i,
+.star-rating .star.selected i,
+.comment-star-rating .comment-star:hover i,
+.comment-star-rating .comment-star.selected i {
+  color: #ffd700 !important; /* Color when selected or hovered */
+}
+
+/* Keep previous stars highlighted when hovering */
+.star-rating .star:hover ~ .star.selected i,
+.comment-star-rating .comment-star:hover ~ .comment-star.selected i {
+  color: #ffd700 !important;
+}
+
+
+/* Display discussion stars */
+.discussion-star-rating .display-star,
+.display-comment-star-rating .display-comment-star {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 13px; /* Adjust size as needed */
+  color: grey; /* Set default non-selected color */
+  padding: 1px; /* Remove padding */
+  margin: 0; /* Remove margin */
+}
+
+/* Highlight stars when hovered */
+.discussion-star-rating .display-star:hover i,
+.display-comment-star-rating .display-comment-star:hover i {
+  color: grey !important; /* Ensure icon color stays grey when unselected and hovered */
+}
+
+/* Highlight stars when selected */
+.discussion-star-rating .display-star.selected i,
+.display-comment-star-rating .display-comment-star.selected i {
+  color: #ffd700; /* Color when selected */
+}
+
+/* Override hover effect for already selected stars */
+.discussion-star-rating .display-star.selected:hover i,
+.display-comment-star-rating .display-comment-star.selected:hover i {
+  color: #ffd700 !important; /* Ensure icon color stays selected color even when hovered */
+}
+
+</style>
+{% endblock %}
+
+{% block content %}
+  <br />
+  <div class="main-content" style="min-height: 51vh;">
+    <div class="container">
+      <div class="input-group mb-3 justify-content-center">
+        <input type="text" style="width: 600px;" name="search_term" id="search_term" class="form-control" placeholder="What's in your mind?" />
+        <!-- Suggestions Dropdown -->
+        <div class="input-group-append">
+          <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle search-dropdown" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Commodity Type</button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+              <div class="checkbox">
+                <label style="margin-left: 5px;"><input type="checkbox" name="commodity" value="all" class="commodity-tag" onchange="handleCheckboxChange(this)" checked /> All</label><br />
+              </div>
+              {% for commodity in commodities %}
+                {% if commodity.status == 'Approved' %}
+                  <div class="checkbox">
+                    <label style="margin-left: 5px;"><input type="checkbox" id="commodity_{{ commodity.commodity_id }}" name="commodity" value="{{ commodity.commodity_id }}" class="commodity-tag" data-selected="false"/> {{ commodity.commodity_name|capfirst }}</label><br />
+                  </div>
+                {% endif %}
+              {% endfor %}
+            </div>
+          </div>
+          <button class="btn text-white" id="search_button" type="button" style="background-color: #0C356A;  margin: 0px 0px 0px 10px; border-radius: 7px; border: none;">Search</button>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <div class="card" id="post-body" style="width: 875px; border-radius: 7px; margin-bottom: 10px;">
+            <div class="card-body">
+              <div class="profile-img">
+                <img src="{% static 'media/default_profile.png' %}" alt="" style="width: 50px; height: 50px; position: absolute;" />
+              </div>
+
+              <div class="content d-flex">
+                <div class="header-content">
+                  <a href="" class="author">{{ discussion.author.first_name|capfirst }} {{ discussion.author.last_name|capfirst }}</a>
+                  {% for commodity in discussion.commodity_id.all %}
+                    <a href="{% url 'general-display-commodity' id=commodity.commodity_id %}" class="commodity-name">{{ commodity.commodity_name|capfirst }}</a>
+                  {% endfor %}
+                  <div class="date-posted">{{ discussion.date_posted }}</div>
+                </div>
+                <div class="button-content">
+                  <button class="btn-post" data-toggle="modal" data-target="#reportquestionModal{{ discussion.discussion_id }}" aria-haspopup="true" aria-expanded="false">
+                      <i class="fa-regular fa-flag"></i>
+                  </button>
+                  {% if request.user in discussion.bookmark.all %}
+                  <button class="btn-post" onclick="bookmark('{{ discussion.discussion_id }}')">
+                    <i class="fa-solid fa-bookmark" style="color: #0C356A;"></i>
+                  </button>
+                  {% else %}
+                  <button class="btn-post" onclick="bookmark('{{ discussion.discussion_id }}')">
+                    <i class="fa-regular fa-bookmark"></i>
+                  </button>
+                  {% endif %}
+                  
+                  <button class="btn-post" data-toggle="modal" data-target="#ratequestionModal" aria-haspopup="true" aria-expanded="false">
+                      <i class="fa-regular fa-star"></i>
+                  </button>
+                </div>
+              </div>
+
+              <div class="contents-data" style="margin-left: 54px;">
+                <div class="content-title" style="margin-top: 10px;">
+                  <span style="font-weight: bolder; text-align: justify;">{{ discussion.discussion_title|upper }}</span>
+                </div>
+                <div class="content-description">
+                  <p style="text-align: justify; font-size: 13px;">{{ discussion.discussion_question|capfirst }}</p>
+                </div>
+              </div>
+              
+              <!-- Other discussion content -->
+              <div class="reaction d-flex" style="margin-left: 54px; justify-content: space-between; align-items: center; width: 90%;">
+                <button class="comment-btn" id="comment-btn" style="background-color: #0C356A; color: white; border-radius: 7px; border: none; padding: 3px 10px 3px 10px;">
+                  <i class="fa fa-comment"></i> ADD ANSWER
+                </button>
+
+                <!-- display Stars reaction -->
+                <div class="discussion-star-rating" >
+                  <button class="display-star" data-value="1"><i class="fa-solid fa-star discussion-star" ></i></button>
+                  <button class="display-star" data-value="2"><i class="fa-solid fa-star discussion-star"></i></button>
+                  <button class="display-star" data-value="3"><i class="fa-solid fa-star discussion-star"></i></button>
+                  <button class="display-star" data-value="4"><i class="fa-solid fa-star discussion-star"></i></button>
+                  <button class="display-star" data-value="5"><i class="fa-solid fa-star discussion-star"></i></button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card comment" id="comment" style="display: none; width: 750px; border-radius: 7px; border: none; position: relative;">
+            <textarea name="comment_content" id="comment_content" style="width: 100%; height: 100px; border-radius: 7px; border: none; padding: 5px 10px; box-sizing: border-box; margin-left: 125px;" placeholder="Write your comment here ..."></textarea>
+            <button name="submit" onclick="handleComment()" class="btn btn-primary submit-btn"><i class="fa-solid fa-paper-plane text-white" ></i> SUBMIT</button>
+          </div>
+          
+          {% if comments %}
+            {% for comment in comments %}
+                <div class="card comments" style="width: 875px; border-radius: 7px; margin-bottom: 10px;">
+                    <div class="card-body">
+                        <div class="profile-img">
+                            <img src="{% static 'media/default_profile.png' %}" alt="" style="width: 50px; height: 50px; position: absolute;" />
+                        </div>
+                        <div class="content d-flex">
+                            <div class="header-content">
+                                <a href="" class="author">{{ comment.commentor.first_name|capfirst }} {{ comment.commentor.last_name|capfirst }}</a>
+                                {% for commodity in discussion.commodity_id.all %}
+                                  <a href="{% url 'general-display-commodity' id=commodity.commodity_id %}" class="commodity-name">{{ commodity.commodity_name|capfirst }}</a>
+                                {% endfor %}
+                                <div class="date-posted">{{ comment.date_commented }}</div>
+                            </div>
+                            <div class="button-content">
+                                <button class="btn-post" data-toggle="modal" data-target="#reportcommentModal{{comment.comment_id}}" aria-haspopup="true" aria-expanded="false"><i class="fa-regular fa-flag"></i></button>
+                                {% if request.user in comment.react.all %}
+                                    <button class="btn-post" onclick="react('{{comment.comment_id}}')"><i class="fa-solid fa-heart" style="color: #0C356A;"></i></button>
+                                {% else %}
+                                    <button class="btn-post" onclick="react('{{comment.comment_id}}')"><i class="fa-regular fa-heart"></i></button>
+                                {% endif %}
+                                <button class="btn-post" data-toggle="modal" data-target="#ratecommentModal{{comment.comment_id}}" aria-haspopup="true" aria-expanded="false">
+                                    <i class="fa-regular fa-star"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="comments-data" style="margin-left: 54px;">
+                            <div class="display-comments" style="margin-top: 10px;">
+                                <p style="text-align: justify; font-size: 13px;">{{ comment.comment_content|capfirst }}</p>
+                            </div>
+                        </div>
+
+                        <div class="reaction d-flex" style="margin-left: 54px; justify-content: space-between; align-items: center; width: 90%;">
+                            <button class="comment-btn" id="comment-btn" style="background-color: white; color: white; border-radius: 7px; border: none; padding: 3px 10px 3px 10px;"></button>
+
+                            <!-- Stars reaction -->
+                            <div class="display-comment-star-rating" data-comment-id="{{ comment.comment_id }}">
+                              {% if existing_comment_rating %}
+                                {% with comment_rating=existing_comment_rating|get_comment_rating:comment.comment_id %}
+                                  {% if comment_rating %}
+                                    {% for i in ratings_list %}
+                                      <button class="display-comment-star" style="color: {% if i <= comment_rating.rating %}#ffd700{% else %}grey{% endif %};" data-value="{{ i }}">
+                                        <i class="fa-solid fa-star discussion-star"></i>
+                                      </button>
+                                    {% endfor %}
+                                  {% else %}
+                                    {% for i in ratings_list %}
+                                      <button class="display-comment-star" style="color: grey;" data-value="{{ i }}">
+                                        <i class="fa-solid fa-star discussion-star"></i>
+                                      </button>
+                                    {% endfor %}
+                                  {% endif %}
+                                {% endwith %}
+                              {% else %}
+                                {% for i in ratings_list %}
+                                  <button class="display-comment-star" style="color: grey;" data-value="{{ i }}">
+                                    <i class="fa-solid fa-star discussion-star"></i>
+                                  </button>
+                                {% endfor %}
+                              {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% include "accounts/general/modal/discussion_forum/rate_comment.html" %}
+                {% include "accounts/general/modal/discussion_forum/report_comment.html" %}
+            {% endfor %}
+          {% else %}
+              <div class="card comments" style="width: 875px; border-radius: 7px; margin-bottom: 10px;">
+                  <div class="card-body">
+                      <span>No comments</span>
+                  </div>
+              </div>
+          {% endif %}
+
+
+        </div>
+      </div>
+      
+    </div>
+  </div>
+
+  {% include "accounts/general/modal/discussion_forum/rate_discussion.html" %}
+  {% include "accounts/general/modal/discussion_forum/report_discussion.html" %}
+{% endblock %}
+
+{% block script %}
+
+<script>
+  //post stars
+  document.addEventListener("DOMContentLoaded", function() {
+    let existingRating = {{ discussion_rating }};
+    console.log(existingRating);
+
+    document.querySelector('.star-rating').addEventListener('mouseleave', function() {
+        let stars = this.querySelectorAll('.star');
+        stars.forEach(s => {
+            if (s.dataset.value > existingRating) {
+                s.classList.remove('selected');
+            }
+        });
+    });
+
+    document.querySelectorAll('.star-rating .star, .star-rating .star i').forEach(element => {
+        element.addEventListener('mouseover', function() {
+            let value = this.closest('.star').dataset.value;
+            let stars = this.closest('.star-rating').querySelectorAll('.star');
+            stars.forEach((s, index) => {
+                if (index < value || (existingRating && index < existingRating)) {
+                    s.classList.add('selected');
+                } else {
+                    s.classList.remove('selected');
+                }
+            });
+        });
+    });
+
+    // Initially color stars up to the existing rating
+    let stars = document.querySelectorAll('.star-rating .star');
+    stars.forEach((star, index) => {
+        if (index < existingRating) {
+            star.classList.add('selected');
+        }
+    });
+
+    document.querySelectorAll('.star-rating .star').forEach(star => {
+        star.addEventListener('click', function() {
+            let value = this.dataset.value;
+            //alert("You rated this " + value + " out of 5"); // Placeholder action
+
+            // Update existingRating with the selected value
+            existingRating = value;
+        });
+    });
+
+    // Display stars based on the existing rating
+    let displayStars = document.querySelectorAll('.discussion-star-rating .display-star');
+    displayStars.forEach(star => {
+        let value = star.dataset.value;
+        if (value <= existingRating) {
+            star.classList.add('selected');
+        }
+    });
+
+    //COMMENT HANDLE COLOR 
+    let existingRatingComment = 0;
+    document.querySelector('.comment-star-rating').addEventListener('mouseleave', function() {
+        let commentstars = this.querySelectorAll('.comment-star');
+        commentstars.forEach(s => {
+            s.classList.remove('selected');
+        });
+    });
+
+    document.querySelectorAll('.comment-star-rating .comment-star, .comment-star-rating .comment-star i').forEach(elements => {
+        elements.addEventListener('mouseover', function() {
+            let commentvalue = this.closest('.comment-star').dataset.value;
+            let commentstars = this.closest('.comment-star-rating').querySelectorAll('.comment-star');
+            commentstars.forEach((s, index) => {
+                if (index < commentvalue || (existingRatingComment && index < existingRatingComment)) {
+                    s.classList.add('selected');
+                } else {
+                    s.classList.remove('selected');
+                }
+            });
+        });
+    });
+
+    // Initially color stars up to the existing rating
+    let commentstars = document.querySelectorAll('.comment-star-rating .comment-star');
+    commentstars.forEach((commentstar, index) => {
+        if (index < existingRatingComment) {
+            commentstar.classList.add('selected');
+        }
+    });
+
+  });
+
+  // TOGGLE COMMENT
+  const toggleButton = document.getElementById('comment-btn')
+  const cardBody = document.getElementById('comment')
+
+  toggleButton.addEventListener('click', function () {
+    if (cardBody.style.display === 'none') {
+      cardBody.style.display = 'block'
+    } else {
+      cardBody.style.display = 'none'
+    }
+  })
+
+  // HANDLE COMMENT
+  function handleComment() {
+    const commentData = document.getElementById('comment_content');
+    const comment = commentData.value;
+    console.log(comment);
+
+    submitComment(comment);
+  }
+
+  //rating using stars
+  function rateDiscussion(reactionValue) {
+    var discussionId = {{ discussion.discussion_id }};
+    console.log(discussionId);
+
+    $.ajax({
+        url: '{% url "general-rate-discussion-stars" %}',
+        type: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRFToken': '{{ csrf_token }}'
+        },
+        contentType: 'application/json',
+        data: JSON.stringify({
+            discussion_id: discussionId,
+            reaction_value: reactionValue
+        }),
+        success: function (data) {
+            console.log('Reaction updated successfully');
+            // Update the UI with the new data
+            window.location.reload();
+        },
+        error: function (xhr, status, error) {
+            console.error('Ajax request failed:', error);
+        }
+    });
+  }
+
+  //rate comment with stars
+  function rateComment(rateValue, commentId) {
+    $.ajax({
+        url: '{% url "general-rate-comment-stars" %}',
+        type: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRFToken': '{{ csrf_token }}'
+        },
+        contentType: 'application/json',
+        data: JSON.stringify({
+            comment_id: commentId,
+            rate_value: rateValue
+        }),
+        success: function (data) {
+            console.log('Reaction updated successfully');
+            console.log(data.rating);
+            // Update the UI with the new data
+            window.location.reload();
+        },
+        error: function (xhr, status, error) {
+            console.error('Ajax request failed:', error);
+        }
+    });
+  }
+
+  // Function to update the star ratings div with new data
+  function updateStars(data) {
+      // Replace '#stars-container' with the ID of the div containing the star ratings
+      //$('.star-rating').html(data);
+      window.location.reload();
+  }
+
+
+  function submitComment(comment){
+    // Get the discussion ID from your HTML or Django template
+    var discussionId = {{discussion.discussion_id}}
+    console.log(discussionId);
+
+    // Send AJAX request to the Django view
+    $.ajax({
+      url: '{% url "general-comment" %}',
+      type: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest',
+        'X-CSRFToken': '{{ csrf_token }}'
+      },
+      contentType: 'application/json',
+      data: JSON.stringify({
+          discussion_id: discussionId,
+          comment_content: comment
+      }),
+      success: function (data) {
+          // Update the UI based on the response data
+          console.log('Reaction updated successfully');
+
+          // Reload the page after a short delay
+          setTimeout(function () {
+            window.location.reload();
+          }, 1000); // You can adjust the delay (in milliseconds) as needed
+      },
+      error: function (xhr, status, error) {
+          console.error('Ajax request failed:', error);
+      }
+    });
+  }
+
+  // Function to bookmark discussion post
+  function bookmark(id) {
+    // Send AJAX request to the Django view
+    $.ajax({
+      url: '{% url "bookmark-post" %}',
+      type: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest',
+        'X-CSRFToken': '{{ csrf_token }}'
+      },
+      contentType: 'application/json',
+      data: JSON.stringify({
+        id: id,
+      }),
+      success: function (data) {
+        // Update the UI based on the response data
+        console.log(data.message);
+        console.log('Bookmark count:', data.bookmark_count);
+        
+        window.location.reload();
+        
+      },
+      error: function (xhr, status, error) {
+        console.error('Ajax request failed:', error);
+      }
+    });
+  }
+
+  //function to react the comment
+  function react(id) {
+    // Send AJAX request to the Django view
+    $.ajax({
+      url: '{% url "react-comment" %}',
+      type: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest',
+        'X-CSRFToken': '{{ csrf_token }}'
+      },
+      contentType: 'application/json',
+      data: JSON.stringify({
+        id: id,
+      }),
+      success: function (data) {
+        // Update the UI based on the response data
+        console.log(data.message);
+        console.log('React count:', data.react_count);
+        
+        window.location.reload();
+        
+      },
+      error: function (xhr, status, error) {
+        console.error('Ajax request failed:', error);
+      }
+    });
+  }
+</script>
+
+{% if messages %}
+    {% for message in messages %}
+      {% if message.tags == 'success' %}
+        <script>
+          // Display SweetAlert success message
+          Swal.fire({
+            icon: 'success',
+            title: 'Success!',
+            text: '{{ message }}'
+          })
+        </script>
+      {% else %}
+      <script>
+        // Display SweetAlert success message
+        Swal.fire({
+          icon: 'error',
+          title: 'Error!',
+          text: '{{ message }}'
+        })
+      </script>
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+{% endblock %}

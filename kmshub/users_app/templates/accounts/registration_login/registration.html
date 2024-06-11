@@ -1,0 +1,118 @@
+{% extends 'base/index.html' %}
+{% load static %}
+{% block title %}
+  Sign-up
+{% endblock %}
+
+{% block stylesheet %}
+  <link rel="stylesheet" href="{% static 'style/registration.css' %}" />
+  <style>
+    .form-control{
+      border-left: none;
+      border-right: none;
+      border-top: none;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+  <br />
+  <div class="main-content">
+    <div class="container" style="min-height: 50vh; ">
+      <h2 style="font-weight: bolder; text-align: center;">ACCOUNT REGISTRATION</h2>
+
+      <form action="{% url 'sign-up' %}" method="POST">
+        {% csrf_token %}
+        <div class="row" style="background-color: white; height: 470px; border-radius: 10px; box-shadow: 1px 1px 2px white, 0 0 25px #0C356A, 0 0 5px #0C356A;">
+          <div class="col-md-6" style="background-color: #0174BE; border-top-left-radius: 10px; border-bottom-left-radius: 10px; height: 472px;">
+            <div class="image-container">
+              <div class="image-wrapper" style="justify-content: center; align-items: center; text-align: center; margin-top: 20px;">
+                <img src="{% static 'media/RAISE-Logo.png' %}" alt="Register" class="logo"/>
+              </div>
+              <div class="text-wrapper text-center" style="margin-top: 10px;">
+                <span class="text font-weight-bold text-white" style="font-size: 30px;"> km4aanr in WESTERN MINDANAO </span>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6" >
+            <div class="content-wrapper" style="margin: 25px 5px 5px 5px;">
+                <div class="col">
+                  <div class="form-group">
+                    <input type="text" class="form-control" id="first_name" name="first_name" placeholder="First Name" required />
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="form-group">
+                    <input type="text" class="form-control" id="last_name" name="last_name" placeholder="Last Name" required />
+                  </div>
+                </div>
+              
+                <div class="col">
+                  <div class="form-group">
+                    <input type="email" class="form-control" id="email" name="email" placeholder="Email" required />
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="form-group">
+                    <input type="text" class="form-control" id="institution" name="institution" placeholder="Institution or Academe" required />
+                  </div>
+                </div>
+              
+                <div class="col">
+                  <div class="form-group">
+                    <input type="text" class="form-control" id="position" name="position" placeholder="Position" required />
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="form-group">
+                    <input type="text" class="form-control" id="occupation" name="occupation" placeholder="Occupation" required />
+                  </div>
+                </div>
+              
+                <div class="col">
+                  <div class="form-group">
+                    <input type="password" class="form-control" id="password" name="password" placeholder="Password" required autocomplete="current-password"/>
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="form-group">
+                    <input type="text" class="form-control" id="user_type" name="user_type" value="general" hidden />
+                  </div>
+                </div>
+              <div class="button-container">
+                <span>Already have an account?<a href="{% url "login" %}"> Click here!</a></span>
+                <button type="submit" value="submit" class="sign-up ">Register</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+{% endblock %}
+
+{% block script %}
+  {% if messages %}
+    {% for message in messages %}
+      {% if message.tags == 'error' %}
+        <script>
+          // Display SweetAlert success message
+          Swal.fire({
+            icon: 'error',
+            title: 'Error!',
+            text: '{{ message }}'
+          })
+        </script>
+        {% else %}
+        <script>
+          // Display SweetAlert success message
+          Swal.fire({
+            icon: 'success',
+            title: 'Success!',
+            text: '{{ message }}'
+          })
+        </script>
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+{% endblock %}

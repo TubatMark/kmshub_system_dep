@@ -1,0 +1,51 @@
+.head-resources,
+.card-title {
+    display: flex;
+    justify-content: space-between;
+    /* Aligns items to the start and end of the container */
+    align-items: center;
+    /* Centers items vertically */
+}
+
+.add-resources-btn,
+.edit-resources-btn,
+.pagination-button {
+    border-radius: 5px;
+    /* Adds rounded corners to the button */
+    background-color: #0C356A;
+    /* Sets the background color to green */
+    color: white;
+    /* Sets the text color to white */
+    padding: 2px 7px;
+    /* Adds padding to the button */
+    border: none;
+    /* Removes the button border */
+    cursor: pointer;
+    /* Changes the cursor to a pointer on hover */
+    font-weight: bold;
+    width: 200px;
+}
+
+.add-resources-btn {
+    width: 130px;
+}
+
+.remove-commodity-btn,
+.remove-cmi-btn {
+    display: flex;
+    align-items: center;
+}
+
+.remove-commodity-btn i,
+.remove-cmi-btn i {
+    margin-left: auto;
+}
+
+.pagination-button:disabled {
+    background-color: white;
+    color: #0C356A;
+    /* Change text color for better visibility */
+    cursor: not-allowed;
+    /* Change cursor to indicate it's not clickable */
+    /* Add any additional styling for the disabled state */
+}

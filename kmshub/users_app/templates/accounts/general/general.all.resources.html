@@ -1,0 +1,201 @@
+{% extends 'base/index.html' %}
+{% load static %}
+{% block title %}
+  Knowledge Resources
+{% endblock %}
+{% block stylesheet %}
+  <link rel="stylesheet" href="{% static 'style/general.css/general.cmi.resources.css' %}" />
+
+  <style>
+    .card, .card-div {
+      transition: transform 0.3s ease-in-out;
+    }
+
+    .card:hover {
+      transform: scale(1.01);
+    }
+
+    .card-div:hover {
+      transform: scale(1.03);
+    }
+  </style>
+
+  {% endblock %}
+
+{% block content %}
+  <br />
+  <div class="main-content">
+    <div class="container" style="min-height: 50vh;">
+      <h2 style="font-weight: bolder;">Knowledge Resources</h2>
+      <hr />
+
+      {% for category, data in limited_resources.items %}
+        {% if category == 'Maps' %}
+          <div class="map-container card" style="margin-bottom: 3px; height: 200px; width: auto; border: 1px solid #ddd; padding: 10px; border-radius: 4px; background-color: white;">
+            <div class="card-title">
+              <h5 style="font-weight: bold; ">{{ category }}</h5>
+              <a href="{% url 'general-display-knowledge' knowledge_id=data.knowledge_id %}">See Map</a>
+            </div>
+            <hr />
+            {% for resource in data.resources_objects %}
+              <ul>
+                <li>
+                  <a style="text-decoration: none;" href="{% url 'general-individual-resources' id=resource.resources_id %}" >{{ resource.resources_title|capfirst }}</a>
+                </li>
+              </ul>
+            {% endfor %}
+          </div>
+          {% elif category in 'Media Technologies Products' %}
+          <br>
+          <div class="cardcard-title d-flex justify-content-between align-items-center" style="justify-content: center;">
+            <h5 style="font-weight: bold; ">{{ category }}</h5>
+            <a style="text-decoration: none;" href="{% url 'general-display-knowledge' knowledge_id=data.knowledge_id %}">See More</a>
+          </div>
+          <hr />
+          <div class="d-flex flex-wrap" style="display: flex; justify-content: center;">
+            {% for resource in data.resources_objects %}
+              <div class="card mr-2 mb-2" style="width: 15rem;">
+                <div class="card-header" style="text-align: center;">
+                  <a style="font-weight: bold; font-size: 13px; text-decoration: none;" href="{% url 'general-individual-resources' id=resource.resources_id %}">{{ resource.resources_title|capfirst|truncatechars:30 }}</a>
+                  <br />
+                </div>
+                <img class="card-img-top" src="{{ resource.images.url }}" alt="{{ resource.resources_title|capfirst }}" style="height: 200px; border-radius: 0;" />
+                <div class="card-body">
+                  <span>
+                    <span style="font-weight: bold; font-size: 13px;">CMI:</span>
+                    {% for cmi in resource.cmi.all %}
+                      <span style="font-size: 13px; background-color: #0174BE; padding: 0 7px; color: white; border-radius: 4px;">{{ cmi.cmi_name|capfirst }}</span>
+                    {% endfor %}
+                  </span><br />
+                  <span>
+                    <span style="font-weight: bold; font-size: 13px;">Commodity:</span>
+                    {% for commodity in resource.commodity.all %}
+                      <span style="font-size: 13px; background-color: #0174BE; padding: 0 7px; color: white; border-radius: 4px;">{{ commodity.commodity_name|capfirst }}</span>
+                    {% endfor %}
+                  </span>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        {% elif category in 'Policies Projects Publications Flyers' %}
+          <div class="{{ category|lower }}-container card" style="margin-bottom: 3px; height: 200px; width: auto; border: 1px solid #ddd; padding: 10px; border-radius: 4px; background-color: white;">
+            <div class="card-title">
+              <h5 style="font-weight: bold; ">{{ category }}</h5>
+              <a style="text-decoration: none;" href="{% url 'general-display-knowledge' knowledge_id=data.knowledge_id %}">See More</a>
+            </div>
+            <hr />
+
+            {% for resource in data.resources_objects %}
+              {% for knowledge in resource.knowledge.all %}
+                {% if knowledge.knowledge_title == category %}
+                  <ul>
+                    <li>
+                      <a style="text-decoration: none;" href="{% url 'view_pdf' id=resource.resources_id %}" target="_blank">{{ resource.resources_title|capfirst }}</a>
+                    </li>
+                  </ul>
+                {% endif %}
+              {% endfor %}
+            {% endfor %}
+          </div>
+        {% elif category in 'Training/Seminars Events' %}
+          <div class="{{ category|lower }}-container card" style="margin-bottom: 3px; height: 270px; width: auto; border: 1px solid #ddd; padding: 10px; border-radius: 4px; background-color: white;">
+            <div class="card-title">
+              <h5 style="font-weight: bold; ">{{ category }}</h5>
+              <a style="text-decoration: none;" href="{% url 'general-display-knowledge' knowledge_id=data.knowledge_id %}">See More</a>
+            </div>
+            <div class="row" style="font-weight: bold;">
+              <div class="col-md-4">
+                <div class="seminar" style="width: auto;  padding: 10px; border-radius: 4px; background-color: white;">Title</div>
+              </div>
+              <div class="col-md-6">
+                <div class="seminar" style="width: auto; padding: 10px; border-radius: 4px; background-color: white;">Venue</div>
+              </div>
+              <div class="col-md-2">
+                <div class="seminar" style=" width: auto; padding: 10px; border-radius: 4px; background-color: white;">Training Date</div>
+              </div>
+            </div>
+            {% for resource in data.resources_objects %}
+              <div class="row">
+                <div class="col-md-4">
+                  <div class="seminar card-div" style="margin-bottom: 3px; width: auto; border: 1px solid #ddd; padding: 10px; border-radius: 4px; background-color: white;">{{ resource.resources_title|capfirst }}</div>
+                </div>
+                <div class="col-md-6">
+                  <div class="seminar card-div" style="margin-bottom: 3px; width: auto; border: 1px solid #ddd; padding: 10px; border-radius: 4px; background-color: white;">{{ resource.venue|capfirst }}</div>
+                </div>
+                <div class="col-md-2">
+                  <div class="seminar card-div" style="margin-bottom: 3px; width: auto; border: 1px solid #ddd; padding: 10px; border-radius: 4px; background-color: white;">{{ resource.training_date }}</div>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+          {% elif category in 'Webinars' %}
+          <div class="{{ category|lower }}-container card" style="margin-bottom: 3px; height: 270px; width: auto; border: 1px solid #ddd; padding: 10px; border-radius: 4px; background-color: white;">
+            <div class="card-title">
+              <h5 style="font-weight: bold; ">{{ category }}</h5>
+              <a style="text-decoration: none;" href="{% url 'general-display-knowledge' knowledge_id=data.knowledge_id %}">See More</a>
+            </div>
+            <div class="row" style="font-weight: bold;">
+              <div class="col-md-4">
+                <div class="seminar" style="width: auto;  padding: 10px; border-radius: 4px; background-color: white;">Title</div>
+              </div>
+              <div class="col-md-6">
+                <div class="seminar" style="width: auto; padding: 10px; border-radius: 4px; background-color: white;">Link</div>
+              </div>
+              <div class="col-md-2">
+                <div class="seminar" style=" width: auto; padding: 10px; border-radius: 4px; background-color: white;">Training Date</div>
+              </div>
+            </div>
+            {% for resource in data.resources_objects %}
+              <div class="row">
+                <div class="col-md-4">
+                  <div class="seminar card-div" style="margin-bottom: 3px; width: auto; border: 1px solid #ddd; padding: 10px; border-radius: 4px; background-color: white;">{{ resource.resources_title|capfirst }}</div>
+                </div>
+                <div class="col-md-6">
+                  <div class="seminar card-div" style="margin-bottom: 3px; width: auto; border: 1px solid #ddd; padding: 10px; border-radius: 4px; background-color: white;">{{ resource.link }}</div>
+                </div>
+                <div class="col-md-2">
+                  <div class="seminar card-div" style="margin-bottom: 3px; width: auto; border: 1px solid #ddd; padding: 10px; border-radius: 4px; background-color: white;">{{ resource.training_date }}</div>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="{{ category|lower }}-container card" style="margin-bottom: 3px; width: auto; height: 200px; border: 1px solid #ddd; padding: 10px; border-radius: 4px; background-color: white;">
+            <div class="card-title">
+              <h5 style="font-weight: bold; ">{{ category }}</h5>
+              <a style="text-decoration: none;" href="{% url 'general-display-knowledge' knowledge_id=data.knowledge_id %}">See More</a>
+            </div>
+            <hr />
+
+            {% for resource in data.resources_objects %}
+              <ul>
+                <li>
+                  <a style="text-decoration: none;" href="{{ resource.link }}">{{ resource.resources_title|capfirst }}</a>
+                </li>
+              </ul>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endfor %}
+
+      <br />
+    </div>
+  </div>
+{% endblock %}
+
+{% block script %}
+  {% if messages %}
+    {% for message in messages %}
+      {% if message.tags == 'success' %}
+        <script>
+          // Display SweetAlert success message
+          Swal.fire({
+            icon: 'success',
+            title: 'Success!',
+            text: '{{ message }}'
+          })
+        </script>
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+{% endblock %}

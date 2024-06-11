@@ -1,0 +1,78 @@
+<!-- Add Program modal -->
+<div id="addTechnologyModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="addTechnologyModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header" style="background-color: #0C356A;">
+        <h5 class="modal-title text-white" id="addTechnologyModalLabel" style="font-weight: bolder;">Add New Technology Generated</h5>
+        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      </div>
+      <form action="{% url 'add_tech' %}" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="tech_title" class="font-weight-bold">Technology Title</label>
+            <input type="text" class="form-control" id="tech_title" name="tech_title" required />
+          </div>
+          <div class="form-group">
+            <label for="description" class="font-weight-bold">Description</label>
+            <textarea class="form-control" id="description" name="description" style="height: 150px;" required></textarea>
+          </div>
+          <div class="form-group">
+            <label for="generator" class="font-weight-bold">Generator</label>
+            <input type="text" class="form-control" id="generator" name="generator" required />
+          </div>
+
+          <div class="row">
+            <div class="col-6">
+              <div class="form-group">
+                <label for="commodity" class="font-weight-bold">Commodity</label>
+                <select class="form-control" id="commodity" name="commodity" required >
+                  <option value="" disabled selected>Select Commodity Tag</option>
+                  {% for commodity in commodities %}
+                  {% if commodity.status == 'Approved' %}
+                    <option value="{{ commodity.commodity_id }}">{{ commodity.commodity_name }}</option>
+                    {% endif %}
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="form-group">
+                <label for="cmi" class="font-weight-bold">CMI</label>
+                <select class="form-control" id="cmi" name="cmi" required >
+                  <option value="" disabled selected>Select CMI</option>
+                  {% for cmi in cmis %}
+                  {% if cmi.status == 'Approved' %}
+                    <option value="{{ cmi.cmi_id }}">{{ cmi.cmi_name }}</option>
+                    {% endif %}
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+          </div>
+          <!-- New row to display selected options -->
+          <div class="row">
+            <div class="col-6">
+              <div class="form-group">
+                <label for="selected-commodity" style="font-weight: bold;">Selected Commodities:</label>
+                <ul id="selected-commodity"></ul>
+                <textarea name="commodity_ids" id="commodity_ids" ></textarea>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="form-group">
+                <label for="selected-cmi" style="font-weight: bold;">Selected CMI(s):</label>
+                <ul id="selected-cmi"></ul>
+                <textarea name="cmi_ids" id="cmi_ids" ></textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal" id="close-clear-modal">Close</button>
+          <button type="submit" class="btn btn-primary">Add Technology</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

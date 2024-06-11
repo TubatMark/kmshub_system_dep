@@ -1,0 +1,50 @@
+<!-- Modal -->
+<div class="modal fade" id="reportquestionModal{{ discussion.discussion_id }}" tabindex="-1" role="dialog" aria-labelledby="reportquestionModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+      <div class="modal-content">
+        <div class="modal-header" style="background-color: #0C356A;">
+          <h5 class="modal-title text-white" id="reportquestionModalLabel">Report Discussion</h5>
+        </div>
+        <div class="modal-body">
+          <form action="{% url 'report' id=discussion.discussion_id name="discussion" %}" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="text" value="{{ discussion.discussion_id }}" name="discussion_id"  hidden/>
+            <div class="row">
+              <div class="container">
+                <div class="form-group">
+                  <label for="discussion_content">Discussion Title</label>
+                  <textarea name="discussion_content" id="discussion_content" class="form-control" readonly>{{ discussion.discussion_title }}</textarea>
+                </div>
+                <div class="form-group">
+                  <label for="report_category">Report Category <span style="color: red;">*</span></label>
+                  <select class="form-control" id="report_category" name="report_category" required>
+                    <option value="" selected disabled>Select a category</option>
+                    <option value="Hate Speech">Hate Speech</option>
+                    <option value="Graphic Violence">Graphic Violence</option>
+                    <option value="Harassment">Harassment</option>
+                    <option value="Bullying">Bullying</option>
+                    <option value="Nudity or Sexual Activity">Nudity or Sexual Activity</option>
+                    <option value="Spam">Spam</option>
+                    <option value="False News">False News</option>
+                    <option value="Impersonation">Impersonation</option>
+                    <option value="Intellectual Property Violation">Intellectual Property Violation</option>
+                    <option value="Suicide or Self-Injury">Suicide or Self-Injury</option>
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label for="report_content">Report Content (Optional)</label>
+                  <textarea name="report_content" id="report_content" class="form-control"></textarea>
+                </div>
+              </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+      </form>
+      </div>
+    </div>
+  </div>
+  

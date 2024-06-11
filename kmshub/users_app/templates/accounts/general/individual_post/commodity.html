@@ -1,0 +1,68 @@
+{% extends 'base/index.html' %}
+{% load static %}
+{% block title %}
+Commodity
+      {% endblock %}
+{% block stylesheet %}
+<link rel="stylesheet" href="{% static 'style/general.css/general.display.commodity.css' %}" />
+{% endblock %}
+
+{% block content %}
+<br>
+  <div class="main-content">
+    <div class="container" style="min-height: 50vh;">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="card" style="border-radius: 5px;">
+            <div class="card-body">
+              {% for commodity in display_commodity %}
+              <h3 class="commodityName">{{ commodity.commodity_name|upper }}</h3>
+              <hr>
+              <img src="{{ commodity.commodity_img.url }}" id="commodityImg" alt="{{ commodity.commodity_name|upper }}">
+              <br>
+              <p class="description">{{ commodity.description|capfirst }}</p>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-md-6 ">
+          <div class="header " style="display: flex; justify-content: space-between; ">
+            <span class="related_resources font-weight-bold">Related Resources Discussion</span>
+            {% for commodity in display_commodity %}
+            <a href="{% url 'related-resources-commodity' id=commodity.commodity_id name='resources' %}">See more</a>
+            {% endfor %}
+          </div>
+          {% for resource in related_resources %}
+          <div class="card " style="margin-bottom: 5px; background-color: #0174BE; border-radius: 5px;">
+            <ul style="margin: 7px 0px 7px 0px; color: white;">
+              <li>
+                <a href="{% url "general-individual-resources" id=resource.resources_id %}" style="color: white; text-align: justify;">{{ resource.resources_title|capfirst|truncatechars:70 }}</a>
+              </li>
+            </ul>
+          </div>
+          {% endfor %}
+        </div>
+        <div class="col-md-6 ">
+          <div class="header" style="display: flex; justify-content: space-between; ">
+            <span class="related_forum font-weight-bold">Related Forum Post</span>
+            {% for commodity in display_commodity %}
+            <a href="{% url 'related-resources-commodity' id=commodity.commodity_id name='forum' %}">See more</a>
+            {% endfor %}
+          </div>
+          {% for forum in related_forum %}
+          <div class="card" style="margin-bottom: 5px; background-color: #0174BE; border-radius: 5px;">
+            <ul style="margin: 7px 0px 7px 0px; color: white;">
+              <li>
+            <a href="{% url 'general-forum-post' id=forum.discussion_id %}" style="color: white;">{{ forum.discussion_title|capfirst }}</a>
+              </li>
+            </ul>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

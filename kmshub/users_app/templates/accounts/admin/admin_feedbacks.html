@@ -1,0 +1,425 @@
+{% extends 'base/admin.html' %}
+{% load static %}
+{% block title %}
+  Admin Feedbacks/Ratings
+{% endblock %}
+{% block stylesheet %}
+  
+
+  <link rel="stylesheet" href="{% static 'style/admin.css/admin.commodities.css' %}" />
+  <style>
+    .testimonials {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+    }
+    
+    .testimonial {
+      flex: 1 1 300px;
+      margin: 0px 1rem 1rem 1rem;
+      background-color: #f2f2f2;
+      padding: 1.5rem;
+      border-radius: 4px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    .testimonial-header {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+    
+    .testimonial-header h3 {
+      font-size: 1.2rem;
+      margin-bottom: 0.2rem;
+    }
+    
+    .testimonial-header p {
+      font-size: 0.9rem;
+      color: #666;
+    }
+    
+    .quote {
+      text-align: center;
+      font-style: italic;
+      color: #333;
+    }
+    
+    .dropdown-item.active,
+    .dropdown-item:active {
+      background-color: #0c356a;
+    }
+    
+    .dropdown-item:hover {
+      background-color: #0c356a;
+      color: white;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+  <br />
+  <div class="main-content" id="main-content">
+    <div class="container">
+      <h3 style="font-weight:bold;">USERS FEEDBACKS AND RATINGS SUMMARY</h3>
+      <hr style="color: black;" />
+      <div class="card-container">
+        <div class="animated fadeIn">
+          <!-- Widgets -->
+          <div class="row">
+            <div class="col-lg-3 col-md-6">
+              <div class="card">
+                <div class="card-body">
+                  <div class="stat-widget-five">
+                    <div class="stat-icon dib flat-color-1">
+                      <span class="mdi mdi-emoticon-happy-outline"></span>
+                    </div>
+                    <div class="stat-content">
+                      <div class="text-left dib">
+                        <div class="stat-text">
+                          <span class="count">
+                            {% if total_good %}
+                              {{ total_good }}
+                            {% else %}
+                              0
+                            {% endif %}
+                          </span>
+                        </div>
+                        <div class="stat-heading">Good Review</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-3 col-md-6">
+              <div class="card">
+                <div class="card-body">
+                  <div class="stat-widget-five">
+                    <div class="stat-icon dib flat-color-2">
+                      <span class="mdi mdi-emoticon-sad-outline"></span>
+                    </div>
+                    <div class="stat-content">
+                      <div class="text-left dib">
+                        <div class="stat-text">
+                          <span class="count">
+                            {% if total_bad %}
+                              {{ total_bad }}
+                            {% else %}
+                              0
+                            {% endif %}
+                          </span>
+                        </div>
+                        <div class="stat-heading">Bad Review</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <br />
+        <div class="drpdwn d-flex">
+          <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="filterDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="background-color: #0C356A; border-radius: 5px;">Select Rating</button>
+            <div class="dropdown-menu" aria-labelledby="filterDropdown" style="background-color: #f8f9fa; border: none; box-shadow: 0 2px 5px rgba(0,0,0,0.1); z-index: 2;">
+              <button class="dropdown-item rate" value="all" style="text-align: center;">Show All</button>
+              <button class="dropdown-item rate" value="good" id="goodFilter" style="text-align: center;">Positive Ratings</button>
+              <button class="dropdown-item rate" value="bad" id="badFilter" style="text-align: center;">Negative Ratings</button>
+            </div>
+          </div>
+
+          <div class="dropdown" style="margin-left: 7px; margin-right: 7px;">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="numberDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="background-color: #0C356A; border-radius: 5px;">Number of Feedbacks</button>
+            <div class="dropdown-menu" aria-labelledby="numberDropdown" style="background-color: #f8f9fa; border: none; box-shadow: 0 2px 5px rgba(0,0,0,0.1); z-index: 1;">
+              <button class="dropdown-item num" value="5" style="text-align: center;">5</button>
+              <button class="dropdown-item num" value="10" style="text-align: center;">10</button>
+              <button class="dropdown-item num" value="20" style="text-align: center;">20</button>
+              <button class="dropdown-item num" value="all" style="text-align: center;">All</button>
+            </div>
+          </div>
+
+          <div class="dropdown" style="margin-right: 7px;">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="downloadsDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="background-color: #0C356A; border-radius: 5px;">Downloads</button>
+            <div class="dropdown-menu" aria-labelledby="downloadsDropdown" style="background-color: #f8f9fa; border: none; box-shadow: 0 2px 5px rgba(0,0,0,0.1); z-index: 2;">
+              <button class="dropdown-item" id="pdfDownload" style="text-align: center;">PDF</button>
+              <button class="dropdown-item" id="csvDownload" style="text-align: center;">CSV</button>
+            </div>
+          </div>
+
+          <input type="text" id="input-search" placeholder="Search here" style="width: 100%; border-top-left-radius: 5px; border-bottom-left-radius: 5px; " />
+          <button id="search_button" style="border-top-right-radius: 5px; border-bottom-right-radius: 5px; background-color: #0C356A; color: white;">Search</button>
+        </div>
+
+        <hr />
+
+        <div class="table-container" style="display: none;">
+          <table id="feedbackTable" class="feedback-table table table-bordered">
+            <thead style="color: #fff; font-size: 13px; background-color: #0C356A; font-weight: bolder;">
+              <tr>
+                <th>Id</th>
+                <th>Author</th>
+                <th>Rate</th>
+                <th>Message</th>
+                <th>Date Rated</th>
+              </tr>
+            </thead>
+            <tbody style="font-size: 12px;">
+              {% for rating in ratings %}
+                <tr>
+                  <td>{{ rating.feedback_id }}</td>
+                  <td>{{ rating.user.first_name|capfirst }} {{ rating.user.last_name|capfirst }}</td>
+                  <td>{{ rating.rate|capfirst }}</td>
+                  <td>{{ rating.message|capfirst }}</td>
+                  <td>{{ rating.date_rated }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+        <div class="testimonials">
+          {% for rating in ratings %}
+            <div class="testimonial discussion-post" data-rate="{{ rating.rate }}">
+              <div class="testimonial-header">
+                <h3 style="color: #0C356A;">{{ rating.user.first_name|capfirst }} {{ rating.user.last_name|capfirst }}</h3>
+                <p>{{ rating.user.institution|upper }}</p>
+              </div>
+              <p style="text-align: center; font-size: 11px;">
+                {% if rating.rate == 'good' %}
+                  <span style="color: green;">{{ rating.rate|upper }}</span>
+                {% else %}
+                  <span style="color: red;">{{ rating.rate|upper }}</span>
+                {% endif %}| {{ rating.date_rated }}
+              </p>
+              <p class="quote post_discussion_title">"{{ rating.message|capfirst }}"</p>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block script %}
+  <script src="https://cdn.jsdelivr.net/npm/jquery-match-height@0.7.2/dist/jquery.matchHeight.min.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      var dropdownItems = document.querySelectorAll('.rate')
+    
+      dropdownItems.forEach(function (item) {
+        item.addEventListener('click', function () {
+          var filterValue = this.getAttribute('value')
+          console.log(filterValue)
+    
+          var testimonials = document.querySelectorAll('.testimonial')
+    
+          testimonials.forEach(function (testimonial) {
+            var rate = testimonial.getAttribute('data-rate')
+    
+            if (filterValue === 'all' || rate === filterValue) {
+              testimonial.style.display = 'block'
+            } else {
+              testimonial.style.display = 'none'
+            }
+          })
+        })
+      })
+    
+      var numberDropdownItems = document.querySelectorAll('.num')
+    
+      numberDropdownItems.forEach(function (item) {
+        item.addEventListener('click', function () {
+          var value = this.getAttribute('value')
+          console.log(value)
+    
+          var testimonials = document.querySelectorAll('.testimonial')
+    
+          var count = 0
+    
+          // Show selected number of testimonials or all if "all" is selected
+          testimonials.forEach(function (testimonial) {
+            if (value === 'all' || count < parseInt(value)) {
+              testimonial.style.display = 'block'
+            } else {
+              testimonial.style.display = 'none'
+            }
+            count++
+          })
+        })
+      })
+    
+      //search
+      //Search bookmark
+      const searchInput = document.getElementById('input-search')
+      const searchButton = document.getElementById('search_button')
+    
+      // Add an event listener to the search input field for changes in value
+      searchInput.addEventListener('input', function () {
+        const searchTerm = searchInput.value.trim()
+    
+        if (searchTerm === '') {
+          // If the search input is empty, display all discussion posts
+          const discussionPosts = document.querySelectorAll('.discussion-post')
+          discussionPosts.forEach((post) => {
+            post.style.display = 'block'
+          })
+        }
+      })
+    
+      // Function to handle search functionality
+      const performSearch = () => {
+        const searchTerm = searchInput.value.trim()
+        console.log('Search Term', searchTerm)
+    
+        fetch("{% url 'search' %}", {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRFToken': '{{ csrf_token }}'
+          },
+          body: JSON.stringify({
+            search_term: searchTerm
+          })
+        })
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error('Network response was not ok.')
+            }
+            return response.json()
+          })
+          .then((data) => {
+            console.log('Search term sent:', searchTerm)
+            console.log('Search terms fetched:', data.search_terms)
+    
+            if (data.search_terms && data.search_terms.length > 0) {
+              const combinedTerms = data.search_terms.join(' ') // Combine terms into a sentence
+              filterDiscussionsBySearch(combinedTerms)
+            } else {
+              if (!data || (data && !data.search_terms)) {
+                // Display SweetAlert when no data or search terms are received or they are empty
+                Swal.fire({
+                  title: 'No discussions found',
+                  text: `There are no discussions about "${searchTerm}"`,
+                  icon: 'info',
+                  confirmButtonText: 'OK'
+                })
+                //window.location.reload();
+                console.error('No search terms received or empty.')
+              }
+            }
+          })
+          .catch((error) => {
+            console.error('There was an error with the request:', error)
+          })
+      }
+    
+      // Event listener for the Enter key press in the search input field
+      searchInput.addEventListener('keypress', function (event) {
+        if (event.key === 'Enter') {
+          performSearch()
+        }
+      })
+    
+      // Event listener for the search button click
+      searchButton.addEventListener('click', performSearch)
+    
+      function filterDiscussionsBySearch(searchTermsSentence) {
+        const searchTerms = searchTermsSentence.split(' ')
+    
+        // Logic for filtering discussions based on search terms
+        const discussionPosts = document.querySelectorAll('.discussion-post')
+        const foundDiscussions = Array.from(discussionPosts).filter((post) => {
+          const title = post.querySelector('.post_discussion_title').innerText.toLowerCase()
+    
+          return searchTerms.some((term) => title.includes(term))
+        })
+    
+        if (foundDiscussions.length === 0) {
+          // Display SweetAlert when no discussions match the search terms
+          Swal.fire({
+            title: 'No discussions found',
+            text: `There are no discussions matching the search terms`,
+            icon: 'info',
+            confirmButtonText: 'OK'
+          })
+    
+          console.error('No discussions found matching the search terms.')
+          return // Exit the function to prevent hiding existing posts
+        }
+    
+        discussionPosts.forEach((post) => {
+          const found = foundDiscussions.includes(post)
+          post.style.display = found ? 'block' : 'none'
+        })
+      }
+    
+      $(document).ready(function () {
+        let table = $('#feedbackTable').DataTable({
+          language: {
+            lengthMenu: '_MENU_',
+            search: '',
+            searchPlaceholder: 'Search...'
+          },
+          lengthMenu: [
+            [7, 10, 25, -1],
+            [7, 10, 25, 'All']
+          ],
+          paging: true,
+          lengthChange: true,
+          autoWidth: false,
+          bInfo: true,
+          bSort: true,
+          responsive: true,
+          buttons: [
+            {
+              text: 'CSV',
+              extend: 'csv'
+            },
+            {
+              text: 'PDF',
+              extend: 'pdf'
+            }
+          ],
+          dom: '<"row"<"col-md-1"l><"col-md-8"B><"col-md-3"f>>' + '<"row"<"col-md-12"tr>>' + '<"row"<"col-md-5"i><"col-md-7"p>>'
+        });
+        // Event listener for PDF download button
+        $('#pdfDownload').on('click', function () {
+          table.button('.buttons-pdf').trigger()
+        });
+    
+        // Event listener for CSV download button
+        $('#csvDownload').on('click', function () {
+          table.button('.buttons-csv').trigger()
+        });
+      });
+    })
+  </script>
+
+  {% if messages %}
+    {% for message in messages %}
+      {% if message.tags == 'success' %}
+        <script>
+          // Display SweetAlert success message
+          Swal.fire({
+            icon: 'success',
+            title: 'Success!',
+            text: '{{ message }}'
+          })
+        </script>
+      {% else %}
+        <script>
+          // Display SweetAlert success message
+          Swal.fire({
+            icon: 'error',
+            title: 'Error!',
+            text: '{{ message }}'
+          })
+        </script>
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+{% endblock %}

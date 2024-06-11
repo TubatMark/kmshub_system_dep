@@ -1,0 +1,16 @@
+from django.apps import apps
+from importlib import import_module
+
+# Get the app config for your 'users_app'
+app_config = apps.get_app_config("users_app")
+# The directory where 'templatetags' should exist, usually under each installed app
+template_tags_dir = app_config.path + "/templatetags"
+# Import the custom tags module
+
+try:
+    custom_tags = import_module("users_app.templatetags.custom_tags")
+    print("Custom template tags loaded successfully!")
+except ModuleNotFoundError as e:
+    print(f"Failed to load custom template tags: {e}")
+except Exception as e:
+    print(f"An error occurred: {e}")

@@ -1,0 +1,302 @@
+{% extends 'base/secretariat.html' %}
+{% load static %}
+{% block title %}
+  Projects
+{% endblock %}
+
+{% block stylesheet %}
+  <link rel="stylesheet" href="{% static 'style/secretariat.css/all_projects.css' %}" />
+{% endblock %}
+
+{% block content %}
+  <br />
+  <div class="main-content">
+    <div class="container">
+      <br />
+      <h3 style="font-weight:bold;">PROJECT MANAGEMENT</h3>
+      <hr />
+      <div class="card-container">
+        <div class="row">
+          <div class="col-lg-2 col-md-3 col-sm-4 col-6">
+            <div class="card">
+              <div class="card-content">
+                <div class="card-body">
+                  <div class="media d-flex">
+                    <div class="align-self-center">
+                      <i class="icon-speech warning font-large-2 float-left"></i>
+                    </div>
+                    <div class="media-body text-right" style="height: auto;">
+                      <h3 style="text-decoration: underline;">{% if total_projects %} {{ total_projects }} {% else %} 0 {% endif %}</h3>
+                      <span>Total</span>
+                      <br>
+                      <span>Projects</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-2 col-md-3 col-sm-4 col-6">
+            <div class="card">
+              <div class="card-content">
+                <div class="card-body">
+                  <div class="media d-flex">
+                    <div class="align-self-center">
+                      <i class="icon-speech warning font-large-2 float-left"></i>
+                    </div>
+                    <div class="media-body text-right" style="height: auto;">
+                      <h3 style="text-decoration: underline;">{% if total_ongoing %} {{ total_ongoing }} {% else %} 0 {% endif %}</h3>
+                      <span>Ongoing</span>
+                      <br>
+                      <span>Projects</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-2 col-md-3 col-sm-4 col-6">
+            <div class="card">
+              <div class="card-content">
+                <div class="card-body">
+                  <div class="media d-flex">
+                    <div class="align-self-center">
+                      <i class="icon-speech warning font-large-2 float-left"></i>
+                    </div>
+                    <div class="media-body text-right" style="height: auto;">
+                      <h3 style="text-decoration: underline;">{% if total_completed %} {{ total_completed }} {% else %} 0  {% endif %}</h3>
+                      <span>Completed</span>
+                      <span>Projects</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-2 col-md-3 col-sm-4 col-6">
+            <div class="card">
+              <div class="card-content">
+                <div class="card-body">
+                  <div class="media d-flex">
+                    <div class="align-self-center">
+                      <i class="icon-speech warning font-large-2 float-left"></i>
+                    </div>
+                    <div class="media-body text-right" style="height: auto;">
+                      <h3 style="text-decoration: underline;">{% if total_terminated %} {{ total_terminated }} {% else %} 0  {% endif %}</h3>
+                      <span>Terminated</span>
+                      <span>Projects</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-2 col-md-3 col-sm-4 col-6">
+            <div class="card">
+              <div class="card-content">
+                <div class="card-body">
+                  <div class="media d-flex">
+                    <div class="align-self-center">
+                      <i class="icon-speech warning font-large-2 float-left"></i>
+                    </div>
+                    <div class="media-body text-right" style="height: auto;">
+                      <h3 style="text-decoration: underline;">{% if total_extended %} {{total_extended}} {% else %} 0  {% endif %}</h3>
+                      <span>Extended</span>
+                      <span>Projects</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <hr />
+        <div class="table-container">
+          <table id="projectsTable" class="projects-table table table-bordered">
+            <thead style="color: #fff; font-size: 13px; background-color: #3B3B3B; font-weight: bolder;">
+              <tr>
+                <th style="width: 8px;">ID</th>
+                <th>Title</th>
+                <th style="width: 10px;">Proponent</th>
+                <th style="width: 10px;">Source of Fund</th>
+                <th style="width: 10px;">Approved Budget</th>
+                <th style="width: 20px;">Total Downloaded Budget</th>
+                <th style="width: 10px;">Started</th>
+                <th style="width: 10px;">Ended</th>
+                <th style="width: 10px;">Status</th> <!-- if ongoing then bg color is green else blue -->
+                <th style="width: auto;">Actions</th>
+              </tr>
+            </thead>
+            <tbody style="font-size: 12px;">
+              {% for project in projects %}
+                <tr>
+                  <td>{{ project.project_id }}</td>
+                  <td>{{ project.project_title|capfirst }}</td>
+                  <td>{{ project.proponent|capfirst }}</td>
+                  <td>{{ project.fund_source }}</td>
+                  <td>
+                    <span style="background-color: #F28585; color: #fff; padding: 4px; border-radius: 4px;">&#8369;{{ project.approved_budget }}</span>
+                  </td>
+                  <td>
+                    <span style="background-color: #C6A969; color: #fff; padding: 4px; border-radius: 4px;">&#8369;{{ project.total_downloaded_budget }}</span>
+                  </td>
+                  <td>{{ project.project_started }}</td>
+                  <td>{{ project.project_ended }}</td>
+                  <td>
+                    {% if project.project_status == 'Ongoing' %}
+                      <span style="background-color: #789461; color: #fff; padding: 4px; border-radius: 4px;">{{ project.project_status }}</span>
+                    {% elif project.project_status == 'Extended' %}
+                      <span style="background-color: #7077A1; color: #fff; padding: 4px; border-radius: 4px;">{{ project.project_status }}</span>
+                    {% elif project.project_status == 'Ended' %}
+                      <span style="background-color: #FFBB64; color: #fff; padding: 4px; border-radius: 4px;">{{ project.project_status }}</span>
+                    {% elif project.project_status == 'Terminated' %}
+                      <span style="background-color: #D04848; color: #fff; padding: 4px; border-radius: 4px;">{{ project.project_status }}</span>
+                    {% elif project.project_status == 'Completed' %}
+                      <span style="background-color: #3468C0; color: #fff; padding: 4px; border-radius: 4px;">{{ project.project_status }}</span>
+                    {% else %}
+                      No status
+                    {% endif %}
+                  </td>
+                  <td>
+                    <div style="display: flex;">
+                      <button type="button" class="btn btn-warning btn-sm edit-btn small-btn" data-toggle="modal" data-target="#editProjectModal{{ project.project_id }}"><i class="fa-solid fa-pen-to-square"></i></button>
+                      <button type="button" class="btn btn-primary btn-sm view-btn small-btn" data-toggle="modal" data-target="#viewProjectModal{{ project.project_id }}" style="margin-left: 2px;"><i class="fa-solid fa-eye"></i></button>
+                      <a data-placement="top" data-toggle="tooltip" title="delete" href="{% url 'secretariat-delete-project' id=project.project_id %}" class="btn btn-danger btn-sm small-btn" style="margin-left: 2px;"><i class="fa-solid fa-trash"></i></a>
+                    </div>
+                  </td>
+                </tr>
+                {% include 'accounts/secretariat/modals/projectsModal/view_project.html' %}
+                {% include 'accounts/secretariat/modals/projectsModal/edit_project.html' %}
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% include 'accounts/secretariat/modals/projectsModal/add_project.html' %}
+{% endblock %}
+
+{% block script %}
+  {% if messages %}
+    {% for message in messages %}
+      {% if message.tags == 'success' %}
+        <script>
+          // Display SweetAlert success message
+          Swal.fire({
+            icon: 'success',
+            title: 'Success!',
+            text: '{{ message }}'
+          })
+        </script>
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+  <script>
+   
+    $(document).ready(function () {
+      $('.view-btn').on('click', function () {
+        $('#viewProjectModal').modal('show')
+      })
+    })
+    
+    function addProject() {
+      // Logic to handle adding data goes here
+      console.log('Add Data button clicked')
+      // Add your logic here for adding data
+      $('#addProjectModal').modal('show')
+    }
+    
+    function downloadSelectedAttachments() {
+      var selectedAttachments = document.querySelectorAll('input[type="checkbox"]:checked')
+    
+      if (selectedAttachments.length === 0) {
+        alert('Please select at least one attachment.')
+        return
+      }
+    
+      var downloadLinks = Array.from(selectedAttachments).map(function (checkbox) {
+        var attachmentCard = checkbox.closest('.card')
+        var downloadLink = attachmentCard.querySelector('a[download][style="color: #12BC79; text-decoration: none;"]')
+    
+        if (downloadLink) {
+          return downloadLink.href
+        }
+      })
+    
+      // Create temporary anchor elements and trigger their click to initiate downloads
+      downloadLinks.forEach(function (link) {
+        var tempLink = document.createElement('a')
+        tempLink.href = link
+        tempLink.setAttribute('download', '')
+        document.body.appendChild(tempLink)
+        tempLink.click()
+        document.body.removeChild(tempLink)
+      })
+    }
+    
+    function addAttachmentRow(modalId) {
+      // Clone the existing attachment row
+      var attachmentRow = document.getElementById('attachmentRows').cloneNode(true)
+    
+      // Clear the file input and reset the dropdown
+      attachmentRow.querySelector('input[type="file"]').value = ''
+      attachmentRow.querySelector('select').selectedIndex = 0
+    
+      // Append the cloned row to the attachment rows in the specified modal
+      var modalBody = document.getElementById(modalId).querySelector('.modal-body')
+      modalBody.appendChild(attachmentRow)
+    
+      // Show the new hr
+      var hr = document.createElement('hr')
+      modalBody.appendChild(hr)
+      console.log('add Attachment Row clicked')
+
+       // Add event listener for the remove button
+      var removeBtn = attachmentRow.querySelector('.remove-attachment-btn')
+      removeBtn.addEventListener('click', function() {
+        attachmentRow.remove()
+        hr.remove()
+      })
+    }
+    
+    $(document).ready(function () {
+      let table = $('#projectsTable').DataTable({
+        language: {
+          lengthMenu: '_MENU_',
+          search: '',
+          searchPlaceholder: 'Search...'
+        },
+        lengthMenu: [
+          [7, 10, 25, -1],
+          [7, 10, 25, 'All']
+        ],
+        paging: true,
+        lengthChange: true,
+        autoWidth: false,
+        bInfo: true,
+        bSort: true,
+        responsive: true,
+        buttons: [
+          {
+            text: 'CSV',
+            extend: 'csv'
+          },
+          {
+            text: 'PDF',
+            extend: 'pdf'
+          },
+          {
+            text: 'ADD',
+            className: 'btn btn-primary',
+            action: function () {
+              addProject()
+            }
+          }
+        ],
+        dom: '<"row"<"col-md-1"l><"col-md-8"B><"col-md-3"f>>' + '<"row"<"col-md-12"tr>>' + '<"row"<"col-md-5"i><"col-md-7"p>>'
+      })
+    })
+  </script>
+{% endblock %}

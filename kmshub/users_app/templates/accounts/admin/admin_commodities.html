@@ -1,0 +1,502 @@
+{% extends 'base/admin.html' %}
+{% load static %}
+{% block title %}
+  Admin Commodities Management
+{% endblock %}
+{% block stylesheet %}
+
+  <link rel="stylesheet" href="{% static 'style/admin.css/admin.commodities.css' %}" />
+{% endblock %}
+
+{% block content %}
+  <br />
+  <div class="main-content" id="main-content">
+    <div class="container">
+      <h3 style="font-weight:bold;">ADMIN COMMODITIES</h3>
+      <hr style="color: black;" />
+      <div class="animated fadeIn">
+        <div class="row">
+          <div class="col-lg-3 col-md-6">
+            <div class="card">
+              <div class="card-body">
+                <div class="stat-widget-five">
+                  <div class="stat-icon dib flat-color-3">
+                    <span class="mdi mdi-leaf"></span>
+                  </div>
+                  <div class="stat-content">
+                    <div class="text-left dib">
+                      <div class="stat-text">
+                        <span class="text" style="font-size: 15px;">
+                          {% if latest_commodity %}
+                            {{ latest_commodity.commodity_name }}
+                          {% else %}
+                            None
+                          {% endif %}
+                        </span>
+                      </div>
+                      <div class="stat-heading">Newly Added Commodity</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-3 col-md-6">
+            <div class="card">
+              <div class="card-body">
+                <div class="stat-widget-five">
+                  <div class="stat-icon dib flat-color-5">
+                    <span class="mdi mdi-seed-plus-outline"></span>
+                  </div>
+                  <div class="stat-content">
+                    <div class="text-left dib">
+                      <div class="stat-text">
+                        <span class="count">
+                          {% if total_pending_commodities %}
+                            {{ total_pending_commodities }}
+                          {% else %}
+                            0
+                          {% endif %}
+                        </span>
+                      </div>
+                      <div class="stat-heading" >Request Commodity</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-3 col-md-6">
+            <div class="card">
+              <div class="card-body">
+                <div class="stat-widget-five">
+                  <div class="stat-icon dib flat-color-cmi">
+                    <span class="mdi mdi-store-check-outline"></span>
+                  </div>
+                  <div class="stat-content">
+                    <div class="text-left dib">
+                      <div class="stat-text">
+                        <span class="count">
+                          {% if total_approved_commodities %}
+                            {{ total_approved_commodities }}
+                          {% else %}
+                            0
+                          {% endif %}
+                        </span>
+                      </div>
+                      <div class="stat-heading">Approved Commodity</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-3 col-md-6">
+            <div class="card">
+              <div class="card-body">
+                <div class="stat-widget-five">
+                  <div class="stat-icon dib flat-color-2">
+                    <span class="mdi mdi-barley"></span>
+                  </div>
+                  <div class="stat-content">
+                    <div class="text-left dib">
+                      <div class="stat-text">
+                        <span class="count">
+                          {% if total_commodities %}
+                            {{ total_commodities }}
+                          {% else %}
+                            0
+                          {% endif %}
+                        </span>
+                      </div>
+                      <div class="stat-heading">Total Commodities</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="buttons" style="margin: 15px 0 0px 0;">
+        <button class="btn text-white" id="commodity_btn" style="background-color: #0174BE;">Pending Commodities</button>
+      </div>
+      <div class="chart-div" style="border: #0174BE 1px solid; border-radius: 5px; margin-top: 10px;">
+        <canvas id="commodityChart"></canvas>
+      </div>
+      <hr />
+
+      <div class="table-container" id="approved-commodity-table">
+        <table id="commoditiesTable" class="commodities-table table table-bordered">
+          <thead style="color: #fff; font-size: 13px; background-color: #0C356A; font-weight: bolder;">
+            <tr>
+              <th style="width: 8px;">ID</th>
+              <th>Commodity Name</th>
+              <th>Resources Type</th>
+              <th>Total Filter</th>
+              <th style="width: 100px;">Total Posts (Tagged)</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody style="font-size: 12px;">
+            {% for commodity in approvedcommodities %}
+            {% if commodity.status == 'Approved' %}
+              <tr>
+                <td>{{ commodity.commodity_id }}</td>
+                <td>{{ commodity.commodity_name }}</td>
+                <td>{{ commodity.resources_type|capfirst }}</td>
+                <td>
+                  {% if frequency_sum %}
+                    {% for freq in frequency_sum %}
+                      {% if freq.commodity_id == commodity.commodity_id %}
+                        {{ freq.total_frequency }}
+                      {% endif %}
+                    {% endfor %}
+                  {% else %}
+                    Not Filtered
+                  {% endif %}
+                </td>
+                <td>
+                  {% if tagged_counts %}
+                    {% for tag_count in tagged_counts %}
+                      {% if tag_count.commodity_id == commodity.commodity_id %}
+                        {{ tag_count.total_tags }}
+                      {% endif %}
+                    {% endfor %}
+                  {% else %}
+                    Not Tagged
+                  {% endif %}
+                </td>
+                <td>
+                  <div class="buttons" style="display: flex;">
+                  <button type="button" style="background-color: #FFC436; color: #fff;" class="btn  btn-sm edit-btn" data-toggle="modal" data-target="#editCommodityModal" data-commodityid="{{ commodity.commodity_id }}" data-commodityname="{{ commodity.commodity_name|upper }}" data-commoditydescription="{{ commodity.description }}" data-resourcestype="{{ commodity.resources_type|capfirst }}"><i class="fa-solid fa-pen-to-square"></i></button>
+                  <button type="button" style="background-color: #0174BE; color: #fff; margin-left: 4px; margin-right: 4px;"class="btn  btn-sm view-btn" data-toggle="modal" data-target="#viewCommodityModal" data-commodityid="{{ commodity.commodity_id }}" data-commodityname="{{ commodity.commodity_name }}" data-commoditydescription="{{ commodity.description }}" data-commodityImg="{{ commodity.commodity_img.url }}" data-resourcestype="{{ commodity.resources_type|capfirst }}"><i class="fa-solid fa-eye"></i></button>
+                  <a data-placement="top" data-toggle="tooltip" title="delete" href="/delete-commodity/{{ commodity.commodity_id }}" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash"></i></a>
+                </div>
+                </td>
+              </tr>
+              {% endif %}
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <!--commodities-->
+      <div class="pending-commodity-table" id="pending-commodity-table">
+        <table id="pendingcommoditiesTable" class="pending-commodities-table table table-bordered">
+          <thead style="color: #fff; font-size: 13px; background-color: #0C356A; font-weight: bolder;">
+            <tr>
+              <th style="width: 8px;">ID</th>
+              <th>Commodity Name</th>
+              <th>Resources Type</th>
+              <th>Total Filter</th>
+              <th>Total Posts</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody style="font-size: 12px;">
+            {% for commodity in pendingcommodities %}
+              <tr>
+                <td>{{ commodity.commodity_id }}</td>
+                <td>{{ commodity.commodity_name }}</td>
+                <td>{{ commodity.resources_type|capfirst }}</td>
+                <td>
+                  {% if frequency_sum %}
+                    {% for freq in frequency_sum %}
+                      {% if freq.commodity_id == commodity.commodity_id %}
+                        {{ freq.total_frequency }}
+                      {% endif %}
+                    {% endfor %}
+                  {% else %}
+                    Not Filtered
+                  {% endif %}
+                </td>
+                <td>
+                  {% if tagged_counts %}
+                    {% for tag_count in tagged_counts %}
+                      {% if tag_count.commodity_id == commodity.commodity_id %}
+                        {{ tag_count.total_tags }}
+                      {% endif %}
+                    {% endfor %}
+                  {% else %}
+                    Not Tagged
+                  {% endif %}
+                </td>
+                <td>
+                  <div class="buttons" style="display: flex;">
+                    <form method="post" action="{% url 'approve-request' id=commodity.commodity_id name='Commodity' %}">
+                        {% csrf_token %}
+                        <button type="submit" title="Approve" style="background-color: #FFC436; color: #fff; margin-right: 4px;" class="btn btn-sm approve-btn" >
+                          <i class="fa-solid fa-check"></i>
+                        </button>
+                      </form>
+                    <a data-placement="top" data-toggle="tooltip" title="delete" href="/delete-additional-request/{{ commodity.commodity_id }}/Commodity/" class="btn btn-danger btn-sm"><i class="fa-solid fa-trash"></i></a>
+                  </div>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  {% include 'accounts/admin/modals/commodity/add_commodity.html' %}
+  {% include 'accounts/admin/modals/commodity/edit_commodity.html' %}
+  {% include 'accounts/admin/modals/commodity/view_commodity.html' %}
+{% endblock %}
+
+{% block script %}
+  <script>
+    // Backend data for commodities with total filter and total tagged counts
+    const commodityData = JSON.parse('{{ commodity_data_json|safe }}');
+
+    // Get the canvas element for the chart
+    const commodityCanvas = document.getElementById('commodityChart');
+
+    const chartConfiguration = {
+      type: 'bar',
+      data: {
+        labels: commodityData.map(commodity => commodity.commodity_name),
+        datasets: [
+          {
+            label: 'Total Filter',
+            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+            borderColor: 'rgba(255, 99, 132, 1)',
+            borderWidth: 1,
+            data: commodityData.map(commodity => commodity.total_filter),
+          },
+          {
+            label: 'Total Tagged',
+            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+            borderColor: 'rgba(54, 162, 235, 1)',
+            borderWidth: 1,
+            data: commodityData.map(commodity => commodity.total_tagged),
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: {
+            ticks: {
+              beginAtZero: true
+            }
+          },
+          x: {
+            display: true,
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'Count'
+            },
+            ticks: {
+              stepSize: 1
+            }
+          }
+        },
+        // Add this part for left axis
+        plugins: {
+          title: {
+            display: true,
+            text: 'Count',
+            position: 'left' // Display on the left side of the chart
+          }
+        }
+      }
+    };
+
+    const chartInstance = new Chart(commodityCanvas, chartConfiguration);
+
+
+    
+    //view commodity modal
+    $(document).ready(function () {
+      $('.view-btn').on('click', function () {
+        var commodityId = $(this).data('commodityid');
+        var commodityName = $(this).data('commodityname');
+        var commodityDescription = $(this).data('commoditydescription');
+        var commodityImg = $(this).data('commodityimg');
+        var resourcesType = $(this).data('resourcestype');
+
+        $('#viewCommodityModal').find('#viewCommodityId').text(commodityId);
+        $('#viewCommodityModal').find('#viewCommodityName').text(commodityName);
+        $('#viewCommodityModal').find('#viewResourcesType').text(resourcesType);
+        $('#viewCommodityModal').find('#viewCommodityDescription').text(commodityDescription);
+        $('#viewCommodityModal').find('#viewCommodityImg').attr('src', commodityImg);
+      });
+    });
+    
+    //edit commodity modal
+    $(document).ready(function () {
+      // Event listener for the edit button
+      $('.edit-btn').on('click', function () {
+        var commodityId = $(this).data('commodityid')
+        var commodityName = $(this).data('commodityname')
+        var commodityDescription = $(this).data('commoditydescription')
+        var resourcesType = $(this).data('resourcestype')
+    
+        // Populate modal fields with commodity-specific data
+        $('#editCommodityModal').find('#commodity_name').val(commodityName)
+        $('#editCommodityModal').find('#description').val(commodityDescription)
+        $('#editCommodityModal').find('#defaultResources').text(resourcesType)
+
+        console.log(resourcesType)
+
+    
+        // Update form action attribute with the commodity ID
+        $('#editCommodityModal')
+          .find('form')
+          .attr('action', '/edit-commodity/' + commodityId + '/')
+      })
+    })
+    
+    //add commodity modal
+    function addCommodity() {
+      // Logic to handle adding data goes here
+      console.log('Add Data button clicked')
+      // Add your logic here for adding data
+      Swal.fire({
+        title: 'Do you want to add new commodity?',
+        showCancelButton: true,
+        confirmButtonText: 'Yes',
+        cancelButtonText: 'No',
+        icon: 'question',
+        preConfirm: () => {
+            // Logic to handle "Yes" goes here
+            // For example, redirecting the user
+            console.log('User confirm the operation so redirect!!!');
+            window.location.href = '{% url "map" name="commodity" %}'; // Adjust the URL as needed
+        }
+      }).then((result) => {
+          if (result.isDismissed) {
+              // Logic to handle "No" goes here
+              console.log('User cancelled the operation');
+          }
+      });
+    }
+    $(document).ready(function () {
+      let table = $('#commoditiesTable').DataTable({
+        language: {
+          lengthMenu: '_MENU_',
+          search: '',
+          searchPlaceholder: 'Search...'
+        },
+        lengthMenu: [
+          [7, 10, 25, -1],
+          [7, 10, 25, 'All']
+        ],
+        paging: true,
+        lengthChange: true,
+        autoWidth: false,
+        bInfo: true,
+        bSort: true,
+        responsive: true,
+        buttons: [
+          {
+            text: 'CSV',
+            extend: 'csv'
+          },
+          {
+            text: 'PDF',
+            extend: 'pdf'
+          },
+          {
+            text: 'ADD',
+            className: 'btn btn-primary',
+            action: function () {
+              addCommodity()
+            }
+          }
+        ],
+        dom: '<"row"<"col-md-1"l><"col-md-8"B><"col-md-3"f>>' + '<"row"<"col-md-12"tr>>' + '<"row"<"col-md-5"i><"col-md-7"p>>'
+      })
+    })
+
+    $(document).ready(function () {
+      let table = $('#pendingcommoditiesTable').DataTable({
+        language: {
+          lengthMenu: '_MENU_',
+          search: '',
+          searchPlaceholder: 'Search...'
+        },
+        lengthMenu: [
+          [7, 10, 25, -1],
+          [7, 10, 25, 'All']
+        ],
+        paging: true,
+        lengthChange: true,
+        autoWidth: false,
+        bInfo: true,
+        bSort: true,
+        responsive: true,
+        buttons: [
+          {
+            text: 'CSV',
+            extend: 'csv'
+          },
+          {
+            text: 'PDF',
+            extend: 'pdf'
+          }
+        ],
+        dom: '<"row"<"col-md-1"l><"col-md-8"B><"col-md-3"f>>' + '<"row"<"col-md-12"tr>>' + '<"row"<"col-md-5"i><"col-md-7"p>>'
+      })
+    })
+
+    document.addEventListener('DOMContentLoaded', function () {
+      var approvedCommodity = document.getElementById('approved-commodity-table');
+      var pendingCommodity = document.getElementById('pending-commodity-table');
+      var commodityBtn = document.getElementById('commodity_btn');
+
+       // Initially show the Pending CMI Table and hide the CMI Table
+        approvedCommodity.style.display = 'block';
+        pendingCommodity.style.display = 'none';
+        commodityBtn.textContent = 'Pending Commodity'; // Set initial button text
+        
+        // Add click event listener to the CMI Button
+        commodityBtn.addEventListener('click', function() {
+          // Check if the Pending CMI Table is currently displayed
+          if (approvedCommodity.style.display === 'block') {
+            // If so, hide the Pending CMI Table and display the CMI Table
+            approvedCommodity.style.display = 'none';
+            pendingCommodity.style.display = 'block';
+            // Change the text of the button to indicate the currently displayed table
+            commodityBtn.textContent = 'Approved Commodity';
+          } else {
+            // If the CMI Table is currently displayed, hide it and display the Pending CMI Table
+            pendingCommodity.style.display = 'none';
+            approvedCommodity.style.display = 'block';
+            // Change the text of the button to indicate the currently displayed table
+            commodityBtn.textContent = 'Pending Commodity';
+          }
+        });
+    });
+  </script>
+
+  {% if messages %}
+    {% for message in messages %}
+      {% if message.tags == 'success' %}
+        <script>
+          // Display SweetAlert success message
+          Swal.fire({
+            icon: 'success',
+            title: 'Success!',
+            text: '{{ message }}'
+          })
+        </script>
+        {% else %}
+        <script>
+          // Display SweetAlert success message
+          Swal.fire({
+            icon: 'error',
+            title: 'Error!',
+            text: '{{ message }}'
+          })
+        </script>
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+{% endblock %}
